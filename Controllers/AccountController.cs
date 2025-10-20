@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using GymPower.Data;
 using GymPower.Models;
 
@@ -14,7 +13,6 @@ namespace GymPower.Controllers
             _context = context;
         }
 
-        [HttpGet]
         public IActionResult Login()
         {
             return View();
@@ -27,7 +25,7 @@ namespace GymPower.Controllers
 
             if (user != null)
             {
-                HttpContext.Session.SetString("UserId", user.Id.ToString());
+                HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("Role", user.Role);
                 HttpContext.Session.SetString("FitnessGoal", user.FitnessGoal);
@@ -42,7 +40,6 @@ namespace GymPower.Controllers
             return View();
         }
 
-        [HttpGet]
         public IActionResult Register()
         {
             return View();
@@ -51,28 +48,23 @@ namespace GymPower.Controllers
         [HttpPost]
         public IActionResult Register(User user)
         {
+            if (_context.Users.Any(u => u.Username == user.Username))
+            {
+                ModelState.AddModelError("Username", "Username already exists");
+            }
+
+            if (_context.Users.Any(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "Email already exists");
+            }
+
             if (ModelState.IsValid)
             {
-                // Check if username already exists
-                if (_context.Users.Any(u => u.Username == user.Username))
-                {
-                    ModelState.AddModelError("Username", "Username already exists");
-                    return View(user);
-                }
-
-                // Check if email already exists
-                if (_context.Users.Any(u => u.Email == user.Email))
-                {
-                    ModelState.AddModelError("Email", "Email already exists");
-                    return View(user);
-                }
-
                 user.Role = "Customer";
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
-                // Auto login after registration
-                HttpContext.Session.SetString("UserId", user.Id.ToString());
+                HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("Role", user.Role);
                 HttpContext.Session.SetString("FitnessGoal", user.FitnessGoal);

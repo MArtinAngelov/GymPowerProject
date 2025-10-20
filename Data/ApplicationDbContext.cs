@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using GymPower.Models;
 
 namespace GymPower.Data
@@ -8,13 +7,27 @@ namespace GymPower.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
+        // ONLY include models that go in the database
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Product> Products => Set<Product>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+
+        // REMOVE this line: public DbSet<CartItem> CartItems => Set<CartItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configure relationships
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.OrderItems)
+                .WithOne(oi => oi.Order)
+                .HasForeignKey(oi => oi.OrderId);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId);
+
             // Seed data
             modelBuilder.Entity<Product>().HasData(
                 new Product
@@ -23,7 +36,7 @@ namespace GymPower.Data
                     Name = "Whey Protein Premium",
                     Description = "High-quality whey protein for muscle recovery and growth",
                     Price = 59.99m,
-                    ImageUrl = "/images/whey-protein.jpg",
+                    ImageUrl = "/images/protein.jpg",
                     Category = "Protein",
                     IsRecommendedForMassGain = true,
                     IsRecommendedForWeightLoss = true,
@@ -46,65 +59,25 @@ namespace GymPower.Data
                 new Product
                 {
                     Id = 3,
-                    Name = "BCAA Amino Acids",
-                    Description = "Essential amino acids for muscle recovery",
-                    Price = 39.99m,
-                    ImageUrl = "/images/bcaa.jpg",
-                    Category = "Amino Acids",
-                    IsRecommendedForMassGain = true,
-                    IsRecommendedForWeightLoss = true,
-                    IsRecommendedForMaintenance = true,
-                    StockQuantity = 60
-                },
-                new Product
-                {
-                    Id = 4,
                     Name = "Fat Burner Pro",
                     Description = "Advanced formula for weight management",
                     Price = 49.99m,
-                    ImageUrl = "/images/fat-burner.jpg",
+                    ImageUrl = "/images/fatburner.jpg",
                     Category = "Weight Loss",
                     IsRecommendedForMassGain = false,
                     IsRecommendedForWeightLoss = true,
                     IsRecommendedForMaintenance = false,
                     StockQuantity = 40
-                },
-                new Product
-                {
-                    Id = 5,
-                    Name = "Multivitamin Complex",
-                    Description = "Complete vitamin formula for athletes",
-                    Price = 24.99m,
-                    ImageUrl = "/images/multivitamin.jpg",
-                    Category = "Vitamins",
-                    IsRecommendedForMassGain = true,
-                    IsRecommendedForWeightLoss = true,
-                    IsRecommendedForMaintenance = true,
-                    StockQuantity = 100
-                },
-                new Product
-                {
-                    Id = 6,
-                    Name = "Pre-Workout Energizer",
-                    Description = "Energy boost for intense workouts",
-                    Price = 44.99m,
-                    ImageUrl = "/images/pre-workout.jpg",
-                    Category = "Pre-Workout",
-                    IsRecommendedForMassGain = true,
-                    IsRecommendedForWeightLoss = false,
-                    IsRecommendedForMaintenance = true,
-                    StockQuantity = 55
                 }
             );
 
-            // Create admin user
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
                     Username = "admin",
                     Email = "admin@gympower.com",
-                    Password = "admin123", // In real app, this should be hashed
+                    Password = "admin123",
                     Role = "Admin",
                     FitnessGoal = "Maintenance",
                     CreatedAt = DateTime.Now

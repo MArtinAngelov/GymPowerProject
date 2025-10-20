@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
 using GymPower.Models;
-using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GymPower.Controllers
 {
@@ -11,17 +11,8 @@ namespace GymPower.Controllers
         private List<CartItem> GetCart()
         {
             var cartJson = HttpContext.Session.GetString(CartSessionKey);
-            if (string.IsNullOrEmpty(cartJson))
-                return new List<CartItem>();
-
-            try
-            {
-                return JsonSerializer.Deserialize<List<CartItem>>(cartJson) ?? new List<CartItem>();
-            }
-            catch
-            {
-                return new List<CartItem>();
-            }
+            return string.IsNullOrEmpty(cartJson) ? new List<CartItem>() :
+                JsonSerializer.Deserialize<List<CartItem>>(cartJson) ?? new List<CartItem>();
         }
 
         private void SaveCart(List<CartItem> cart)
@@ -40,34 +31,28 @@ namespace GymPower.Controllers
         [HttpPost]
         public IActionResult AddToCart(int productId, string productName, decimal price, string imageUrl, int quantity = 1)
         {
-            try
-            {
-                var cart = GetCart();
-                var existingItem = cart.FirstOrDefault(item => item.ProductId == productId);
+            var cart = GetCart();
+            var existingItem = cart.FirstOrDefault(item => item.ProductId == productId);
 
-                if (existingItem != null)
-                {
-                    existingItem.Quantity += quantity;
-                }
-                else
-                {
-                    cart.Add(new CartItem
-                    {
-                        ProductId = productId,
-                        ProductName = productName,
-                        Price = price,
-                        ImageUrl = imageUrl,
-                        Quantity = quantity
-                    });
-                }
-
-                SaveCart(cart);
-                return Json(new { success = true, count = cart.Sum(item => item.Quantity) });
-            }
-            catch (Exception ex)
+            if (existingItem != null)
             {
-                return Json(new { success = false, error = ex.Message });
+                existingItem.Quantity += quantity;
             }
+            else
+            {
+                cart.Add(new CartItem
+                {
+                    ProductId = productId,
+                    ProductName = productName,
+                    Price = price,
+                    ImageUrl = imageUrl,
+                    Quantity = quantity
+                });
+            }
+
+            SaveCart(cart);
+            TempData["SuccessMessage"] = "Product added to cart successfully!";
+            return RedirectToAction("Index", "Products");
         }
 
         [HttpPost]
