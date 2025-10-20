@@ -8,17 +8,14 @@ namespace GymPower.Models
         [Key]
         public int Id { get; set; }
 
-        [Display(Name = "User")]
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public User? User { get; set; }
 
-        [Display(Name = "Order Date")]
         [DataType(DataType.DateTime)]
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
-        [Display(Name = "Total Price")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPrice { get; set; }
 

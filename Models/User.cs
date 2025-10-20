@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GymPower.Models
 {
@@ -9,25 +10,20 @@ namespace GymPower.Models
 
         [Required]
         [StringLength(50)]
-        [Display(Name = "Username")]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
-        [Display(Name = "Email Address")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         [MinLength(6)]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         public string Role { get; set; } = "Customer";
+        public string FitnessGoal { get; set; } = "Maintenance";
 
-        [Display(Name = "Fitness Goal")]
-        public string FitnessGoal { get; set; } // MassGain, WeightLoss, Maintenance
-
-        [Display(Name = "Created At")]
+        [DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
