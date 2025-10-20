@@ -8,17 +8,15 @@ namespace GymPower.Models
         [Key]
         public int Id { get; set; }
 
-        [Display(Name = "Order")]
         public int OrderId { get; set; }
 
         [ForeignKey("OrderId")]
-        public Order Order { get; set; }
+        public Order? Order { get; set; }
 
-        [Display(Name = "Product")]
         public int ProductId { get; set; }
 
         [ForeignKey("ProductId")]
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
 
         public int Quantity { get; set; }
 

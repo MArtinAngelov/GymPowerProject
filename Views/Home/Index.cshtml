@@ -1,8 +1,179 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<GymPower.Models.Product>
+@{
+    ViewData["Title"] = "Home - GymPower";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="hero-title floating">FUEL YOUR FITNESS JOURNEY</h1>
+                <p class="lead mb-4 fs-5">Premium supplements, expert guidance, and unbeatable results. Transform your body with GymPower.</p>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-primary btn-lg px-5 py-3">
+                    <i class="fas fa-bolt me-2"></i> SHOP NOW
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fitness Goals Section -->
+@if (!string.IsNullOrEmpty(Context.Session.GetString("FitnessGoal")))
+{
+    <div class="container mt-5">
+        <div class="fitness-goal-card">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3 class="mb-3">
+                        <i class="fas fa-bullseye me-2"></i>
+                        Your Fitness Goal: <span class="text-warning">@Context.Session.GetString("FitnessGoal")</span>
+                    </h3>
+                    @if (ViewBag.FitnessTips != null)
+                    {
+                        <div class="row">
+                            @foreach (var tip in ViewBag.FitnessTips)
+                            {
+                                <div class="col-md-6 mb-2">
+                                    <i class="fas fa-check text-success me-2"></i> @tip
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="col-md-4 text-end">
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-outline-light">
+                        <i class="fas fa-dumbbell me-2"></i> View Recommended Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Features Section -->
+<div class="container mt-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card floating">
+                <div class="feature-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h5>Fast & Free Shipping</h5>
+                <p class="mb-0">Free delivery on orders over $50. Get your supplements in 2-3 days.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card floating" style="animation-delay: 0.2s;">
+                <div class="feature-icon">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h5>Premium Quality</h5>
+                <p class="mb-0">Third-party tested supplements with proven results and purity.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card floating" style="animation-delay: 0.4s;">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h5>Expert Support</h5>
+                <p class="mb-0">24/7 customer service and fitness guidance from our experts.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Products -->
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold">FEATURED PRODUCTS</h2>
+            <p class="lead">Best sellers that help athletes achieve their goals</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col-xl-4 col-lg-6 col-md-6">
+                <div class="card h-100">
+                    <div class="position-relative overflow-hidden">
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name"
+                             onerror="this.src='/images/default-product.jpg'">
+                        <span class="badge-premium position-absolute top-0 end-0 m-3">
+                            <i class="fas fa-star me-1"></i> Featured
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">@product.Name</h5>
+                        <p class="card-text text-muted">@product.Description</p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-dark">@product.Category</span>
+                            <span class="text-warning fw-bold">Stock: @product.StockQuantity</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="text-primary fw-bold mb-0">$@product.Price.ToString("F2")</h4>
+                            @if (Context.Session.GetString("Role") == "Admin")
+                            {
+                                <div>
+                                    <a asp-controller="Products" asp-action="Edit" asp-route-id="@product.Id"
+                                       class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id"
+                                       class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary"
+                                        onclick="addToCartWithAnimation(@product.Id, '@product.Name', @product.Price, '@product.ImageUrl')">
+                                    <i class="fas fa-cart-plus me-2"></i> ADD TO CART
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-light btn-lg px-5">
+            <i class="fas fa-store me-2"></i> VIEW ALL PRODUCTS
+        </a>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="container mt-5">
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">5000+</div>
+                <div>Happy Customers</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">100+</div>
+                <div>Premium Products</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">24/7</div>
+                <div>Expert Support</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">98%</div>
+                <div>Success Rate</div>
+            </div>
+        </div>
+    </div>
 </div>

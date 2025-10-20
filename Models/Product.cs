@@ -8,26 +8,28 @@ namespace GymPower.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "Product name is required")]
+        [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters")]
         [Display(Name = "Product Name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        [StringLength(500)]
+        [StringLength(500, ErrorMessage = "Description cannot be longer than 500 characters")]
         [DataType(DataType.MultilineText)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
-        [Required]
-        [Range(0.01, 1000)]
+        [Required(ErrorMessage = "Price is required")]
+        [Range(0.01, 1000, ErrorMessage = "Price must be between 0.01 and 1000")]
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         [Display(Name = "Image URL")]
-        public string ImageUrl { get; set; }
+        [Url(ErrorMessage = "Please enter a valid URL")]
+        public string ImageUrl { get; set; } = "/images/products/default-product.jpg";
 
-        [Required]
-        public string Category { get; set; } // Protein, Creatine, Vitamins, Accessories
+        [Required(ErrorMessage = "Category is required")]
+        [Display(Name = "Category")]
+        public string Category { get; set; } = "Protein";
 
         [Display(Name = "Recommended for Mass Gain")]
         public bool IsRecommendedForMassGain { get; set; }
@@ -39,7 +41,7 @@ namespace GymPower.Models
         public bool IsRecommendedForMaintenance { get; set; }
 
         [Display(Name = "Stock Quantity")]
-        [Range(0, 1000)]
+        [Range(0, 1000, ErrorMessage = "Stock quantity must be between 0 and 1000")]
         public int StockQuantity { get; set; } = 100;
     }
 }

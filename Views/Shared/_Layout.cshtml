@@ -6,70 +6,355 @@
     <title>@ViewData["Title"] - GymPower</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #ff6b35;
+            --secondary: #2ec4b6;
+            --dark: #1a1a2e;
+            --darker: #0d0d1a;
+            --light: #f8f9fa;
+            --gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        * {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: var(--gradient-dark) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            padding: 1rem 0;
+        }
+
         .navbar-brand {
-            font-weight: bold;
-            color: #dc3545 !important;
+            font-weight: 800;
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-link {
+            color: var(--light) !important;
+            font-weight: 600;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+            border-radius: 25px;
+            padding: 0.5rem 1rem !important;
+        }
+
+        .nav-link:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
         }
 
         .btn-primary {
-            background-color: #dc3545;
-            border-color: #dc3545;
+            background: var(--gradient);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
         }
 
-            .btn-primary:hover {
-                background-color: #c82333;
-                border-color: #bd2130;
-            }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+            background: linear-gradient(135deg, #ff8c35 0%, #ffa91e 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ec4b6 0%, #20c997 100%);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            transition: all 0.3s ease;
+        }
 
         .card {
-            transition: transform 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
         }
 
-            .card:hover {
-                transform: translateY(-5px);
-            }
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
 
-        .fitness-tips {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .card-img-top {
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+
+        .hero-section {
+            background: var(--gradient-dark);
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,107,53,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .fitness-goal-card {
+            background: var(--gradient-dark);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--primary);
+        }
+
+        .badge-premium {
+            background: var(--gradient);
             color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        .table {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .table th {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .table td {
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        footer {
+            background: var(--gradient-dark);
+            border-top: 2px solid var(--primary);
+            margin-top: auto;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px) rotate(5deg);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .alert {
+            border-radius: 15px;
+            border: none;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
+            color: #721c24;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: var(--light);
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+            color: var(--light);
+        }
+
+        .input-group-text {
+            background: var(--primary);
+            border: none;
+            color: white;
+            border-radius: 15px;
+        }
+
+        .quantity-btn {
+            background: var(--primary);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            transform: scale(1.1);
+            background: #ff8c35;
+        }
+
+        .stats-card {
+            background: var(--gradient);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @@keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                <i class="fas fa-dumbbell"></i> GymPower
+                <i class="fas fa-dumbbell"></i> GYMPOWER
             </a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            <i class="fas fa-home"></i> Home
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Products" asp-action="Index">Products</a>
+                        <a class="nav-link" asp-controller="Products" asp-action="Index">
+                            <i class="fas fa-store"></i> Products
+                        </a>
                     </li>
+
                     @if (!string.IsNullOrEmpty(Context.Session.GetString("UserId")))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="MyOrders">My Orders</a>
+                            <a class="nav-link" asp-controller="Orders" asp-action="MyOrders">
+                                <i class="fas fa-clipboard-list"></i> My Orders
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Cart" asp-action="Index">
                                 <i class="fas fa-shopping-cart"></i> Cart
-                                <span id="cartCount" class="badge bg-danger">0</span>
+                                <span id="cartCount" class="badge bg-danger ms-1">0</span>
                             </a>
                         </li>
                     }
+
                     @if (Context.Session.GetString("Role") == "Admin")
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
-                                Admin
+                                <i class="fas fa-crown"></i> Admin
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
@@ -80,24 +365,33 @@
                         </li>
                     }
                 </ul>
+
                 <ul class="navbar-nav">
                     @if (string.IsNullOrEmpty(Context.Session.GetString("UserId")))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">
+                                <i class="fas fa-user-plus"></i> Register
+                            </a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i> @Context.Session.GetString("Username")
+                                <i class="fas fa-user-circle"></i> @Context.Session.GetString("Username")
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     }
@@ -106,64 +400,66 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                @TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
+    <main class="flex-grow-1">
+        <div class="container mt-4">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show pulse" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
 
-        @RenderBody()
-    </div>
+            @RenderBody()
+        </div>
+    </main>
 
-    <footer class="bg-dark text-white mt-5 py-4">
-        <div class="container">
+    <footer class="mt-5">
+        <div class="container py-5">
             <div class="row">
-                <div class="col-md-4">
-                    <h5><i class="fas fa-dumbbell"></i> GymPower</h5>
-                    <p>Your trusted partner for fitness supplements and accessories.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contact Info</h5>
-                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-                    <p><i class="fas fa-envelope"></i> info@gympower.com</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Follow Us</h5>
+                <div class="col-md-4 mb-4">
+                    <h4 class="fw-bold"><i class="fas fa-dumbbell"></i> GYMPOWER</h4>
+                    <p class="mb-3">Your ultimate destination for premium fitness supplements and accessories. Achieve your fitness goals with our high-quality products.</p>
                     <div class="social-links">
-                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">Contact Info</h5>
+                    <p><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope me-2"></i> support@gympower.com</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> Fitness Street 123, Sport City</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">Quick Links</h5>
+                    <p><a href="#" class="text-light text-decoration-none">About Us</a></p>
+                    <p><a href="#" class="text-light text-decoration-none">Shipping Info</a></p>
+                    <p><a href="#" class="text-light text-decoration-none">Returns & Refunds</a></p>
+                    <p><a href="#" class="text-light text-decoration-none">Privacy Policy</a></p>
+                </div>
             </div>
-            <hr>
+            <hr class="my-4">
             <div class="text-center">
-                <p>&copy; 2024 GymPower. All rights reserved.</p>
+                <p class="mb-0">&copy; 2024 GymPower. Fuel Your Fitness Journey. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Update cart count on page load
-        $(document).ready(function() {
-            updateCartCount();
-        });
-
-        // Update cart count function
+        // Update cart count
         async function updateCartCount() {
             try {
                 const response = await fetch('@Url.Action("GetCartCount", "Cart")');
@@ -172,27 +468,45 @@
                     $('#cartCount').text(count);
                 }
             } catch (error) {
-                console.log('Error updating cart count:', error);
+                console.log('Cart count update failed');
             }
         }
 
-        // Add to cart function
-        function addToCart(productId, productName, price, imageUrl) {
+        // Add to cart with animation
+        function addToCartWithAnimation(productId, productName, price, imageUrl) {
             $.post('@Url.Action("AddToCart", "Cart")', {
                 productId: productId,
                 productName: productName,
                 price: price,
                 imageUrl: imageUrl,
                 quantity: 1
-            })
-            .done(function(data) {
+            }).done(function(data) {
                 updateCartCount();
-                alert('Product added to cart!');
-            })
-            .fail(function() {
-                alert('Error adding product to cart');
+
+                // Create floating notification
+                const notification = $(`
+                    <div class="alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3 pulse"
+                         style="z-index: 9999; min-width: 300px;">
+                        <i class="fas fa-check-circle"></i> ${productName} added to cart!
+                    </div>
+                `);
+
+                $('body').append(notification);
+                setTimeout(() => notification.remove(), 3000);
+            }).fail(function() {
+                alert('Failed to add product to cart');
             });
         }
+
+        $(document).ready(function() {
+            updateCartCount();
+
+            // Add hover effects to cards
+            $('.card').hover(
+                function() { $(this).addClass('shadow-lg'); },
+                function() { $(this).removeClass('shadow-lg'); }
+            );
+        });
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
