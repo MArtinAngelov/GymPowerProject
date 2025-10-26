@@ -1,0 +1,28 @@
+﻿@model GymPower.Models.Order
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h1 class="text-center mb-4 text-warning fw-bold">Checkout</h1>
+
+<div class="card shadow-sm mx-auto" style="max-width:600px;">
+    <div class="card-body">
+        <form asp-action="PlaceOrder" method="post">
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input asp-for="UserId" class="form-control" placeholder="John Doe" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" placeholder="john@example.com" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Shipping Address</label>
+                <textarea asp-for="Address" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-warning btn-lg">Confirm Order</button>
+            </div>
+        </form>
+    </div>
+</div>

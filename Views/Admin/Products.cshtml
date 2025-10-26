@@ -1,0 +1,29 @@
+﻿@model IEnumerable<GymPower.Models.Product>
+@{
+    ViewData["Title"] = "Manage Products";
+}
+
+<h1 class="text-center mb-4 text-warning fw-bold">Manage Products</h1>
+
+<table class="table table-hover shadow-sm align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th class="text-end">Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Name</td>
+                <td>@p.Description</td>
+                <td class="text-end">@p.Price.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

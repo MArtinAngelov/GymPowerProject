@@ -12,11 +12,13 @@ namespace GymPower.Models
 
         [ForeignKey("UserId")]
         public User? User { get; set; }
+        public string Email { get; set; } 
 
         [DataType(DataType.DateTime)]
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
         [Column(TypeName = "decimal(18,2)")]
+        public string Address { get; set; }
         public decimal TotalPrice { get; set; }
 
         public string Status { get; set; } = "Pending";
