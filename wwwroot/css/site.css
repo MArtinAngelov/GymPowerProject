@@ -1,4 +1,4 @@
-main {
+﻿main {
     animation: fadeIn 0.8s ease-in;
 }
 
@@ -13,6 +13,7 @@ main {
         transform: translateY(0);
     }
 }
+
 
 /* Loading animation */
 .loading-spinner {
@@ -56,3 +57,271 @@ main {
     .btn:hover::before {
         left: 100%;
     }
+.navbar {
+    font-size: 1.05rem;
+}
+
+.navbar-brand i {
+    margin-right: 5px;
+}
+
+.navbar .form-control {
+    border-radius: 25px;
+}
+
+.navbar .btn-outline-warning:hover {
+    color: #000;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+/* Cart Page Colors & Outlines */
+.cart-container {
+    background-color: #16171b;
+    color: #f8f9fa;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 0 25px rgba(255, 193, 7, 0.05);
+}
+
+/* Table Header */
+.table thead {
+    background: linear-gradient(90deg, #ff8c00, #ffa733);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 12px 12px 0 0;
+}
+
+/* Table Body */
+.table tbody tr {
+    background-color: #1e1f25;
+    color: #fff;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(255, 193, 7, 0.05);
+}
+
+/* Buttons */
+.btn-warning {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+    font-weight: 600;
+}
+
+    .btn-warning:hover {
+        background-color: #ffae00;
+        color: #fff;
+    }
+
+.btn-outline-danger {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+    .btn-outline-danger:hover {
+        background-color: #ff6b6b;
+        color: #fff;
+    }
+
+/* 🧮 Order Summary Fix */
+.order-summary {
+    background-color: #1e1f25;
+    color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.05);
+}
+
+    .order-summary h5,
+    .order-summary h6 {
+        color: #ffc107;
+        font-weight: 600;
+    }
+
+    .order-summary .text-success {
+        color: #28a745 !important;
+    }
+
+    .order-summary .text-warning {
+        color: #ffc107 !important;
+    }
+
+/* Cart Image */
+.cart-item-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid #ffc107;
+}
+/* 🔍 Make search bar text and placeholder white */
+.navbar .form-control {
+    color: #fff !important; /* text color */
+    background-color: transparent !important; /* keeps it sleek */
+    border: 1px solid #fff !important; /* optional white border */
+}
+
+    .navbar .form-control::placeholder {
+        color: #ccc !important; /* slightly gray placeholder */
+        opacity: 1; /* ensures it’s visible */
+    }
+    .navbar .form-control:focus {
+        box-shadow: 0 0 5px #ff8c00; /* soft orange glow */
+        border-color: #ff8c00;
+        outline: none;
+    }
+/* 🏋️‍♂️ Product Page Styling */
+.product-card {
+    background-color: #1a1a1a; /* dark background for contrast */
+    color: #fff; /* white text */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); /* orange glow */
+    }
+
+    .product-card img {
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .product-card h5,
+    .product-card p,
+    .product-card span {
+        color: #fff !important; /* force white text */
+    }
+
+    .product-card .price {
+        color: #ffc107 !important; /* orange/gold for price */
+        font-weight: bold;
+    }
+
+    .product-card .btn {
+        background-color: #ff8c00;
+        border: none;
+        color: #000;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .product-card .btn:hover {
+            background-color: #ffa500;
+            color: #fff;
+        }
+/* 🏠 Home Page Dark Theme Styling (keeps animations intact) */
+/* 🏠 Ensure home page text is visible on dark backgrounds */
+.hero-section,
+.hero-section h1,
+.hero-section p,
+.hero-section .lead {
+    color: #fff !important;
+}
+
+.feature-card,
+.feature-card h5,
+.feature-card p {
+    color: #fff !important;
+}
+
+.stats-card,
+.stats-card div {
+    color: #fff !important;
+}
+
+.stats-number {
+    color: #ffc107 !important; /* GymBeam orange for numbers */
+}
+
+/* Highlight main call-to-action buttons */
+.hero-section .btn,
+.feature-card .btn,
+.stats-card .btn {
+    background-color: #ff8c00 !important;
+    border: none;
+    color: #000 !important;
+}
+
+    .hero-section .btn:hover,
+    .feature-card .btn:hover,
+    .stats-card .btn:hover {
+        background-color: #ffa500 !important;
+        color: #fff !important;
+    }
+/*/* 🌟 Fade-in & slide animations */
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.animate-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease;
+}
+
+.animate-fade {
+    opacity: 0;
+    transition: all 1s ease;
+}
+
+.animate-show {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* 🖱️ Hover effects */
+.card:hover {
+    transform: translateY(-8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.2);
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+/* 🧡 Floating icon pulse */
+.feature-icon i {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}

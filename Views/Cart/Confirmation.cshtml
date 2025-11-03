@@ -1,0 +1,10 @@
+﻿@model GymPower.Models.Order
+
+<section class="py-5 text-center" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <h1 class="text-warning fw-bold mb-4">🎉 Благодарим ти за поръчката!</h1>
+        <p class="lead">Поръчка № @Model.Id беше приета успешно на @Model.OrderDate.ToString("dd.MM.yyyy HH:mm").</p>
+        <p>Ще се свържем с теб на <strong>@Model.Email</strong> или <strong>@Model.Phone</strong>.</p>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-warning fw-bold mt-4">⬅️ Обратно към продуктите</a>
+    </div>
+</section>

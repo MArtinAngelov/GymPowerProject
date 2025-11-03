@@ -1,0 +1,107 @@
+﻿@model List<GymPower.Models.CartItem>
+@{
+    ViewData["Title"] = "Плащане и поръчка";
+    var total = ViewBag.Total ?? 0m;
+}
+
+<section class="py-5" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <h1 class="text-center text-warning fw-bold mb-4">🧾 Финализирай поръчката си</h1>
+
+        <div class="row g-5 justify-content-center">
+            <!-- 🛍️ Cart Summary -->
+            <div class="col-lg-6">
+                <div class="card bg-dark border-0 shadow-lg">
+                    <div class="card-body">
+                        <h4 class="fw-bold text-warning mb-3">Твоята количка</h4>
+                        <table class="table align-middle text-white">
+                            <thead>
+                                <tr class="text-warning">
+                                    <th>Продукт</th>
+                                    <th>Количество</th>
+                                    <th>Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <!-- 🖼️ Small product image added + clickable name -->
+                                        <td class="d-flex align-items-center">
+                                            <img src="@item.ImageUrl" alt="@item.ProductName"
+                                                 class="me-3 rounded"
+                                                 style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #444;">
+                                            <a asp-controller="Products"
+                                               asp-action="Details"
+                                               asp-route-id="@item.ProductId"
+                                               class="text-white text-decoration-none fw-semibold hover-underline">
+                                                @item.ProductName
+                                            </a>
+                                        </td>
+                                        <td>@item.Quantity</td>
+                                        <td>@(item.Price* item.Quantity) лв.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <hr />
+                        <h4 class="text-end text-warning fw-bold">
+                            Общо: @total лв.
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 🧾 Checkout Form -->
+            <div class="col-lg-6">
+                <div class="card bg-dark border-0 shadow-lg">
+                    <div class="card-body">
+                        <!-- 🟡 White delivery section -->
+                        <h4 class="fw-bold mb-3" style="color:white;">Информация за доставка</h4>
+
+                        <form asp-action="PlaceOrder" asp-controller="Cart" method="post">
+                            <div class="mb-3">
+                                <label class="form-label text-white">Име и фамилия:</label>
+                                <input type="text" name="FullName" class="form-control bg-dark text-white border-secondary" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-white">Адрес за доставка:</label>
+                                <input type="text" name="Address" class="form-control bg-dark text-white border-secondary" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-white">Имейл:</label>
+                                <input type="email" name="Email" class="form-control bg-dark text-white border-secondary" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-white">Телефон:</label>
+                                <input type="tel" name="Phone" class="form-control bg-dark text-white border-secondary" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-white">Начин на плащане:</label>
+                                <select name="PaymentMethod" class="form-select bg-dark text-white border-secondary">
+                                    <option>Наложен платеж</option>
+                                    <option>Банкова карта</option>
+                                </select>
+                            </div>
+
+                            <form asp-action="PlaceOrder" asp-controller="Cart" method="post">
+                                ...
+                                <button type="submit" class="btn btn-warning fw-bold w-100 py-2 mt-3">
+                                    ✅ Потвърди поръчката
+                                </button>
+                            </form>
+
+                            <a asp-action="Index" class="btn btn-outline-light w-100 mt-3">
+                                ← Назад към количката
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

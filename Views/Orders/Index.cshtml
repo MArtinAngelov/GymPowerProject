@@ -1,53 +1,188 @@
 ﻿@model IEnumerable<GymPower.Models.Order>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Управление на поръчки";
+
+    var ordersList = Model?.ToList() ?? new List<GymPower.Models.Order>();
+    var todayOrders = ordersList.Where(o => o.OrderDate.Date == DateTime.Today).ToList();
+    var todayRevenue = todayOrders.Sum(o => o.TotalPrice);
+    var totalOrders = ordersList.Count;
 }
 
-<h1>Index</h1>
+<section class="py-5" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <h1 class="text-warning fw-bold mb-5 text-center">🧾 Управление на поръчки</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+        <!-- 🟧 Dashboard Summary -->
+        <div class="row g-4 mb-5 text-center">
+            <div class="col-md-4">
+                <div class="card bg-dark border-0 shadow-lg p-4">
+                    <div class="card-body">
+                        <h3 class="fw-bold text-warning">💰 Днешни приходи</h3>
+                        <h2 class="fw-bold text-success mt-3">@todayRevenue.ToString("F2") лв.</h2>
+                        <p class="text-secondary mt-2">Приходи от поръчки, направени днес.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark border-0 shadow-lg p-4">
+                    <div class="card-body">
+                        <h3 class="fw-bold text-warning">📦 Общо поръчки</h3>
+                        <h2 class="fw-bold text-info mt-3">@totalOrders</h2>
+                        <p class="text-secondary mt-2">Общ брой направени поръчки в системата.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark border-0 shadow-lg p-4">
+                    <div class="card-body">
+                        <h3 class="fw-bold text-warning">🕒 Днешни поръчки</h3>
+                        <h2 class="fw-bold text-light mt-3">@todayOrders.Count</h2>
+                        <p class="text-secondary mt-2">Брой поръчки, направени днес.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🧾 Orders Table -->
+        @if (!ordersList.Any())
+        {
+            <div class="alert alert-secondary text-center fw-bold">
+                Няма направени поръчки.
+            </div>
+        }
+        else
+        {
+            <div class="card bg-dark border-0 shadow-lg">
+                <div class="card-body">
+                    <h4 class="fw-bold text-warning mb-3">📋 Списък с поръчки</h4>
+                    <table class="table table-hover table-dark text-white align-middle">
+                        <thead class="table-warning text-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Клиент</th>
+                                <th>Имейл</th>
+                                <th>Телефон</th>
+                                <th>Обща сума</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            @foreach (var order in ordersList.OrderByDescending(o => o.OrderDate))
+                            {
+                                <tr id="order-row-@order.Id">
+                                    <td>@order.Id</td>
+                                    <td>@(order.CustomerName ?? "—")</td>
+                                    <td>@(order.Email ?? "—")</td>
+                                    <td>@(order.Phone ?? "—")</td>
+                                    <td class="fw-bold text-success">@order.TotalPrice.ToString("F2") лв.</td>
+                                    <td>@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+
+                                    <!-- 🟢 AJAX Dropdown -->
+                                    <td>
+                                        @{
+                                            var statuses = new[] { "Обработва се", "Изпратена", "Доставена" };
+                                            string colorClass = order.Status switch
+                                            {
+                                                "Изпратена" => "text-primary fw-bold",
+                                                "Доставена" => "text-success fw-bold",
+                                                _ => "text-warning fw-bold"
+                                            };
+                                        }
+
+                                        <div class="d-flex align-items-center gap-2">
+                                            <!-- 🟢 Color Badge -->
+                                            <span class="@colorClass" style="min-width: 110px;">
+                                                @switch (order.Status)
+                                                {
+                                                    case "Обработва се":
+                                                        @:🟡 Обработва се
+                                                        break;
+                                                    case "Изпратена":
+                                                        @:🔵 Изпратена
+                                                        break;
+                                                    case "Доставена":
+                                                        @:🟢 Доставена
+                                                        break;
+                                                }
+                                            </span>
+
+                                            <!-- 🔽 Dropdown -->
+                                            <select class="form-select form-select-sm bg-dark text-white border-secondary status-dropdown"
+                                                    data-id="@order.Id"
+                                                    style="width:150px;">
+                                                @foreach (var status in statuses)
+                                                {
+                                                    var isSelected = order.Status == status ? "selected" : "";
+                                                    <option value="@status" selected="@isSelected.Equals("selected")">@status</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </td>
+
+                                    <!-- ❌ Delete Button -->
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger fw-bold delete-btn"
+                                                data-id="@order.Id">
+                                            🗑 Изтрий
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <!-- 🔙 Back Button -->
+        <div class="text-center mt-4">
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-warning px-4 py-2 fw-bold rounded-pill">
+                ← Назад към админ панела
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // ✅ AJAX update for order status
+        $(".status-dropdown").change(function () {
+            const orderId = $(this).data("id");
+            const newStatus = $(this).val();
+
+            $.ajax({
+                url: '/Orders/UpdateStatusAjax',
+                type: 'POST',
+                data: { id: orderId, status: newStatus },
+                success: function () {
+                    console.log("✅ Статусът е обновен успешно!");
+                },
+                error: function () {
+                    alert("⚠️ Възникна грешка при обновяването на статуса.");
+                }
+            });
+        });
+
+        // ✅ AJAX delete order
+        $(".delete-btn").click(function () {
+            if (!confirm("Сигурен ли си, че искаш да изтриеш тази поръчка?")) return;
+
+            const orderId = $(this).data("id");
+            $.ajax({
+                url: '/Orders/DeleteAjax',
+                type: 'POST',
+                data: { id: orderId },
+                success: function () {
+                    $("#order-row-" + orderId).fadeOut(300, function () { $(this).remove(); });
+                },
+                error: function () {
+                    alert("⚠️ Грешка при изтриването на поръчката.");
+                }
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>

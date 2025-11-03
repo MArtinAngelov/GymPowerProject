@@ -1,59 +1,62 @@
 ﻿@model GymPower.Models.User
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редактирай потребител";
 }
 
-<h1>Edit</h1>
+<section class="py-5" style="background-color:#0b0b14; color:white; font-family:'Montserrat', sans-serif;">
+    <div class="container">
+        <div class="card bg-dark border-0 shadow-lg p-5 mx-auto" style="max-width:700px;">
+            <h2 class="text-warning fw-bold text-center mb-4">✏️ Редактирай потребител</h2>
+            <hr class="border-secondary mb-4" />
 
-<h4>User</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Role" class="control-label"></label>
-                <input asp-for="Role" class="form-control" />
-                <span asp-validation-for="Role" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FitnessGoal" class="control-label"></label>
-                <input asp-for="FitnessGoal" class="form-control" />
-                <span asp-validation-for="FitnessGoal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Потребителско име</label>
+                    <input asp-for="Username" class="form-control bg-dark text-white border-secondary" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Имейл адрес</label>
+                    <input asp-for="Email" type="email" class="form-control bg-dark text-white border-secondary" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Парола (остави празно, ако няма промяна)</label>
+                    <input asp-for="Password" type="password" class="form-control bg-dark text-white border-secondary" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Роля</label>
+                    <select asp-for="Role" class="form-select bg-dark text-white border-secondary">
+                        <option value="Customer">Потребител</option>
+                        <option value="Admin">Администратор</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Фитнес цел</label>
+                    <select asp-for="FitnessGoal" class="form-select bg-dark text-white border-secondary">
+                        <option value="Muscle Gain">Покачване на мускулна маса</option>
+                        <option value="Weight Loss">Отслабване</option>
+                        <option value="Maintenance">Поддържане</option>
+                    </select>
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label fw-semibold" for="IsActive">Активен потребител</label>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4">← Назад</a>
+                    <button type="submit" class="btn text-dark fw-bold rounded-pill px-4"
+                            style="background: linear-gradient(135deg, #ffb84d, #ff6b35); border: none;">
+                        💾 Запази промените
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+</section>

@@ -1,0 +1,141 @@
+﻿@model IEnumerable<GymPower.Models.Order>
+@{
+    ViewData["Title"] = "Моите поръчки";
+}
+
+<section class="py-5" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <h1 class="text-warning fw-bold mb-4 text-center">🧾 Моите поръчки</h1>
+
+        @if (ViewBag.Message != null)
+        {
+            <p class="text-center text-light">@ViewBag.Message</p>
+        }
+        else
+        {
+            @foreach (var order in Model)
+            {
+                <div class="card bg-dark border-0 shadow-lg mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-warning fw-bold mb-0">Поръчка №@order.Id</h5>
+                            <span class="badge bg-@(order.Status == "Доставена" ? "success" : order.Status == "Обработва се" ? "warning" : "secondary") px-3 py-2">
+                                @order.Status
+                            </span>
+                        </div>
+
+                        <div class="d-flex flex-wrap justify-content-between text-muted small">
+                            <span>📅 @order.OrderDate.ToString("dd.MM.yyyy HH:mm")</span>
+                            <span>💰 Общо: <strong class="text-warning">@order.TotalPrice лв.</strong></span>
+                            <span>💳 Плащане: @order.PaymentMethod</span>
+                        </div>
+
+                        <hr class="border-secondary my-3" />
+
+                        <!-- 🛍️ Products grid -->
+                        <div class="row g-3">
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card bg-secondary bg-opacity-10 border-0 h-100 text-center p-2 hover-shadow"
+                                         style="cursor:pointer;"
+                                         onclick="window.location.href='@Url.Action("Details", "Products", new { id = item.ProductId })'">
+
+                                        <img src="@item.Product?.ImageUrl" alt="@item.Product?.Name"
+                                             class="img-fluid rounded mb-2" style="height:150px; object-fit:cover;">
+
+                                        <!-- ✅ Clickable Product Name -->
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId"
+                                           class="text-warning fw-bold d-block mb-1 text-decoration-none">
+                                            @item.Product?.Name
+                                        </a>
+
+                                        <p class="text-muted mb-1">Количество: <strong>@item.Quantity</strong></p>
+                                        <p class="text-light fw-bold mb-0">@item.Price лв.</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="text-end mt-3">
+                            <a asp-controller="Orders" asp-action="MyOrderDetails" asp-route-id="@order.Id"
+                               class="btn btn-outline-warning btn-sm fw-bold rounded-pill px-4">
+                                👁️ Преглед
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="text-center mt-4">
+            <a asp-controller="Products" asp-action="Index"
+               class="btn btn-warning text-dark fw-bold px-4 py-2 rounded-pill">
+                🛍️ Върни се към продуктите
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    body {
+        background-color: #0b0b14;
+        color: #f1f1f1;
+    }
+
+    .card {
+        background-color: #1a1a22 !important;
+        color: #f1f1f1;
+        border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+
+        .card h5, .card h6 {
+            color: #ffc107;
+        }
+
+    .text-muted {
+        color: #9ca3af !important;
+    }
+
+    .text-light {
+        color: #f1f1f1 !important;
+    }
+
+    .text-warning {
+        color: #ffc107 !important;
+    }
+
+    .btn-outline-warning {
+        border-color: #ffc107;
+        color: #ffc107;
+    }
+
+        .btn-outline-warning:hover {
+            background-color: #ffc107;
+            color: #0b0b14;
+        }
+
+    .badge {
+        color: #0b0b14 !important;
+        font-weight: bold;
+    }
+
+    .hover-shadow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    a {
+        color: #ffc107;
+    }
+
+        a:hover {
+            color: #f8d24b;
+        }
+
+    .order-info {
+        color: #9ca3af;
+        font-size: 0.95rem;
+    }
+</style>

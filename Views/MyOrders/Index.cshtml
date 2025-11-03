@@ -1,0 +1,119 @@
+﻿@model IEnumerable<GymPower.Models.Order>
+@{
+    ViewData["Title"] = "Моите поръчки";
+}
+
+<section class="py-5" style="background-color:#0b0b14; font-family:'Montserrat',sans-serif;">
+    <div class="container">
+        <h2 class="fw-bold text-center mb-5" style="color:#ff6b35;">📦 Моите поръчки</h2>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center text-secondary">
+                <p class="fs-5">Нямаш направени поръчки.</p>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-warning rounded-pill px-4 py-2 fw-bold">
+                    🛒 Разгледай продукти
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var order in Model)
+                {
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-dark border-0 shadow-lg rounded-4 order-card" style="border-left:4px solid #ff6b35;">
+                            <div class="card-body text-light">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="fw-bold text-white mb-0">Поръчка №@order.Id</h5>
+                                    <span class="text-secondary small">@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</span>
+                                </div>
+
+                                <p class="mb-1 text-light small">
+                                    Статус:
+                                    <span class="badge
+                                                @(order.Status == "Доставена" ? "bg-success" :
+                                                                                    order.Status == "Отказана" ? "bg-danger" : "bg-warning text-dark")">
+                                @order.Status
+                            </span>
+                        </p>
+                        <p class="mb-2 fw-bold text-warning">Общо: <span class="text-success">@order.TotalPrice лв.</span></p>
+
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                            @foreach (var item in order.OrderItems.Take(3)) // show only first 3
+                                    {
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId"
+                                           class="text-decoration-none">
+                                            <img src="@item.Product.ImageUrl"
+                                                 style="width:70px;height:70px;object-fit:cover;border-radius:10px;border:1px solid #333;"
+                                                 class="me-1 glow-img" />
+                                        </a>
+                                    }
+                                    @if (order.OrderItems.Count > 3)
+                                    {
+                                        <div class="d-flex align-items-center justify-content-center bg-secondary rounded-circle"
+                                             style="width:70px;height:70px;">
+                                            <span class="text-white fw-bold">+@((order.OrderItems.Count - 3))</span>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="text-end">
+                                    <a asp-action="Details" asp-route-id="@order.Id"
+                                       class="btn btn-outline-warning rounded-pill px-4 py-2 fw-bold glow-btn">
+                                        👁️ Преглед
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+    body {
+        background-color: #0b0b14;
+    }
+
+    .order-card {
+        transition: all 0.3s ease;
+        background-color: #12121d !important;
+    }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(255, 107, 53, 0.25);
+        }
+
+    .glow-img {
+        transition: all 0.3s ease;
+        box-shadow: 0 0 0 rgba(255, 107, 53, 0);
+    }
+
+        .glow-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+
+    .glow-btn:hover {
+        background-color: #ff6b35;
+        color: #0b0b14 !important;
+        border-color: #ff6b35;
+        box-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+    }
+
+    h2, h5, p, span {
+        color: #f1f1f1;
+    }
+
+    .text-warning {
+        color: #ffb84d !important;
+    }
+
+    .text-success {
+        color: #65ff84 !important;
+    }
+</style>

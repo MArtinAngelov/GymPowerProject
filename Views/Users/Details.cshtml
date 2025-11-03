@@ -1,54 +1,81 @@
-﻿@model GymPower.Models.User
-
+﻿@inject GymPower.Data.AppDbContext _context
+@model GymPower.Models.User
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Детайли за потребител";
 }
 
-<h1>Details</h1>
+<section class="py-5" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <div class="card bg-dark border-0 shadow-lg p-5 mx-auto" style="max-width:800px;">
+            <h2 class="text-warning fw-bold text-center mb-4">👤 Потребителски детайли</h2>
+            <hr class="border-secondary mb-4" />
 
-<div>
-    <h4>User</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Username)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Username)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Role)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Role)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FitnessGoal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FitnessGoal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Потребителско име:</strong> @Model.Username</p>
+                    <p><strong>Имейл:</strong> @Model.Email</p>
+                    <p><strong>Роля:</strong> @Model.Role</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Фитнес цел:</strong> @Model.FitnessGoal</p>
+                    <p><strong>Регистриран на:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy")</p>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4" />
+
+            <h4 class="text-warning fw-bold mb-3">🧾 История на поръчките</h4>
+            @if (ViewBag.Orders == null || !((IEnumerable<GymPower.Models.Order>)ViewBag.Orders).Any())
+            {
+                <p>❗ Този потребител все още няма направени поръчки.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-hover align-middle mb-0">
+                        <thead class="table-warning text-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Дата</th>
+                                <th>Сума</th>
+                                <th>Статус</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in (IEnumerable<GymPower.Models.Order>)ViewBag.Orders)
+                            {
+                                <tr>
+                                    <td>@order.Id</td>
+                                    <td>@order.OrderDate.ToString("dd.MM.yyyy")</td>
+                                    <td>@order.TotalPrice лв.</td>
+                                    <td>@order.Status</td>
+                                    <td>
+                                        <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id"
+                                           class="btn btn-outline-info btn-sm rounded-pill px-3">👁️ Преглед</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            <div class="text-center mt-4">
+                <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4">← Назад</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .card {
+        background-color: #1a1a22 !important;
+        color: #f1f1f1;
+        border: 1px solid rgba(255, 193, 7, 0.15);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+</style>

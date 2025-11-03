@@ -1,72 +1,25 @@
-﻿using GymPower.Data;
-using GymPower.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace GymPower.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly AppDbContext _context;
-
-        public AdminController(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        private bool IsAdmin()
-        {
-            var role = HttpContext.Session.GetString("Role");
-            return role == "Admin";
-        }
-
+        // ✅ Main Admin Panel
         public IActionResult Index()
         {
-            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            // Check if user is logged in and is admin
+            var role = HttpContext.Session.GetString("Role");
 
-            var stats = new
+            if (role != "Admin")
             {
-                TotalProducts = _context.Products.Count(),
-                TotalOrders = _context.Orders.Count(),
-                TotalUsers = _context.Users.Count(),
-                RecentOrders = _context.Orders
-                    .Include(o => o.User)
-                    .OrderByDescending(o => o.OrderDate)
-                    .Take(5)
-                    .ToList()
-            };
-
-            return View(stats);
-        }
-
-        public IActionResult Orders()
-        {
-            if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            var orders = _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
-                .OrderByDescending(o => o.OrderDate)
-                .ToList();
-
-            return View(orders);
-        }
-
-        [HttpPost]
-        public IActionResult UpdateOrderStatus(int orderId, string status)
-        {
-            if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            var order = _context.Orders.Find(orderId);
-            if (order != null)
-            {
-                order.Status = status;
-                _context.SaveChanges();
-                TempData["SuccessMessage"] = "Order status updated successfully!";
+                // ❌ Not an admin — redirect home (not login)
+                TempData["ErrorMessage"] = "Нямате достъп до Админ панела.";
+                return RedirectToAction("Index", "Home");
             }
 
-            return RedirectToAction("Orders");
+            // ✅ Already admin — show dashboard
+            return View();
         }
     }
 }

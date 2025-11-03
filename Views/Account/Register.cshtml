@@ -1,54 +1,54 @@
 ﻿@model GymPower.Models.User
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Регистрация";
 }
 
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <h2>Create New Account</h2>
+        <h2>Създай нов акаунт</h2>
 
-        <!-- Registration Form -->
+        <!-- Форма за регистрация -->
         <form asp-action="Register">
-            <!-- Username Field -->
+            <!-- Потребителско име -->
             <div class="form-group mb-3">
-                <label asp-for="Username" class="control-label"></label>
+                <label asp-for="Username" class="control-label">Потребителско име</label>
                 <input asp-for="Username" class="form-control" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
 
-            <!-- Email Field -->
+            <!-- Имейл -->
             <div class="form-group mb-3">
-                <label asp-for="Email" class="control-label"></label>
+                <label asp-for="Email" class="control-label">Имейл</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <!-- Password Field -->
+            <!-- Парола -->
             <div class="form-group mb-3">
-                <label asp-for="Password" class="control-label"></label>
+                <label asp-for="Password" class="control-label">Парола</label>
                 <input asp-for="Password" type="password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <!-- Fitness Goal Dropdown -->
+            <!-- Фитнес цел -->
             <div class="form-group mb-3">
-                <label asp-for="FitnessGoal" class="control-label"></label>
+                <label asp-for="FitnessGoal" class="control-label">Фитнес цел</label>
                 <select asp-for="FitnessGoal" class="form-control">
-                    <option value="MassGain">Mass Gain</option>
-                    <option value="WeightLoss">Weight Loss</option>
-                    <option value="Maintenance">Maintenance</option>
+                    <option value="MassGain">Покачване на мускулна маса</option>
+                    <option value="WeightLoss">Отслабване</option>
+                    <option value="Maintenance">Поддържане</option>
                 </select>
                 <span asp-validation-for="FitnessGoal" class="text-danger"></span>
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-success w-100">Register</button>
+            <!-- Бутон за регистрация -->
+            <button type="submit" class="btn btn-success w-100">Регистрация</button>
         </form>
 
-        <!-- Link to login page -->
+        <!-- Линк към вход -->
         <div class="text-center mt-3">
-            <a asp-action="Login">Already have an account? Login here</a>
+            <a asp-action="Login">Вече имаш акаунт? Влез оттук</a>
         </div>
     </div>
 </div>

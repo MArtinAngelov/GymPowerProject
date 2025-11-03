@@ -1,0 +1,26 @@
+﻿@model GymPower.Models.User
+@{
+    ViewData["Title"] = "Моят профил";
+}
+
+<section class="py-5" style="background-color:#0b0b14;">
+    <div class="container text-white">
+        <div class="card bg-dark border-0 shadow-lg p-4 mx-auto text-white" style="max-width:600px;">
+            <h2 class="text-warning fw-bold mb-4 text-center">👤 Моят профил</h2>
+
+            <div class="text-center mb-4">
+                <p class="mb-2"><strong>Потребителско име:</strong> @Model.Username</p>
+                <p class="mb-2"><strong>Имейл:</strong> @Model.Email</p>
+                <p class="mb-2"><strong>Фитнес цел:</strong> @Model.FitnessGoal</p>
+            </div>
+
+            <a asp-action="EditProfile" class="btn btn-warning fw-bold w-100 rounded-pill mt-3 shadow">
+                ✏️ Редактирай профила
+            </a>
+
+            <a asp-action="Logout" class="btn btn-outline-light fw-bold w-100 rounded-pill mt-3">
+                🚪 Изход
+            </a>
+        </div>
+    </div>
+</section>

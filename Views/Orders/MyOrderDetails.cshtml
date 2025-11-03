@@ -1,0 +1,124 @@
+﻿@model GymPower.Models.Order
+@{
+    ViewData["Title"] = $"Детайли за поръчка №{Model.Id}";
+}
+
+<section class="py-5" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <div class="card bg-dark shadow-lg border-0">
+            <div class="card-body">
+                <h3 class="text-warning fw-bold mb-4">👁️ Детайли за поръчка №@Model.Id</h3>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="text-light">Информация за клиента</h5>
+                        <p class="mb-1">👤 @Model.CustomerName</p>
+                        <p class="mb-1">📧 @Model.Email</p>
+                        <p class="mb-1">📞 @Model.Phone</p>
+                        <p class="mb-1">🏠 @Model.Address</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-light">Информация за поръчката</h5>
+                        <p class="mb-1">📅 Дата: @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</p>
+                        <p class="mb-1">💳 Плащане: @Model.PaymentMethod</p>
+                        <p class="mb-1">💰 Общо: <strong class="text-warning">@Model.TotalPrice лв.</strong></p>
+                        <p class="mb-1">
+                            🚚 Статус:
+                            <span class="badge bg-@(Model.Status == "Доставена" ? "success" : Model.Status == "Обработва се" ? "warning" : "secondary")">
+                                @Model.Status
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="border-secondary mb-4" />
+
+                <h5 class="text-warning mb-3">🛒 Продукти в поръчката</h5>
+
+                <div class="row g-3">
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card bg-secondary bg-opacity-10 border-0 text-center p-3 h-100">
+                                <img src="@item.Product?.ImageUrl" alt="@item.Product?.Name"
+                                     class="img-fluid rounded mb-2" style="height:150px; object-fit:cover;">
+                                <h6 class="text-light text-truncate">@item.Product?.Name</h6>
+                                <p class="text-muted mb-1">Количество: <strong>@item.Quantity</strong></p>
+                                <p class="text-warning fw-bold mb-0">@item.Price лв.</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="text-center mt-4">
+                    <a asp-controller="Orders" asp-action="MyOrders"
+                       class="btn btn-outline-light rounded-pill px-4">
+                        ← Назад към моите поръчки
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    body {
+        background-color: #0b0b14;
+        color: #f1f1f1;
+    }
+
+    .card {
+        background-color: #1a1a22 !important;
+        color: #f1f1f1;
+        border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+
+        .card h5, .card h6 {
+            color: #ffc107;
+        }
+
+    .text-muted {
+        color: #9ca3af !important;
+    }
+
+    .text-light {
+        color: #f1f1f1 !important;
+    }
+
+    .text-warning {
+        color: #ffc107 !important;
+    }
+
+    .btn-outline-warning {
+        border-color: #ffc107;
+        color: #ffc107;
+    }
+
+        .btn-outline-warning:hover {
+            background-color: #ffc107;
+            color: #0b0b14;
+        }
+
+    .badge {
+        color: #0b0b14 !important;
+        font-weight: bold;
+    }
+
+    .hover-shadow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    a {
+        color: #ffc107;
+    }
+
+        a:hover {
+            color: #f8d24b;
+        }
+
+    .order-info {
+        color: #9ca3af;
+        font-size: 0.95rem;
+    }
+</style>

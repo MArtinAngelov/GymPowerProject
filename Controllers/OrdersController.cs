@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GymPower.Data;
+using GymPower.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using GymPower.Data;
-using GymPower.Models;
 
 namespace GymPower.Controllers
 {
@@ -19,28 +18,72 @@ namespace GymPower.Controllers
             _context = context;
         }
 
-        // GET: Orders
-        public async Task<IActionResult> Index()
+        // ✅ Show all orders for admin
+        public IActionResult Index()
         {
-            var appDbContext = _context.Orders.Include(o => o.User);
-            return View(await appDbContext.ToListAsync());
-        }
+            var orders = _context.Orders
+                .Include(o => o.OrderItems)
+                .ToList();
 
+            // Debug check — if no data, return empty list
+            if (orders == null || !orders.Any())
+            {
+                ViewBag.Message = "Няма направени поръчки.";
+            }
+
+            return View(orders);
+        }
+        public IActionResult MyOrders()
+        {
+            // ✅ Try to identify the user
+            var username = HttpContext.Session.GetString("Username");
+            var email = HttpContext.Session.GetString("Email");
+
+            // Fallback: if session expired but user just ordered, find last used email
+            if (string.IsNullOrEmpty(email) && TempData["LastOrderEmail"] != null)
+                email = TempData["LastOrderEmail"].ToString();
+
+            var orders = _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(i => i.Product)
+                .Where(o => o.CustomerName == username || o.Email == email)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+
+            if (!orders.Any())
+            {
+                ViewBag.Message = "Все още нямате направени поръчки.";
+            }
+
+            return View(orders);
+        }
+        public IActionResult MyOrderDetails(int id)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var email = HttpContext.Session.GetString("Email");
+
+            var order = _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefault(o => o.Id == id && (o.CustomerName == username || o.Email == email));
+
+            if (order == null)
+                return RedirectToAction("MyOrders");
+
+            return View(order);
+        }
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var order = await _context.Orders
-                .Include(o => o.User)
+                .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (order == null)
-            {
                 return NotFound();
-            }
 
             return View(order);
         }
@@ -48,24 +91,24 @@ namespace GymPower.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
             return View();
         }
 
         // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,OrderDate,TotalPrice,Status")] Order order)
+        public async Task<IActionResult> Create(Order order)
         {
             if (ModelState.IsValid)
             {
+                order.OrderDate = DateTime.Now;
+                order.Status = "Обработва се";
+                order.TotalPrice = order.OrderItems?.Sum(i => i.Price * i.Quantity) ?? 0;
+
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", order.UserId);
             return View(order);
         }
 
@@ -73,30 +116,22 @@ namespace GymPower.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
-            {
                 return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", order.UserId);
+
             return View(order);
         }
 
         // POST: Orders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,OrderDate,TotalPrice,Status")] Order order)
+        public async Task<IActionResult> Edit(int id, Order order)
         {
             if (id != order.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -108,17 +143,12 @@ namespace GymPower.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!OrderExists(order.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", order.UserId);
             return View(order);
         }
 
@@ -126,17 +156,13 @@ namespace GymPower.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var order = await _context.Orders
-                .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (order == null)
-            {
                 return NotFound();
-            }
 
             return View(order);
         }
@@ -150,9 +176,9 @@ namespace GymPower.Controllers
             if (order != null)
             {
                 _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -160,5 +186,43 @@ namespace GymPower.Controllers
         {
             return _context.Orders.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        public IActionResult UpdateStatus(int id, string status)
+        {
+            var order = _context.Orders.FirstOrDefault(o => o.Id == id);
+            if (order != null)
+            {
+                order.Status = status;
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "✅ Статусът на поръчката беше обновен успешно!";
+            }
+
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public IActionResult UpdateStatusAjax(int id, string status)
+        {
+            var order = _context.Orders.FirstOrDefault(o => o.Id == id);
+            if (order != null)
+            {
+                order.Status = status;
+                _context.SaveChanges();
+            }
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAjax(int id)
+        {
+            var order = _context.Orders.FirstOrDefault(o => o.Id == id);
+            if (order != null)
+            {
+                _context.Orders.Remove(order);
+                _context.SaveChanges();
+            }
+            return Json(new { success = true });
+        }
     }
+
 }

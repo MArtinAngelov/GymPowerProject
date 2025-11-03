@@ -1,31 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Admin Dashboard";
+﻿@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Админ Панел";
+    var username = Context.Session.GetString("Username");
 }
 
-<h1 class="text-center mb-4 text-warning fw-bold">Admin Dashboard</h1>
+<section class="hero-section text-center text-white py-5" style="background: var(--gradient-dark);">
+    <div class="container">
+        <h1 class="hero-title fw-bold mb-3 text-warning">⚙️ Админ Панел</h1>
+        <p class="lead text-light">
+            Добре дошъл, <strong>@username</strong>! Управлявай съдържанието на своя онлайн магазин GymPower.
+        </p>
+    </div>
+</section>
 
-<div class="row g-4 text-center">
-    <div class="col-md-4">
-        <div class="card shadow-sm p-3">
-            <h3 class="text-muted">Products</h3>
-            <h1 class="fw-bold">@ViewBag.TotalProducts</h1>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card shadow-sm p-3">
-            <h3 class="text-muted">Orders</h3>
-            <h1 class="fw-bold">@ViewBag.TotalOrders</h1>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card shadow-sm p-3">
-            <h3 class="text-muted">Revenue</h3>
-            <h1 class="fw-bold text-success">@ViewBag.TotalRevenue.ToString("C")</h1>
-        </div>
-    </div>
-</div>
+<div class="container py-5 text-white">
+    <div class="row g-4">
 
-<div class="text-center mt-4">
-    <a asp-action="Products" class="btn btn-warning me-2">Manage Products</a>
-    <a asp-action="Orders" class="btn btn-outline-dark">View Orders</a>
+        <!-- Управление на продукти -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-dark border-0 shadow-sm h-100 text-center p-4">
+                <div class="mb-3">
+                    <i class="fas fa-box-open fa-3x text-warning"></i>
+                </div>
+                <h4 class="fw-bold mb-3 text-warning">Продукти</h4>
+                <p class="text-light mb-4">
+                    Добавяй, редактирай и изтривай продуктите в твоя онлайн магазин.
+                </p>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-warning fw-bold text-dark px-4 py-2 rounded-pill shadow">
+                    Управлявай продукти
+                </a>
+            </div>
+        </div>
+
+        <!-- Управление на поръчки -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-dark border-0 shadow-sm h-100 text-center p-4">
+                <div class="mb-3">
+                    <i class="fas fa-shopping-cart fa-3x text-warning"></i>
+                </div>
+                <h4 class="fw-bold mb-3 text-warning">Поръчки</h4>
+                <p class="text-light mb-4">
+                    Преглеждай и обработвай направените поръчки от клиентите.
+                </p>
+                <a asp-controller="Orders" asp-action="Index" class="btn btn-warning fw-bold text-dark px-4 py-2 rounded-pill shadow">
+                     Управлявай поръчки
+                </a>
+            </div>
+        </div>
+
+        <!-- Управление на потребители -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-dark border-0 shadow-sm h-100 text-center p-4">
+                <div class="mb-3">
+                    <i class="fas fa-users fa-3x text-warning"></i>
+                </div>
+                <h4 class="fw-bold mb-3 text-warning">Потребители</h4>
+                <p class="text-light mb-4">
+                    Управлявай акаунтите на потребителите и техните данни.
+                </p>
+                <a asp-controller="Users" asp-action="Index" class="btn btn-warning fw-bold text-dark px-4 py-2 rounded-pill shadow">
+                    Управлявай потребители
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light fw-bold px-4 py-2 rounded-pill">
+            ← Назад към началото
+        </a>
+    </div>
 </div>
