@@ -1,72 +1,130 @@
 ﻿@model GymPower.Models.Product
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Детайли за продукта";
 }
 
-<h1>Details</h1>
+<section class="py-5" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <div class="row justify-content-center align-items-start g-5">
 
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsRecommendedForMassGain)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsRecommendedForMassGain)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsRecommendedForWeightLoss)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsRecommendedForWeightLoss)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsRecommendedForMaintenance)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsRecommendedForMaintenance)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StockQuantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StockQuantity)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+            <!-- 🖼️ Product Image -->
+            <div class="col-lg-6 col-md-6">
+                <div class="bg-dark rounded-4 overflow-hidden shadow-sm">
+                    <img src="@Model.ImageUrl"
+                         alt="@Model.Name"
+                         class="img-fluid w-100"
+                         style="object-fit: cover; height: 500px; border-radius: 0;">
+                </div>
+            </div>
+
+            <!-- 🧾 Product Info -->
+            <div class="col-lg-6 col-md-6">
+                <h1 class="fw-bold text-warning mb-3">@Model.Name</h1>
+
+                <span class="badge bg-secondary mb-3 fs-6">@Model.Category</span>
+
+                <p class="lead mb-4" style="color:#e0e0e0; line-height:1.7;">
+                    @Model.Description
+                </p>
+
+                <!-- Long Description / Benefits Section -->
+                <div class="mb-4">
+                    <h5 class="text-warning fw-semibold mb-2">Ползи от продукта:</h5>
+                    <ul class="text-light" style="line-height:1.7;">
+                        <li>Подпомага мускулния растеж и възстановяването.</li>
+                        <li>Повишава енергията и издръжливостта при тренировки.</li>
+                        <li>Осигурява необходимите нутриенти за постигане на целите ти.</li>
+                        <li>Идеален за активно трениращи и спортисти.</li>
+                    </ul>
+                </div>
+
+                <h3 class="fw-bold text-warning mb-4">
+                    Цена: @Model.Price.ToString("F2") лв.
+                </h3>
+
+                <div class="mb-4">
+                    <i class="fas fa-box me-2"></i>
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <span class="text-success fw-semibold">В наличност (@Model.StockQuantity бр.)</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger fw-semibold">Изчерпан</span>
+                    }
+                </div>
+
+                <!-- Quantity + Add to Cart -->
+                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3">
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div class="d-flex align-items-center bg-dark rounded-3 px-3 py-2">
+                        <label for="quantity" class="me-2 fw-semibold text-light">Количество:</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="@Model.StockQuantity"
+                               class="form-control text-center bg-dark text-white border-0" style="width:80px;">
+                    </div>
+
+                    <button type="submit" class="btn btn-warning fw-bold px-4 py-2 text-dark rounded-3 shadow-sm">
+                        🛒 Добави в количката
+                    </button>
+                </form>
+
+                <a asp-controller="Products" asp-action="Index"
+                   class="btn btn-outline-light px-4 py-2 mt-4 rounded-3">
+                    ← Назад към продуктите
+                </a>
+            </div>
+        </div>
+
+        <!-- 🧩 Related Products -->
+        <div class="mt-5 pt-4 border-top border-secondary">
+            <h3 class="text-center text-warning fw-bold mb-4">Подобни продукти</h3>
+            <div class="row g-4 justify-content-center">
+                @foreach (var related in ViewBag.RelatedProducts as IEnumerable<GymPower.Models.Product> ?? Enumerable.Empty<GymPower.Models.Product>())
+                {
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card bg-dark border-0 h-100 shadow-sm text-center">
+                            <img src="@related.ImageUrl" class="card-img-top" alt="@related.Name"
+                                 style="height:200px; object-fit:cover;">
+                            <div class="card-body">
+                                <h6 class="fw-bold text-light">@related.Name</h6>
+                                <p class="text-warning fw-semibold">@related.Price.ToString("F2") лв.</p>
+                                <a asp-action="Details" asp-route-id="@related.Id"
+                                   class="btn btn-outline-warning btn-sm">Виж продукта</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="toastMessage"
+             class="position-fixed bottom-0 end-0 mb-4 me-4 bg-success text-white fw-semibold px-4 py-3 rounded-3 shadow-lg"
+             style="z-index: 9999; animation: fadeIn 0.4s;">
+            ✅ @TempData["SuccessMessage"]
+        </div>
+
+        <script>
+            setTimeout(() => {
+                const toast = document.getElementById("toastMessage");
+                if (toast) toast.remove();
+            }, 2500);
+        </script>
+
+        <style>
+            @@keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+    }
+</section>

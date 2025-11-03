@@ -1,0 +1,114 @@
+﻿@model GymPower.Models.Order
+@{
+    ViewData["Title"] = "Детайли за поръчка";
+}
+
+<section class="py-5" style="background-color:#0b0b14; font-family:'Montserrat',sans-serif;">
+    <div class="container">
+        <div class="card bg-dark border-0 shadow-lg p-5 rounded-4" style="color:#ffffff;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0" style="color:#ff6b35;">Поръчка №@Model.Id</h3>
+                <span class="text-secondary small">@Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</span>
+            </div>
+
+            <hr class="border-secondary" />
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p class="mb-2">
+                        <strong>Статус:</strong>
+                        <span class="badge
+                            @(Model.Status == "Доставена" ? "bg-success" :
+                                                            Model.Status == "Отказана" ? "bg-danger" : "bg-warning text-dark")">
+                            @Model.Status
+                        </span>
+                    </p>
+                    <p class="mb-2"><strong>Начин на плащане:</strong> <span class="text-light">@Model.PaymentMethod</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-2"><strong>Име:</strong> <span class="text-light">@Model.CustomerName</span></p>
+                    <p class="mb-2"><strong>Имейл:</strong> <span class="text-light">@Model.Email</span></p>
+                    <p class="mb-2"><strong>Телефон:</strong> <span class="text-light">@Model.Phone</span></p>
+                    <p class="mb-2"><strong>Адрес за доставка:</strong> <span class="text-light">@Model.Address</span></p>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-3" style="color:#ff6b35;">🛍️ Продукти в поръчката</h5>
+
+            <div class="row">
+                @foreach (var item in Model.OrderItems)
+                {
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId"
+                           class="text-decoration-none">
+                            <div class="card border-0 bg-black shadow-sm rounded-3 overflow-hidden h-100 product-card">
+                                <div class="position-relative">
+                                    <img src="@item.Product.ImageUrl" class="card-img-top"
+                                         style="height:180px;object-fit:cover;opacity:0.9;border-bottom:2px solid #ff6b35;">
+                                    <span class="badge bg-warning text-dark position-absolute bottom-0 end-0 m-1">
+                                        @item.Quantity бр.
+                                    </span>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h6 class="fw-bold text-white text-truncate">@item.Product.Name</h6>
+                                    <p class="text-light small mb-0">@item.Price лв. × @item.Quantity бр.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <hr class="border-secondary mt-4" />
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="fw-bold" style="color:#ff6b35;">Общо: @Model.TotalPrice лв.</h4>
+                <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold">
+                    ← Назад към моите поръчки
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    body {
+        background-color: #0b0b14;
+    }
+
+    .card {
+        background-color: #12121d !important;
+        border-radius: 15px;
+        color: #ffffff;
+    }
+
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .product-card img:hover {
+            opacity: 1;
+        }
+
+    strong {
+        color: #ffb84d;
+    }
+
+    h3, h4, h5 {
+        color: #ff6b35;
+    }
+
+    .text-light {
+        color: #f1f1f1 !important;
+    }
+
+    .btn-outline-light:hover {
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+        color: #0b0b14 !important;
+    }
+</style>

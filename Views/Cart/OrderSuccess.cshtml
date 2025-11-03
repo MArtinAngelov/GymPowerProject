@@ -1,0 +1,90 @@
+﻿@using Newtonsoft.Json
+@using GymPower.Models
+@{
+    ViewData["Title"] = "Поръчка приета успешно";
+    var orderId = TempData["OrderId"];
+    var total = TempData["OrderTotal"];
+    var itemsJson = TempData["OrderItems"] as string;
+    var orderItems = !string.IsNullOrEmpty(itemsJson)
+     ? JsonConvert.DeserializeObject<List<dynamic>>(itemsJson)
+     : new List<dynamic>();
+}
+
+<section class="py-5 text-center" style="background-color:#0b0b14; color:white;">
+    <div class="container">
+        <div class="card bg-dark border-0 shadow-lg p-5 mx-auto" style="max-width:800px;">
+            <div class="mb-4">
+                <i class="fas fa-check-circle text-success fa-5x"></i>
+            </div>
+
+            <h1 class="fw-bold text-warning mb-3">✅ Поръчката е приета успешно!</h1>
+            <p class="lead text-light mb-4">
+                Благодарим ти, че избра <strong>GymPower</strong>!
+                Ще се свържем с теб скоро, за да потвърдим доставката.
+            </p>
+
+            <hr class="border-secondary my-4">
+
+            <div class="text-start text-light mb-4">
+                <h5 class="text-warning fw-bold mb-3">📋 Детайли за поръчката:</h5>
+                <p><strong>Номер на поръчка:</strong> #@orderId</p>
+                <p><strong>Обща сума:</strong> @total лв.</p>
+                <p><strong>Дата:</strong> @DateTime.Now.ToString("dd.MM.yyyy HH:mm")</p>
+            </div>
+
+            @if (orderItems.Any())
+            {
+                <div class="text-start mb-4">
+                    <h5 class="text-warning fw-bold mb-3">🛍️ Закупени продукти:</h5>
+                    <table class="table table-dark table-striped text-white align-middle">
+                        <thead>
+                            <tr>
+                                <th>Снимка</th>
+                                <th>Продукт</th>
+                                <th>Количество</th>
+                                <th>Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in orderItems)
+                            {
+                                <tr>
+                                    <td style="width:80px;">
+                                        <img src="@item.ImageUrl" alt="@item.ProductName"
+                                             style="width:70px; height:70px; object-fit:cover; border-radius:10px;" />
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId"
+                                           class="text-warning fw-semibold text-decoration-none">
+                                            @item.ProductName
+                                        </a>
+                                    </td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Price лв.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            <div class="text-start text-light mb-4">
+                <h5 class="text-warning fw-bold">Следващи стъпки:</h5>
+                <ul class="list-unstyled">
+                    <li>📦 Подготвяме пратката ти за изпращане.</li>
+                    <li>🚚 Ще получиш потвърждение по имейл или телефон.</li>
+                    <li>💳 Плащането ще бъде извършено при доставка.</li>
+                </ul>
+            </div>
+
+            <a asp-controller="Products" asp-action="Index"
+               class="btn btn-warning text-dark fw-bold px-4 py-2 rounded-pill shadow">
+                🛍️ Продължи с пазаруването
+            </a>
+            <a asp-controller="MyOrders" asp-action="Index"
+               class="btn btn-outline-light fw-bold px-4 py-2 rounded-pill mt-3">
+                📦 Моите поръчки
+            </a>
+        </div>
+    </div>
+</section>

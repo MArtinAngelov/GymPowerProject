@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GymPower.Data;
+using GymPower.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GymPower.Data;
-using GymPower.Models;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace GymPower.Controllers
 {
@@ -20,45 +23,75 @@ namespace GymPower.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string category = null)
+        public IActionResult Index(string? category, string? search)
         {
-            IQueryable<Product> products = _context.Products;
+            // Load all products first
+            var products = _context.Products.ToList();
 
-            if (!string.IsNullOrEmpty(category))
+            // ✅ Filter by category (case-insensitive + trims + Bulgarian letters safe)
+            if (!string.IsNullOrWhiteSpace(category))
             {
-                products = products.Where(p => p.Category == category);
-                ViewBag.CurrentCategory = category;
+                string normalized = category.Trim().ToLower();
+                products = products
+                    .Where(p => p.Category != null &&
+                                p.Category.Trim().ToLower().Contains(normalized))
+                    .ToList();
             }
 
-            var productList = await products.ToListAsync();
+            // ✅ Search filter (also safe and case-insensitive)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string normalizedSearch = search.Trim().ToLower();
+                products = products
+                    .Where(p =>
+                        (p.Name != null && p.Name.ToLower().Contains(normalizedSearch)) ||
+                        (p.Description != null && p.Description.ToLower().Contains(normalizedSearch)) ||
+                        (p.Category != null && p.Category.ToLower().Contains(normalizedSearch))
+                    )
+                    .ToList();
+            }
 
-            // Get categories for filter
-            ViewBag.Categories = await _context.Products
-                .Select(p => p.Category)
-                .Distinct()
-                .ToListAsync();
+            return View(products);
+        }
 
-            return View(productList);
+        // ✅ Helper: Normalize text (removes accents & softens search)
+        private static string NormalizeText(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return string.Empty;
+            var normalized = input.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder();
+
+            foreach (var c in normalized)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+
+            return sb.ToString()
+                     .Normalize(NormalizationForm.FormC)
+                     .Replace("y", "i") // helps with translit typos
+                     .Replace("u", "v")
+                     .Replace("q", "k");
         }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null) return NotFound();
 
+            // Load related products from the same category
+            var relatedProducts = await _context.Products
+                .Where(p => p.Category == product.Category && p.Id != product.Id)
+                .Take(4)
+                .ToListAsync();
+
+            ViewBag.RelatedProducts = relatedProducts;
             return View(product);
         }
-
         // GET: Products/Create
         public IActionResult Create()
         {
@@ -143,6 +176,7 @@ namespace GymPower.Controllers
             return View(product);
         }
 
+
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -179,6 +213,16 @@ namespace GymPower.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Search(string query)
+        {
+            var results = string.IsNullOrWhiteSpace(query)
+                ? _context.Products.ToList()
+                : _context.Products
+                    .Where(p => p.Name.Contains(query) || p.Description.Contains(query))
+                    .ToList();
+
+            return View("Index", results);
         }
 
         private bool ProductExists(int id)

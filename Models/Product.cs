@@ -5,43 +5,27 @@ namespace GymPower.Models
 {
     public class Product
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Product name is required")]
-        [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters")]
-        [Display(Name = "Product Name")]
-        public string Name { get; set; } = string.Empty;
+        [Required]
+        public string Name { get; set; } // replaces 'Name'
 
-        [StringLength(500, ErrorMessage = "Description cannot be longer than 500 characters")]
-        [DataType(DataType.MultilineText)]
-        public string Description { get; set; } = string.Empty;
+        [Required]
+        public string Description { get; set; }
 
-        [Required(ErrorMessage = "Price is required")]
-        [Range(0.01, 1000, ErrorMessage = "Price must be between 0.01 and 1000")]
-        [DataType(DataType.Currency)]
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(10,2)")]
+        [Required]
         public decimal Price { get; set; }
 
-        [Display(Name = "Image URL")]
-        [Url(ErrorMessage = "Please enter a valid URL")]
-        public string ImageUrl { get; set; } = "/images/products/default-product.jpg";
+        [Required]
+        public string ImageUrl { get; set; }
 
-        [Required(ErrorMessage = "Category is required")]
-        [Display(Name = "Category")]
-        public string Category { get; set; } = "Protein";
+        [Required]
+        public string Category { get; set; }
 
-        [Display(Name = "Recommended for Mass Gain")]
-        public bool IsRecommendedForMassGain { get; set; }
-
-        [Display(Name = "Recommended for Weight Loss")]
-        public bool IsRecommendedForWeightLoss { get; set; }
-
-        [Display(Name = "Recommended for Maintenance")]
-        public bool IsRecommendedForMaintenance { get; set; }
-
-        [Display(Name = "Stock Quantity")]
-        [Range(0, 1000, ErrorMessage = "Stock quantity must be between 0 and 1000")]
-        public int StockQuantity { get; set; } = 100;
+        public int StockQuantity { get; set; } = 0;
+        public bool IsRecommendedForMassGain { get; set; } = false;
+        public bool IsRecommendedForWeightLoss { get; set; } = false;
+        public bool IsRecommendedForMaintenance { get; set; } = false;
     }
 }

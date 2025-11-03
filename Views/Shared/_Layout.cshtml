@@ -1,5 +1,11 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var username = Context.Session.GetString("Username");
+    var role = Context.Session.GetString("Role");
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<!DOCTYPE html>
+<html lang="bg">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,7 +38,6 @@
 
         .navbar {
             background: var(--gradient-dark) !important;
-            backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--primary);
             padding: 1rem 0;
         }
@@ -50,149 +55,16 @@
             color: var(--light) !important;
             font-weight: 600;
             margin: 0 0.5rem;
-            transition: all 0.3s ease;
             border-radius: 25px;
             padding: 0.5rem 1rem !important;
-        }
-
-        .nav-link:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
-        }
-
-        .btn-primary {
-            background: var(--gradient);
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
-            background: linear-gradient(135deg, #ff8c35 0%, #ffa91e 100%);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #2ec4b6 0%, #20c997 100%);
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
             transition: all 0.3s ease;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border-color: var(--primary);
-        }
-
-        .card-img-top {
-            height: 250px;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover .card-img-top {
-            transform: scale(1.1);
-        }
-
-        .hero-section {
-            background: var(--gradient-dark);
-            padding: 100px 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,107,53,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .feature-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-
-        .fitness-goal-card {
-            background: var(--gradient-dark);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            border-left: 5px solid var(--primary);
-        }
-
-        .badge-premium {
-            background: var(--gradient);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 15px;
-            font-weight: 600;
-        }
-
-        .table {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        .table th {
-            background: var(--primary);
-            color: white;
-            border: none;
-            font-weight: 600;
-        }
-
-        .table td {
-            border-color: rgba(255, 255, 255, 0.1);
-            color: var(--light);
-        }
+            .nav-link:hover {
+                background: var(--primary);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+            }
 
         footer {
             background: var(--gradient-dark);
@@ -209,113 +81,23 @@
             background: var(--gradient);
             border-radius: 50%;
             color: white;
+            margin: 0 0.5rem;
             text-decoration: none;
             transition: all 0.3s ease;
-            margin: 0 0.5rem;
         }
 
-        .social-links a:hover {
-            transform: translateY(-3px) rotate(5deg);
-            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
-        }
-
-        .alert {
-            border-radius: 15px;
-            border: none;
-            font-weight: 600;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            color: #155724;
-        }
-
-        .alert-danger {
-            background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
-            color: #721c24;
-        }
-
-        .form-control {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            color: var(--light);
-            padding: 0.75rem 1rem;
-        }
-
-        .form-control:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
-            color: var(--light);
-        }
-
-        .input-group-text {
-            background: var(--primary);
-            border: none;
-            color: white;
-            border-radius: 15px;
-        }
-
-        .quantity-btn {
-            background: var(--primary);
-            border: none;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .quantity-btn:hover {
-            transform: scale(1.1);
-            background: #ff8c35;
-        }
-
-        .stats-card {
-            background: var(--gradient);
-            color: white;
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            margin: 1rem 0;
-        }
-
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @@keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @@keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
+            .social-links a:hover {
+                transform: translateY(-3px) rotate(5deg);
+                box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+            }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                <i class="fas fa-dumbbell"></i> GYMPOWER
+    <!-- ✅ Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand text-uppercase" asp-controller="Home" asp-action="Index">
+                GymPower
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -325,74 +107,58 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">
-                            <i class="fas fa-home"></i> Home
-                        </a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">🏠 Начало</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Products" asp-action="Index">
-                            <i class="fas fa-store"></i> Products
-                        </a>
+                        <a class="nav-link" asp-controller="Products" asp-action="Index">🛒 Продукти</a>
                     </li>
 
-                    @if (!string.IsNullOrEmpty(Context.Session.GetString("UserId")))
+                    @if (role == "Admin")
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="MyOrders">
-                                <i class="fas fa-clipboard-list"></i> My Orders
+                            <a class="nav-link text-warning fw-bold" asp-controller="Admin" asp-action="Index">
+                                ⚙️ Админ Панел
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Cart" asp-action="Index">
-                                <i class="fas fa-shopping-cart"></i> Cart
-                                <span id="cartCount" class="badge bg-danger ms-1">0</span>
-                            </a>
-                        </li>
-                    }
-
-                    @if (Context.Session.GetString("Role") == "Admin")
-                    {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-crown"></i> Admin
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
-                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index">Products</a></li>
-                                <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index">Orders</a></li>
-                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Index">Users</a></li>
-                            </ul>
                         </li>
                     }
                 </ul>
 
+                <form class="d-flex me-3" asp-controller="Products" asp-action="Index" method="get">
+                    <input class="form-control me-2" type="search" name="search" placeholder="🔍 Търси продукти..." />
+                    <button class="btn btn-outline-warning" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+
                 <ul class="navbar-nav">
-                    @if (string.IsNullOrEmpty(Context.Session.GetString("UserId")))
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Cart" asp-action="Index">
+                            <i class="fa fa-shopping-cart"></i> Количка
+                        </a>
+                    </li>
+
+                    @if (!string.IsNullOrEmpty(username))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">
-                                <i class="fas fa-sign-in-alt"></i> Login
-                            </a>
+                            <span class="nav-link">👋 Здравей, @username!</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Register">
-                                <i class="fas fa-user-plus"></i> Register
-                            </a>
+                            <a class="nav-link" asp-controller="MyOrders" asp-action="Index">🧾 Моите поръчки</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Profile">👤 Моят профил</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Logout">🚪 Изход</a>
                         </li>
                     }
-                    else
+                    else if (currentController != "Account")
                     {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle"></i> @Context.Session.GetString("Username")
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
-                                        <i class="fas fa-sign-out-alt"></i> Logout
-                                    </a>
-                                </li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">🔑 Вход</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">🧾 Регистрация</a>
                         </li>
                     }
                 </ul>
@@ -400,33 +166,20 @@
         </div>
     </nav>
 
+    <!-- ✅ Body -->
     <main class="flex-grow-1">
         <div class="container mt-4">
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show pulse" role="alert">
-                    <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i> @TempData["ErrorMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
-
             @RenderBody()
         </div>
     </main>
 
+    <!-- ✅ Footer -->
     <footer class="mt-5">
         <div class="container py-5">
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <h4 class="fw-bold"><i class="fas fa-dumbbell"></i> GYMPOWER</h4>
-                    <p class="mb-3">Your ultimate destination for premium fitness supplements and accessories. Achieve your fitness goals with our high-quality products.</p>
+                    <p>Твоят източник на премиум добавки и аксесоари. Постигни целите си с качествени продукти.</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
@@ -435,80 +188,27 @@
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold">Contact Info</h5>
-                    <p><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</p>
-                    <p><i class="fas fa-envelope me-2"></i> support@gympower.com</p>
-                    <p><i class="fas fa-map-marker-alt me-2"></i> Fitness Street 123, Sport City</p>
+                    <h5 class="fw-bold">Контакти</h5>
+                    <p><i class="fas fa-phone me-2"></i> +359 888 123 456</p>
+                    <p><i class="fas fa-envelope me-2"></i> support@gympower.bg</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> ул. „Фитнес“ 123, гр. София</p>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold">Quick Links</h5>
-                    <p><a href="#" class="text-light text-decoration-none">About Us</a></p>
-                    <p><a href="#" class="text-light text-decoration-none">Shipping Info</a></p>
-                    <p><a href="#" class="text-light text-decoration-none">Returns & Refunds</a></p>
-                    <p><a href="#" class="text-light text-decoration-none">Privacy Policy</a></p>
+                    <h5 class="fw-bold">Бързи връзки</h5>
+                    <p><a href="#" class="text-light text-decoration-none">За нас</a></p>
+                    <p><a href="#" class="text-light text-decoration-none">Доставка</a></p>
+                    <p><a href="#" class="text-light text-decoration-none">Връщане и замяна</a></p>
+                    <p><a href="#" class="text-light text-decoration-none">Политика за поверителност</a></p>
                 </div>
             </div>
             <hr class="my-4">
             <div class="text-center">
-                <p class="mb-0">&copy; 2024 GymPower. Fuel Your Fitness Journey. All rights reserved.</p>
+                <p>&copy; 2024 GymPower — Зареди своята сила. Всички права запазени.</p>
             </div>
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // Update cart count
-        async function updateCartCount() {
-            try {
-                const response = await fetch('@Url.Action("GetCartCount", "Cart")');
-                if (response.ok) {
-                    const count = await response.text();
-                    $('#cartCount').text(count);
-                }
-            } catch (error) {
-                console.log('Cart count update failed');
-            }
-        }
-
-        // Add to cart with animation
-        function addToCartWithAnimation(productId, productName, price, imageUrl) {
-            $.post('@Url.Action("AddToCart", "Cart")', {
-                productId: productId,
-                productName: productName,
-                price: price,
-                imageUrl: imageUrl,
-                quantity: 1
-            }).done(function(data) {
-                updateCartCount();
-
-                // Create floating notification
-                const notification = $(`
-                    <div class="alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3 pulse"
-                         style="z-index: 9999; min-width: 300px;">
-                        <i class="fas fa-check-circle"></i> ${productName} added to cart!
-                    </div>
-                `);
-
-                $('body').append(notification);
-                setTimeout(() => notification.remove(), 3000);
-            }).fail(function() {
-                alert('Failed to add product to cart');
-            });
-        }
-
-        $(document).ready(function() {
-            updateCartCount();
-
-            // Add hover effects to cards
-            $('.card').hover(
-                function() { $(this).addClass('shadow-lg'); },
-                function() { $(this).removeClass('shadow-lg'); }
-            );
-        });
-    </script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

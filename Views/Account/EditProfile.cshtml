@@ -1,0 +1,58 @@
+﻿@model GymPower.Models.User
+@{
+    ViewData["Title"] = "Редактирай профила";
+}
+
+<section class="py-5" style="background-color:#0b0b14; color:#f1f1f1;">
+    <div class="container">
+        <div class="card bg-dark border-0 shadow-lg p-4 mx-auto" style="max-width:600px;">
+            <h2 class="text-warning fw-bold mb-4 text-center">✏️ Редактирай профила си</h2>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success text-center fw-bold">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            <form asp-action="EditProfile" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken() <!-- ✅ required -->
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Имейл:</label>
+                    <input type="email" asp-for="Email"
+                           class="form-control bg-dark text-white border-secondary" required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Фитнес цел:</label>
+                    <select asp-for="FitnessGoal" class="form-select bg-dark text-white border-secondary">
+                        <option value="Maintenance">Поддържане</option>
+                        <option value="MuscleGain">Покачване на мускулна маса</option>
+                        <option value="FatLoss">Изгаряне на мазнини</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Парола (по избор):</label>
+                    <!-- Make client-side validation ignore Required on edit -->
+                    <input type="password" asp-for="Password" data-val="false"
+                           class="form-control bg-dark text-white border-secondary"
+                           placeholder="Остави празно, ако не искаш да я променяш" />
+                </div>
+
+                <button type="submit"
+                        class="btn btn-warning fw-bold w-100 rounded-pill mt-3 shadow">
+                    💾 Запази промените
+                </button>
+
+                <a asp-action="Profile"
+                   class="btn btn-outline-light fw-bold w-100 rounded-pill mt-3">
+                    ← Назад
+                </a>
+            </form>
+        </div>
+    </div>
+</section>

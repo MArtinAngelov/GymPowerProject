@@ -1,47 +1,91 @@
-﻿@model IEnumerable<GymPower.Models.CartItem>
-@{
-    ViewData["Title"] = "Your Cart";
-}
+﻿@model List<GymPower.Models.CartItem>
 
-<h1 class="text-center mb-4 text-warning fw-bold">Your Cart</h1>
+<div class="container my-5 text-white">
+    <h2 class="mb-4 text-center fw-bold text-warning">
+        <i class="fas fa-shopping-cart me-2"></i> Твоята количка
+    </h2>
 
-@if (Model != null && Model.Any())
-{
-    <table class="table table-striped table-hover align-middle shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>Product</th>
-                <th class="text-center">Quantity</th>
-                <th class="text-end">Price</th>
-                <th class="text-end">Total</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.ProductName</td>
-                    <td class="text-center">@item.Quantity</td>
-                    <td class="text-end">@item.Price.ToString("C")</td>
-                    <td class="text-end">@((item.Price * item.Quantity).ToString("C"))</td>
-                    <td class="text-end">
-                        <a asp-action="RemoveFromCart" asp-route-id="@item.ProductId" class="btn btn-sm btn-outline-danger">
-                            Remove
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning text-center shadow-sm p-4 bg-dark text-white border-warning">
+            Количката ти е празна.
+            <a asp-controller="Products" asp-action="Index" class="btn btn-warning ms-2 fw-semibold">
+                Разгледай продукти
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm rounded-4 bg-dark border-0">
+            <div class="card-body p-4">
+                <table class="table align-middle bg-white text-dark rounded-3 overflow-hidden">
+                    <thead style="background-color: #ff8c00; color: #fff;">
+                        <tr>
+                            <th>Продукт</th>
+                            <th>Цена</th>
+                            <th>Количество</th>
+                            <th>Общо</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="@item.ImageUrl" alt="@item.ProductName" width="70"
+                                             class="rounded me-3 shadow-sm border border-warning" />
+                                        <span class="fw-semibold text-dark">@item.ProductName</span>
+                                    </div>
+                                </td>
+                                <td class="text-dark fw-semibold">@item.Price.ToString("F2") лв.</td>
+                                <td class="text-dark">@item.Quantity</td>
+                                <td class="fw-bold text-dark">@((item.Price * item.Quantity).ToString("F2")) лв.</td>
+                                <td>
+                                    <a asp-action="RemoveFromCart" asp-route-id="@item.ProductId"
+                                       class="btn btn-outline-danger btn-sm rounded-pill fw-semibold">
+                                        <i class="bi bi-trash"></i> Премахни
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-    <div class="text-end">
-        <a asp-controller="Orders" asp-action="Checkout" class="btn btn-warning btn-lg mt-3">Proceed to Checkout</a>
-    </div>
-}
-else
-{
-    <div class="alert alert-info text-center shadow-sm">
-        Your cart is empty. <a asp-controller="Home" asp-action="Index" class="text-warning fw-bold">Shop now!</a>
-    </div>
-}
+                <div class="text-end mt-3">
+                    <a asp-action="ClearCart" class="btn btn-outline-light me-2 rounded-pill">Изчисти количката</a>
+                    <a asp-action="Checkout" class="btn btn-warning rounded-pill shadow-sm fw-semibold text-dark">
+                        Продължи към плащане
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+            <div class="card shadow-sm border-0 bg-dark text-white" style="width: 320px;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-warning">Обобщение на поръчката</h5>
+                    <hr class="border-warning" />
+                    <p class="mb-2">
+                        Междинна сума:
+                        <span class="float-end fw-semibold text-warning">
+                            @Model.Sum(x => x.Price * x.Quantity).ToString("F2") лв.
+                        </span>
+                    </p>
+                    <p class="mb-2 text-white">
+                        Доставка:
+                        <span class="float-end text-success">Безплатна</span>
+                    </p>
+                    <hr class="border-secondary" />
+                    <h5 class="text-warning">
+                        Общо:
+                        <span class="float-end text-success fw-bold">
+                            @Model.Sum(x => x.Price * x.Quantity).ToString("F2") лв.
+                        </span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    }
+</div>

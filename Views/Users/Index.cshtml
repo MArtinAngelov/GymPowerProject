@@ -1,65 +1,147 @@
 ﻿@model IEnumerable<GymPower.Models.User>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Управление на потребители";
 }
 
-<h1>Index</h1>
+<section class="py-5" style="background: #0a0a12; color: #f8f9fa; font-family: 'Montserrat', sans-serif;">
+    <div class="container">
+        <h1 class="fw-bold mb-4 text-center" style="color: #ffb84d; letter-spacing: 1px;">
+            👥 Управление на потребители
+        </h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Username)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FitnessGoal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FitnessGoal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+        <!-- ✅ Dashboard Cards -->
+        <div class="row text-center g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-lg p-3" style="background: #151521;">
+                    <h6 class="text-uppercase fw-semibold" style="color:#9ca3af;">Общо потребители</h6>
+                    <h2 class="fw-bold text-warning">@ViewBag.TotalUsers</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-lg p-3" style="background: #151521;">
+                    <h6 class="text-uppercase fw-semibold" style="color:#9ca3af;">Администратори</h6>
+                    <h2 class="fw-bold" style="color:#00d1b2;">@ViewBag.Admins</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-lg p-3" style="background: #151521;">
+                    <h6 class="text-uppercase fw-semibold" style="color:#9ca3af;">Клиенти</h6>
+                    <h2 class="fw-bold" style="color:#ffb84d;">@ViewBag.Customers</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-lg p-3" style="background: #151521;">
+                    <h6 class="text-uppercase fw-semibold" style="color:#9ca3af;">Нови днес</h6>
+                    <h2 class="fw-bold" style="color:#4ade80;">@ViewBag.NewToday</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Search + Filter -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+            <form method="get" class="d-flex flex-wrap align-items-center gap-2">
+                <input type="text" name="search"
+                       class="form-control bg-dark text-white border-warning"
+                       placeholder="🔍 Търси по име или имейл..." />
+                <select name="roleFilter" class="form-select bg-dark text-white border-warning">
+                    <option>Всички</option>
+                    <option>Admin</option>
+                    <option>Customer</option>
+                </select>
+                <button type="submit" class="btn btn-warning fw-bold shadow-sm">Филтрирай</button>
+            </form>
+
+            <a asp-action="Create"
+               class="btn fw-bold text-dark rounded-pill px-4"
+               style="background: linear-gradient(135deg, #ffb84d, #ff6b35); border: none;">
+                ➕ Добави нов потребител
+            </a>
+        </div>
+
+        <!-- ✅ Table -->
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-5">
+                <p>❗ Все още няма регистрирани потребители.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive shadow-lg rounded-4 overflow-hidden">
+                <table class="table align-middle mb-0" style="background:#151521; color:#f5f5f5;">
+                    <thead style="background: linear-gradient(135deg, #ff6b35, #ffb84d); color:#0b0b14;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Потребител</th>
+                            <th>Имейл</th>
+                            <th>Роля</th>
+                            <th>Активен</th>
+                            <th>Цел</th>
+                            <th>Регистрация</th>
+                            <th class="text-center">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in Model)
+                        {
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td>@u.Id</td>
+                                <td class="fw-semibold text-warning">@u.Username</td>
+                                <td>@u.Email</td>
+                                <td>
+                                    @if (u.Role == "Admin")
+                                    {
+                                        <span class="badge bg-danger text-white">Администратор</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary text-white">Потребител</span>
+                                    }
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm toggle-active @(u.IsActive ? "btn-success" : "btn-secondary")"
+                                            data-id="@u.Id" style="min-width:100px;">
+                                        @(u.IsActive ? "Активен" : "Неактивен")
+                                    </button>
+                                </td>
+                                <td>@u.FitnessGoal</td>
+                                <td>@u.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@u.Id"
+                                       class="btn btn-outline-warning btn-sm rounded-pill px-3 me-2">✏️</a>
+                                    <form asp-action="DeleteConfirmed" asp-route-id="@u.Id"
+                                          method="post" style="display:inline;">
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                                onclick="return confirm('Сигурен ли си, че искаш да изтриеш този потребител?');">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".toggle-active").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                fetch(`/Users/ToggleActive?id=${id}`, { method: "POST" })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            btn.textContent = data.isActive ? "Активен" : "Неактивен";
+                            btn.classList.toggle("btn-success", data.isActive);
+                            btn.classList.toggle("btn-secondary", !data.isActive);
+                        }
+                    });
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
