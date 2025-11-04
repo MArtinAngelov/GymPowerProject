@@ -2,6 +2,41 @@
     animation: fadeIn 0.8s ease-in;
 }
 
+body {
+    background-color: #0b0b14;
+    color: #f1f1f1;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.card {
+    background-color: #1b1b29;
+    color: #f1f1f1;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* 🌞 Light mode */
+body.light-mode {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+    body.light-mode .card {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+
+    /* Buttons adjust automatically */
+    body.light-mode .btn-outline-warning {
+        border-color: #ffb703;
+        color: #ffb703;
+    }
+
+        body.light-mode .btn-outline-warning:hover {
+            background-color: #ffb703;
+            color: #000;
+        }
+
+
 @@keyframes fadeIn {
     from {
         opacity: 0;
@@ -151,6 +186,8 @@
     .order-summary .text-warning {
         color: #ffc107 !important;
     }
+
+
 
 /* Cart Image */
 .cart-item-img {
