@@ -14,6 +14,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddTransient<GymPower.Services.EmailService>();
+
+
 // ✅ Session + Context Access
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
