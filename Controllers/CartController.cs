@@ -1,11 +1,13 @@
 ﻿using GymPower.Data;
 using GymPower.Models;
+using GymPower.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GymPower.Controllers
 {
@@ -13,11 +15,11 @@ namespace GymPower.Controllers
     {
         private readonly AppDbContext _context;
 
-        public CartController(AppDbContext context)
+        public CartController(AppDbContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
-
         private List<CartItem> GetCart()
         {
             var sessionCart = HttpContext.Session.GetString("Cart");
@@ -126,7 +128,7 @@ namespace GymPower.Controllers
             return View(cart);
         }
         [HttpPost]
-        public IActionResult PlaceOrder(string FullName, string Address, string Email, string Phone, string PaymentMethod)
+        public async Task<IActionResult> PlaceOrder(string FullName, string Address, string Email, string Phone, string PaymentMethod)
         {
             // ✅ 1. Load cart from session
             var cartJson = HttpContext.Session.GetString("Cart");
@@ -174,6 +176,69 @@ namespace GymPower.Controllers
             TempData["LastOrderEmail"] = order.Email;
             _context.SaveChanges();
 
+            string subject = "🎉 Потвърждение на поръчка - GymPower";
+
+            // Build the product table with images
+            string productTable = @"
+<table style='width:100%; border-collapse:collapse; margin-top:15px; font-family:Arial, sans-serif;'>
+<tr style='background-color:#ff6b35; color:white; text-align:left;'>
+    <th style='padding:10px;'>Продукт</th>
+    <th style='padding:10px;'>Количество</th>
+    <th style='padding:10px;'>Цена</th>
+    <th style='padding:10px;'>Общо</th>
+</tr>";
+
+            foreach (var item in order.OrderItems)
+            {
+                var product = _context.Products.FirstOrDefault(p => p.Id == item.ProductId);
+                if (product != null)
+                {
+                    productTable += $@"
+        <tr style='border-bottom:1px solid #eee; background-color:#fff;'>
+            <td style='padding:10px; color:#111;'>{product.Name}</td>
+            <td style='padding:10px;'>
+                <img src='https://yourdomain.com' alt='{product.Name}' width='80' style='border-radius:8px; border:1px solid #ddd;'/>
+            </td>
+            <td style='padding:10px; color:#333;'>{item.Quantity}</td>
+            <td style='padding:10px; color:#333;'>{item.Price:F2} лв.</td>
+            <td style='padding:10px; color:#333;'>{(item.Price * item.Quantity):F2} лв.</td>
+        </tr>";
+                }
+            }
+            productTable += "</table>";
+
+            string body = $@"
+<div style='font-family:Arial, sans-serif; color:#333; background-color:#f8f9fa; padding:30px; border-radius:10px;'>
+    <div style='text-align:center; margin-bottom:25px;'>
+        <img src='https://yourdomain.com/images/logo.png' width='120' alt='GymPower Logo' style='margin-bottom:10px;'/>
+        <h2 style='color:#ff6b35; margin:0;'>Благодарим ти, {FullName}!</h2>
+        <p style='margin-top:5px; color:#555;'>Поръчката ти беше приета успешно на <strong>{order.OrderDate:dd.MM.yyyy HH:mm}</strong>.</p>
+    </div>
+
+    <div style='background:white; border-radius:10px; padding:20px; border:1px solid #eee;'>
+        <h3 style='color:#ff6b35;'>🛍️ Детайли за поръчката</h3>
+        {productTable}
+
+        <p style='margin-top:20px; font-size:16px; color:#111;'>
+            <strong>Начин на плащане:</strong> {PaymentMethod}<br>
+            <strong>Обща сума:</strong> {total:F2} лв.
+        </p>
+    </div>
+
+    <hr style='margin:30px 0; border:none; border-top:1px solid #ddd;'>
+
+    <div style='text-align:center;'>
+        <p style='color:#555; font-size:15px;'>Ще се свържем с теб на <strong>{Phone}</strong> или на имейл <strong>{Email}</strong> за потвърждение на доставката.</p>
+        <p style='color:#777; font-size:13px; margin-top:20px;'>
+            💪 Екипът на <strong>GymPower</strong><br>
+            <a href='https://localhost:7064/' style='color:#ff6b35; text-decoration:none;'>Посети нашия уебсайт</a> за още оферти и нови продукти.
+        </p>
+    </div>
+</div>
+";
+            await _emailService.SendEmailAsync("usgympower@gmail.com", $"Нова поръчка от {FullName}", body);
+            await _emailService.SendEmailAsync(Email, subject, body);
+
             // Save order info to TempData for success page
             TempData["OrderId"] = order.Id.ToString();
             TempData["OrderTotal"] = total.ToString("F2");
@@ -185,6 +250,7 @@ namespace GymPower.Controllers
         Quantity = i.Quantity,
         Price = i.Price
     }).ToList()
+
 );
 
             // ✅ 6. Clear the cart
@@ -200,6 +266,10 @@ namespace GymPower.Controllers
         {
             return View("OrderSuccess");
         }
+
+        private readonly EmailService _emailService;
+
+      
     }
     
 }

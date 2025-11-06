@@ -211,218 +211,387 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <style>
-        /* 🔥 Global smooth transitions */
-        * {
-            transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
-        }
-
-        /* ===========================================================
-           ⚡ DEFAULT GYMPOWER THEME
-           =========================================================== */
         body.default-theme {
-            background: linear-gradient(135deg, #000000, #212529);
+            background: linear-gradient(135deg, #000000, #1a1a2e);
             color: #f8f9fa;
         }
 
+            /* ✅ General text visibility */
+            body.default-theme p,
+            body.default-theme span,
+            body.default-theme td,
+            body.default-theme h1,
+            body.default-theme h2,
+            body.default-theme h3,
+            body.default-theme h4,
+            body.default-theme h5,
+            body.default-theme h6 {
+                color: #f8f9fa !important;
+            }
+
+            /* ✅ Section backgrounds */
             body.default-theme .navbar,
             body.default-theme footer,
             body.default-theme .card,
             body.default-theme .table,
             body.default-theme .admin-panel {
-                background-color: #121212 !important;
+                background-color: #0d0d1a !important;
                 color: #f8f9fa !important;
             }
 
-            body.default-theme a,
-            body.default-theme h1, h2, h3, h4, h5, h6 {
-                color: #ffb347;
+            /* ✅ Hero title and category section header */
+            body.default-theme .text-center.mb-4 h2,
+            body.default-theme .hero-section h1,
+            body.default-theme .lead.text-secondary {
+                color: #ffb347 !important;
+                text-shadow: 0 2px 10px rgba(255, 179, 71, 0.3);
+                font-weight: 800;
             }
 
+            /* ✅ Category buttons and badges */
             body.default-theme .btn-outline-warning {
-                color: #ffc107;
-                border-color: #ffc107;
+                color: #ffb347 !important;
+                border: 2px solid #ffb347 !important;
+                background-color: transparent !important;
+                font-weight: 600;
+                transition: all 0.3s ease;
             }
 
                 body.default-theme .btn-outline-warning:hover {
-                    background-color: #ffc107;
-                    color: #000;
+                    background-color: #ffb347 !important;
+                    color: #000 !important;
+                    box-shadow: 0 0 10px rgba(255, 179, 71, 0.6);
                 }
 
-        /* ===========================================================
-           🌑 DARK THEME
-           =========================================================== */
-        body.dark-theme {
-            background-color: #0b0b14;
-            color: #f1f1f1;
-        }
-
-            body.dark-theme .navbar,
-            body.dark-theme footer,
-            body.dark-theme .card,
-            body.dark-theme .table,
-            body.dark-theme .admin-panel {
-                background-color: #1a1a22 !important;
-                color: #f1f1f1 !important;
+            /* ✅ Product category tags below product names */
+            body.default-theme .card .badge,
+            body.default-theme .card .text-dark,
+            body.default-theme .card .text-secondary {
+                color: #ffd580 !important;
             }
 
-            body.dark-theme a,
-            body.dark-theme h1, h2, h3, h4, h5, h6 {
-                color: #ff9f43;
+            /* ✅ Footer headings (GYMPOWER, Контакти, Бързи връзки) */
+            body.default-theme footer h4,
+            body.default-theme footer h5 {
+                color: #ffb347 !important;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
-            body.dark-theme .btn-warning {
-                background-color: #ff6b35 !important;
-                color: white !important;
-                border: none !important;
+            /* ✅ Footer paragraph and links */
+            body.default-theme footer p,
+            body.default-theme footer a {
+                color: #f8f9fa !important;
+                font-weight: 500;
             }
 
-            body.dark-theme .btn-outline-warning {
-                color: #ff6b35 !important;
-                border-color: #ff6b35 !important;
-            }
-
-                body.dark-theme .btn-outline-warning:hover {
-                    background-color: #ff6b35 !important;
-                    color: #fff !important;
+                body.default-theme footer a:hover {
+                    color: #ffb347 !important;
+                    text-decoration: underline;
                 }
 
-        /* ===========================================================
-           ☀️ LIGHT THEME (Fully fixed version)
-           =========================================================== */
-        body.light-theme {
-            background-color: #f9fafb;
-            color: #1a1a1a;
-        }
-
-            /* Page structure */
-            body.light-theme .navbar,
-            body.light-theme footer,
-            body.light-theme .admin-panel {
-                background-color: #ffffff !important;
-                color: #1a1a1a !important;
-                border-color: #e5e7eb !important;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            }
-
-            /* Cards, tables, containers */
-            body.light-theme .card,
-            body.light-theme .table {
-                background-color: #ffffff !important;
-                color: #1a1a1a !important;
-                border-color: #e5e7eb !important;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            }
-
-            body.light-theme .table-striped tbody tr:nth-of-type(odd) {
-                background-color: rgba(0,0,0,0.03);
-            }
-
-            /* Fix all white text */
-            body.light-theme .text-white,
-            body.light-theme .fw-bold.text-white,
-            body.light-theme .card .text-white,
-            body.light-theme .btn.text-white,
-            body.light-theme h1.text-white,
-            body.light-theme h2.text-white,
-            body.light-theme h3.text-white,
-            body.light-theme h4.text-white,
-            body.light-theme h5.text-white,
-            body.light-theme p.text-white,
-            body.light-theme span.text-white {
-                color: #1a1a1a !important;
-            }
-
-            /* Buttons */
-            body.light-theme .btn-warning {
-                background-color: #ffb347 !important;
+            /* ✅ Optional hero button consistency */
+            body.default-theme .btn-warning,
+            body.default-theme .btn-lg,
+            body.default-theme a.btn-warning {
+                background: linear-gradient(135deg, #ffb347 0%, #ff6b35 100%) !important;
                 color: #000 !important;
-                border: none;
+                font-weight: 700 !important;
+                border: none !important;
+                box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                transition: all 0.3s ease;
             }
 
-            body.light-theme .btn-outline-warning {
-                border: 2px solid #ff6b35 !important;
-                color: #ff6b35 !important;
-                font-weight: 600;
-            }
-
-                body.light-theme .btn-outline-warning:hover {
-                    background-color: #ff6b35 !important;
+                body.default-theme .btn-warning:hover,
+                body.default-theme .btn-lg:hover,
+                body.default-theme a.btn-warning:hover {
+                    background: linear-gradient(135deg, #ff9f1a 0%, #ff6b35 100%) !important;
                     color: #fff !important;
+                    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+                    transform: translateY(-3px);
                 }
 
-            /* Links, headers */
-            body.light-theme a {
-                color: #d97706 !important;
-                text-decoration: none;
-            }
+        /* ===========================================================
+           ☀️ LIGHT THEME VISIBILITY FIXES (Final Polished Version)
+           =========================================================== */
 
-                body.light-theme a:hover {
-                    color: #b45309 !important;
-                }
 
-            body.light-theme h1, h2, h3, h4, h5, h6 {
-                color: #111827 !important;
-            }
-
-            /* Badges & highlights */
-            body.light-theme .badge {
-                background-color: #fde68a !important;
-                color: #1a1a1a !important;
-            }
-
-            body.light-theme .text-warning {
-                color: #b45309 !important;
-            }
-
-            /* Footer fix */
-            body.light-theme footer p,
-            body.light-theme footer a {
-                color: #111827 !important;
-            }
-
-            /* Forms and inputs */
-            body.light-theme input,
-            body.light-theme select,
-            body.light-theme textarea {
-                background-color: #fff !important;
-                color: #111 !important;
-                border: 1px solid #d1d5db !important;
-            }
-
-                body.light-theme input:focus,
-                body.light-theme select:focus,
-                body.light-theme textarea:focus {
-                    outline: none;
-                    border-color: #ff6b35 !important;
-                    box-shadow: 0 0 4px rgba(255, 107, 53, 0.4);
-                }
-
-        /* Hover animations */
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(255, 107, 53, 0.2);
+        body.light-theme,
+        body.light-theme main,
+        body.light-theme section,
+        body.light-theme .container,
+        body.light-theme .card,
+        body.light-theme .table,
+        body.light-theme footer,
+        body.light-theme .navbar,
+        body.light-theme .product-details,
+        body.light-theme .admin-panel {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border-color: #e5e7eb !important;
+            box-shadow: none !important;
         }
+
+            /* All white or light text becomes dark */
+            body.light-theme,
+            body.light-theme * {
+                color: #000000 !important;
+                text-shadow: none !important;
+            }
+
+                /* Titles, headings, strong text */
+                body.light-theme h1,
+                body.light-theme h2,
+                body.light-theme h3,
+                body.light-theme h4,
+                body.light-theme h5,
+                body.light-theme h6,
+                body.light-theme strong {
+                    color: #000000 !important;
+                    text-shadow: none !important;
+                }
+
+                /* Product badges */
+                body.light-theme .badge,
+                body.light-theme .badge.bg-warning,
+                body.light-theme .badge.bg-light {
+                    background-color: #ffed4a !important;
+                    color: #000000 !important;
+                    border: 1px solid #fcd34d !important;
+                }
+
+                /* Buttons */
+                body.light-theme .btn-warning {
+                    background: linear-gradient(135deg, #ffb347, #ff6b35) !important;
+                    color: #000000 !important;
+                    border: none !important;
+                    font-weight: 600;
+                }
+
+                body.light-theme .btn-outline-warning {
+                    border: 2px solid #ff6b35 !important;
+                    color: #ff6b35 !important;
+                    background-color: #ffffff !important;
+                }
+
+                    body.light-theme .btn-outline-warning:hover {
+                        background-color: #ff6b35 !important;
+                        color: #ffffff !important;
+                    }
+
+                /* Inputs and forms */
+                body.light-theme input,
+                body.light-theme select,
+                body.light-theme textarea {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                    border: 1px solid #d1d5db !important;
+                }
+
+                    body.light-theme input:focus,
+                    body.light-theme select:focus,
+                    body.light-theme textarea:focus {
+                        border-color: #ff6b35 !important;
+                        box-shadow: 0 0 4px rgba(255, 107, 53, 0.3);
+                    }
+
+                /* Links */
+                body.light-theme a {
+                    color: #d97706 !important;
+                    text-decoration: none;
+                }
+
+                    body.light-theme a:hover {
+                        color: #ff6b35 !important;
+                    }
+
+                /* Footer */
+                body.light-theme footer {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                    border-top: 2px solid #e5e7eb !important;
+                }
+
+                    body.light-theme footer p,
+                    body.light-theme footer a,
+                    body.light-theme footer h4,
+                    body.light-theme footer h5,
+                    body.light-theme footer span {
+                        color: #000000 !important;
+                    }
+
+                    body.light-theme footer .social-links a {
+                        background: #ffb347 !important;
+                        color: #000 !important;
+                    }
+
+                        body.light-theme footer .social-links a:hover {
+                            background: #ff6b35 !important;
+                            color: #fff !important;
+                        }
+
+                /* 🚚 FEATURE CARDS FIX */
+                body.light-theme .feature-card {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                    border: 1px solid #e5e7eb !important;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                }
+
+                    body.light-theme .feature-card h5,
+                    body.light-theme .feature-card p,
+                    body.light-theme .feature-card i {
+                        color: #000000 !important;
+                    }
+
+                /* Social media icons */
+                body.light-theme .social-links a {
+                    background: #ffb347 !important;
+                    color: #000000 !important;
+                }
+
+                    body.light-theme .social-links a:hover {
+                        background: #ff6b35 !important;
+                        color: #ffffff !important;
+                    }
+
+                /* Product cards */
+                body.light-theme .card {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                    border: 1px solid #e5e7eb !important;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+                }
+
+                    body.light-theme .card .text-white {
+                        color: #000000 !important;
+                    }
+
+                    body.light-theme .card .text-light {
+                        color: #000000 !important;
+                    }
+
+                    body.light-theme .card .badge {
+                        background-color: #ffed4a !important;
+                        color: #000000 !important;
+                    }
+
+                /* Product details */
+                body.light-theme .product-details p,
+                body.light-theme .product-details span,
+                body.light-theme .product-details li,
+                body.light-theme .product-details h1,
+                body.light-theme .product-details h2,
+                body.light-theme .product-details h3 {
+                    color: #000000 !important;
+                }
+
+                /* My Orders / Checkout / Admin */
+                body.light-theme .order-card,
+                body.light-theme .checkout-card,
+                body.light-theme .admin-panel {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                    border: 1px solid #e5e7eb !important;
+                }
+
+                /* Category filters and top buttons */
+                body.light-theme .btn-outline-warning,
+                body.light-theme .filter-button {
+                    background-color: #ffffff !important;
+                    border: 2px solid #ff6b35 !important;
+                    color: #ff6b35 !important;
+                    font-weight: 600;
+                }
+
+                body.light-theme .navbar,
+                body.light-theme .navbar * {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                    border-color: #e5e7eb !important;
+                }
+
+                body.light-theme .navbar {
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+                }
+
+                    body.light-theme .navbar .nav-link:hover,
+                    body.light-theme .navbar .navbar-brand:hover,
+                    body.light-theme .navbar .fa-shopping-cart:hover {
+                        color: #ff6b35 !important;
+                    }
+
+                /* 🧾 Quantity Box */
+                body.light-theme .quantity-box,
+                body.light-theme input[type="number"],
+                body.light-theme .form-control {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                    border: 1px solid #d1d5db !important;
+                }
+
+                    body.light-theme label,
+                    body.light-theme .quantity-box label {
+                        color: #000000 !important;
+                    }
+
+                    body.light-theme input[type="number"]:focus,
+                    body.light-theme .form-control:focus {
+                        border-color: #ff6b35 !important;
+                        box-shadow: 0 0 5px rgba(255, 107, 53, 0.4) !important;
+                    }
+
+                    body.light-theme label,
+                    body.light-theme .quantity-box label {
+                        color: #000000 !important;
+                    }
+
+                    body.light-theme input[type="number"]:focus,
+                    body.light-theme input:focus,
+                    body.light-theme .form-control:focus,
+                    body.light-theme select:focus {
+                        border-color: #ff6b35 !important;
+                        box-shadow: 0 0 5px rgba(255,107,53,0.4) !important;
+                    }
+
     </style>
+
+    
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const button = document.getElementById("themeToggle");
+            // ✅ Default theme (GymPower)
+            const defaultTheme = "default";
             const themes = ["default", "dark", "light"];
-            const savedTheme = localStorage.getItem("gympower-theme") || "default";
+            const button = document.getElementById("themeToggle");
+
+            // Detect logged user
+            const isLoggedIn = "@(username != null)".toLowerCase() === "true";
+
+            // If logged in → load saved theme
+            // If not logged in → force GymPower theme
+            const savedTheme = isLoggedIn ? localStorage.getItem("gympower-theme") || defaultTheme : defaultTheme;
             applyTheme(savedTheme);
 
-            button.addEventListener("click", () => {
-                const currentTheme = localStorage.getItem("gympower-theme") || "default";
-                const nextTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
-                localStorage.setItem("gympower-theme", nextTheme);
-                applyTheme(nextTheme);
-            });
+            if (button) {
+                button.addEventListener("click", () => {
+                    const currentTheme = localStorage.getItem("gympower-theme") || defaultTheme;
+                    const nextTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+                    localStorage.setItem("gympower-theme", nextTheme);
+                    applyTheme(nextTheme);
+                });
+            }
 
             function applyTheme(theme) {
                 document.body.classList.remove("default-theme", "dark-theme", "light-theme");
                 document.body.classList.add(theme + "-theme");
-                if (theme === "dark") button.innerHTML = "☀️ Светла тема";
-                else if (theme === "light") button.innerHTML = "⚡ GymPower тема";
-                else button.innerHTML = "🌙 Тъмна тема";
+
+                if (button) {
+                    if (theme === "dark") button.innerHTML = "☀️ Светла тема";
+                    else if (theme === "light") button.innerHTML = "⚡ GymPower тема";
+                    else button.innerHTML = "🌙 Тъмна тема";
+                }
             }
         });
     </script>
