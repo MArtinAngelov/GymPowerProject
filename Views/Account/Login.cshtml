@@ -2,34 +2,68 @@
     ViewData["Title"] = "Вход";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2>Вход в GymPower</h2>
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-5">
+        <div class="card shadow-lg" style="background: rgba(26, 26, 46, 0.95); border: 1px solid var(--primary); border-radius: 20px; backdrop-filter: blur(10px);">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-uppercase" style="letter-spacing: 2px;">
+                        <i class="fas fa-dumbbell text-warning"></i> GymPower
+                    </h2>
+                    <p class="text-white-50">Влез в профила си и постигни целите си</p>
+                </div>
 
-        <!-- Показване на съобщение при грешка -->
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger">@ViewBag.Error</div>
-        }
+                <!-- Показване на съобщение при грешка -->
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> @ViewBag.Error
+                    </div>
+                }
 
-        <!-- Форма за вход -->
-        <form method="post">
-            <div class="form-group mb-3">
-                <label for="username">Потребителско име</label>
-                <input type="text" name="username" class="form-control" required />
+                <!-- Форма за вход -->
+                <form method="post">
+                    <div class="form-floating mb-3">
+                        <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Потребителско име" required 
+                               style="background: #0d0d1a; color: white; border: 1px solid #444;">
+                        <label for="floatingInput" class="text-white-50">👤 Потребителско име</label>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Парола" required 
+                               style="background: #0d0d1a; color: white; border: 1px solid #444;">
+                        <label for="floatingPassword" class="text-white-50">🔒 Парола</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg w-100 fw-bold text-white shadow-sm" 
+                            style="background: var(--gradient); border-radius: 50px; transition: transform 0.3s;">
+                        🚀 ВХОД
+                    </button>
+                </form>
+
+                <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+                <!-- Линк към регистрация -->
+                <div class="text-center">
+                    <p class="text-white-50 mb-2">Нямаш акаунт?</p>
+                    <a asp-action="Register" class="text-warning fw-bold text-decoration-none">
+                        📝 Създай нов профил
+                    </a>
+                </div>
             </div>
-
-            <div class="form-group mb-3">
-                <label for="password">Парола</label>
-                <input type="password" name="password" class="form-control" required />
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Вход</button>
-        </form>
-
-        <!-- Линк към регистрация -->
-        <div class="text-center mt-3">
-            <a asp-action="Register">Нямаш акаунт? Регистрирай се тук</a>
         </div>
     </div>
 </div>
+
+<style>
+    .form-control:focus {
+        background: #1a1a2e;
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+    }
+    button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+    }
+</style>

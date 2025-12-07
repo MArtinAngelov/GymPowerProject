@@ -41,6 +41,7 @@ namespace GymPower.Controllers
             var user = _context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
             if (user != null)
             {
+                HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("Role", "User");
 

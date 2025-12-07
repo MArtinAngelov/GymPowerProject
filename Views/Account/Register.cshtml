@@ -4,51 +4,134 @@
     ViewData["Title"] = "Регистрация";
 }
 
-<div class="row justify-content-center">
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="col-md-6">
-        <h2>Създай нов акаунт</h2>
+        <div class="card shadow-lg" style="background: rgba(26, 26, 46, 0.95); border: 1px solid var(--secondary); border-radius: 20px; backdrop-filter: blur(10px);">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-uppercase" style="letter-spacing: 2px;">
+                        <i class="fas fa-user-plus text-info"></i> Нов Профил
+                    </h2>
+                    <p class="text-white-50">Присъедини се към отбора на GymPower</p>
+                </div>
 
-        <!-- Форма за регистрация -->
-        <form asp-action="Register">
-            <!-- Потребителско име -->
-            <div class="form-group mb-3">
-                <label asp-for="Username" class="control-label">Потребителско име</label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
+                <!-- Форма за регистрация -->
+                <form asp-action="Register">
+                    
+                    <div class="form-floating mb-3">
+                        <input asp-for="Username" class="form-control" id="regUsername" placeholder="Потребителско име" 
+                               style="background: #0d0d1a; color: white; border: 1px solid #444;" />
+                        <label for="regUsername" class="text-white-50">👤 Потребителско име</label>
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" id="regEmail" placeholder="Имейл" 
+                               style="background: #0d0d1a; color: white; border: 1px solid #444;" />
+                        <label for="regEmail" class="text-white-50">📧 Имейл</label>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Password" type="password" class="form-control" id="regPass" placeholder="Парола" 
+                               style="background: #0d0d1a; color: white; border: 1px solid #444;" />
+                        <label for="regPass" class="text-white-50">🔒 Парола</label>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <select asp-for="FitnessGoal" class="form-control" id="regGoal" 
+                                style="background: #0d0d1a; color: white; border: 1px solid #444;">
+                            <option value="MassGain">💪 Покачване на мускулна маса</option>
+                            <option value="WeightLoss">🥗 Отслабване</option>
+                            <option value="Maintenance">⚖️ Поддържане</option>
+                        </select>
+                        <label for="regGoal" class="text-white-50">🎯 Фитнес цел</label>
+                        <span asp-validation-for="FitnessGoal" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg w-100 fw-bold text-white shadow-sm" 
+                            style="background: linear-gradient(135deg, #2ec4b6 0%, #20a094 100%); border-radius: 50px; transition: transform 0.3s;">
+                        ✅ РЕГИСТРАЦИЯ
+                    </button>
+                </form>
+
+                <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+                <!-- Линк към вход -->
+                <div class="text-center">
+                    <p class="text-white-50 mb-2">Вече имаш акаунт?</p>
+                    <a asp-action="Login" class="text-info fw-bold text-decoration-none">
+                        🔑 Влез в профила си
+                    </a>
+                </div>
             </div>
-
-            <!-- Имейл -->
-            <div class="form-group mb-3">
-                <label asp-for="Email" class="control-label">Имейл</label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <!-- Парола -->
-            <div class="form-group mb-3">
-                <label asp-for="Password" class="control-label">Парола</label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-
-            <!-- Фитнес цел -->
-            <div class="form-group mb-3">
-                <label asp-for="FitnessGoal" class="control-label">Фитнес цел</label>
-                <select asp-for="FitnessGoal" class="form-control">
-                    <option value="MassGain">Покачване на мускулна маса</option>
-                    <option value="WeightLoss">Отслабване</option>
-                    <option value="Maintenance">Поддържане</option>
-                </select>
-                <span asp-validation-for="FitnessGoal" class="text-danger"></span>
-            </div>
-
-            <!-- Бутон за регистрация -->
-            <button type="submit" class="btn btn-success w-100">Регистрация</button>
-        </form>
-
-        <!-- Линк към вход -->
-        <div class="text-center mt-3">
-            <a asp-action="Login">Вече имаш акаунт? Влез оттук</a>
         </div>
     </div>
 </div>
+
+<style>
+    .form-control:focus {
+        background: #1a1a2e;
+        color: white;
+        border-color: var(--secondary);
+        box-shadow: 0 0 10px rgba(46, 196, 182, 0.3);
+    }
+    button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(46, 196, 182, 0.4);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const usernameInput = document.getElementById("regUsername");
+            const emailInput = document.getElementById("regEmail");
+
+            async function validateField(field, type) {
+                const value = field.value;
+                if (value.length < 3) return;
+
+                const payload = {};
+                payload[type] = value;
+
+                try {
+                    const response = await fetch('/api/validation/check-user', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    
+                    const isValid = type === 'username' ? result.usernameAvailable : result.emailAvailable;
+                    const feedbackId = type === 'username' ? 'usernameFeedback' : 'emailFeedback';
+                    
+                    let feedback = document.getElementById(feedbackId);
+                    if (!feedback) {
+                        feedback = document.createElement('div');
+                        feedback.id = feedbackId;
+                        feedback.style.fontSize = '0.8rem';
+                        feedback.style.marginTop = '5px';
+                        field.parentNode.appendChild(feedback);
+                    }
+
+                    if (isValid) {
+                        field.style.borderColor = '#2ec4b6'; // Success Green
+                        feedback.style.color = '#2ec4b6';
+                        feedback.innerHTML = '<i class="fas fa-check-circle"></i> Свободно';
+                    } else {
+                        field.style.borderColor = '#ff6b35'; // Error Orange
+                        feedback.style.color = '#ff6b35';
+                        feedback.innerHTML = '<i class="fas fa-times-circle"></i> Заето';
+                    }
+                } catch (error) {
+                    console.error('Validation error:', error);
+                }
+            }
+
+            usernameInput.addEventListener("blur", () => validateField(usernameInput, "username"));
+            emailInput.addEventListener("blur", () => validateField(emailInput, "email"));
+        });
+    </script>
+}

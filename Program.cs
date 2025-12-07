@@ -8,7 +8,10 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<GymPower.Services.FreeAIService>();
+
 
 // ✅ Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
