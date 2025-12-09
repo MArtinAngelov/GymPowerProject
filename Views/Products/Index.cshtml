@@ -124,49 +124,49 @@
         }
 </style>
 
-<div class="container mt-5 text-white">
+<div class="container mt-5">
     <!-- Категории -->
     <div class="row mb-5">
         <div class="col-12">
-            <h3 class="text-center mb-4 fw-bold text-white">ПАЗАРУВАЙ ПО КАТЕГОРИЯ</h3>
+            <h3 class="text-center mb-4 fw-bold">ПАЗАРУВАЙ ПО КАТЕГОРИЯ</h3>
             <div class="d-flex flex-wrap gap-2 justify-content-center">
                 <a href="@Url.Action("Index", new { category = "" })"
-                   class="btn @(string.IsNullOrEmpty(ViewContext.HttpContext.Request.Query["category"]) ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(string.IsNullOrEmpty(ViewContext.HttpContext.Request.Query["category"]) ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     <i class="fas fa-th-large me-2"></i> Всички продукти
                 </a>
 
                 <a href="@Url.Action("Index", new { category = "Изграждане на мускулна маса" })"
-                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Изграждане на мускулна маса" ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Изграждане на мускулна маса" ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     💪 Изграждане на мускулна маса
                 </a>
 
                 <a href="@Url.Action("Index", new { category = "Отслабване" })"
-                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Отслабване" ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Отслабване" ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     🔥 Отслабване
                 </a>
 
                 <a href="@Url.Action("Index", new { category = "Регенерация" })"
-                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Регенерация" ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Регенерация" ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     ♻️ Регенерация
                 </a>
 
                 <a href="@Url.Action("Index", new { category = "Висока производителност" })"
-                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Висока производителност" ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Висока производителност" ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     ⚡ Висока производителност
                 </a>
 
                 <a href="@Url.Action("Index", new { category = "Имунитет" })"
-                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Имунитет" ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Имунитет" ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     💊 Имунитет
                 </a>
 
                 <a href="@Url.Action("Index", new { category = "Здравословна закуска" })"
-                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Здравословна закуска" ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Здравословна закуска" ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     🍎 Здравословна закуска
                 </a>
 
                 <a href="@Url.Action("Index", new { category = "Облекло" })"
-                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Облекло" ? "btn-warning text-dark fw-semibold" : "btn-outline-light")">
+                   class="btn @(ViewContext.HttpContext.Request.Query["category"] == "Облекло" ? "btn-warning text-dark fw-semibold" : "btn-outline-secondary")">
                     👕 Облекло
                 </a>
             </div>
@@ -190,125 +190,74 @@
         @foreach (var product in Model)
         {
             <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
-                <div class="card product-card h-100 border-0 shadow-sm" style="background-color:#1b1b1b; color:white;">
+                <div class="card product-card h-100 border-0 shadow-sm" 
+                     style="cursor: pointer;"
+                     onclick="if(!event.target.closest('a, button')) location.href='@Url.Action("Details", "Products", new { id = product.Id })'">
                     <!-- Снимка -->
                     <div class="position-relative overflow-hidden">
                         <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name"
                              onerror="this.src='/images/products/default-product.jpg'"
-                             style="height: 250px; object-fit: cover; transition: transform 0.3s ease;">
+                             style="height: 250px; object-fit: cover;">
 
-                        <span class="badge-premium position-absolute top-0 start-0 m-3 text-warning fw-bold">
+                        <span class="badge position-absolute top-0 start-0 m-3 bg-warning text-dark fw-bold">
                             <i class="fas fa-crown me-1"></i> Премиум
                         </span>
 
                         <!-- Наличност -->
                         @if (product.StockQuantity < 10)
                         {
-                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3">
+                            <span class="badge bg-danger position-absolute top-0 end-0 m-3">
                                 <i class="fas fa-exclamation-triangle me-1"></i> Ограничени количества
                             </span>
                         }
-                        else if (product.StockQuantity > 50)
-                        {
-                            <span class="badge bg-success position-absolute top-0 end-0 m-3">
-                                <i class="fas fa-check me-1"></i> В наличност
-                            </span>
-                        }
-
-                        <!-- Препоръки -->
-                        <div class="position-absolute bottom-0 start-0 m-2">
-                            @if (product.IsRecommendedForMassGain)
-                            {
-                                <span class="badge bg-info me-1 mb-1" title="Препоръчано за мускулна маса">
-                                    <i class="fas fa-weight-hanging"></i> Масa
-                                </span>
-                            }
-                            @if (product.IsRecommendedForWeightLoss)
-                            {
-                                <span class="badge bg-success me-1 mb-1" title="Препоръчано за отслабване">
-                                    <i class="fas fa-fire"></i> Изгаряне
-                                </span>
-                            }
-                            @if (product.IsRecommendedForMaintenance)
-                            {
-                                <span class="badge bg-primary mb-1" title="Поддържане на форма">
-                                    <i class="fas fa-balance-scale"></i> Баланс
-                                </span>
-                            }
-                        </div>
                     </div>
 
                     <!-- Детайли -->
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold text-white">@product.Name</h5>
-                        <span class="badge bg-dark mb-2 align-self-start text-light">@product.Category</span>
-
-                        <p class="card-text flex-grow-1 text-light">@product.Description</p>
-
-                        <!-- Информация за наличност -->
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <i class="fas fa-box me-1"></i>
-                                @if (product.StockQuantity > 0)
-                                {
-                                    <span class="text-success">@product.StockQuantity бр. в наличност</span>
-                                }
-                                else
-                                {
-                                    <span class="text-danger">Изчерпано количество</span>
-                                }
-                            </small>
+                        <h5 class="card-title text-truncate fw-bold">@product.Name</h5>
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">@product.Category</span>
                         </div>
+
+                        <p class="card-text text-truncate flex-grow-1 text-muted">@product.Description</p>
 
                         <!-- Цена и бутони -->
                         <div class="mt-auto">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h4 class="fw-bold mb-0" style="color: #ffc107;">@product.Price.ToString("F2") лв.</h4>
+                                <span class="text-price fw-bold fs-5">@GymPower.Helpers.CurrencyHelper.ToEuro(product.Price)</span>
                                 <div class="text-warning">
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star-half-alt"></i>
-                                    <small class="text-muted">4.5</small>
                                 </div>
                             </div>
 
                             <div class="d-flex gap-2">
-                                <!-- Детайли -->
-                                <a asp-action="Details" asp-route-id="@product.Id"
-                                   class="btn btn-info text-white" title="Виж детайли">
-                                    <i class="fas fa-eye"></i>
+                                <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary flex-fill">
+                                    <i class="fas fa-eye"></i> Детайли
                                 </a>
 
                                 @if (Context.Session.GetString("Role") == "Admin")
                                 {
-                                    <a asp-action="Edit" asp-route-id="@product.Id"
-                                       class="btn btn-warning flex-fill fw-bold" title="Редактирай продукта">
+                                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-warning text-dark fw-bold" 
+                                       onclick="event.stopPropagation()">
                                         <i class="fas fa-edit me-1"></i> Редактирай
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@product.Id"
-                                       class="btn btn-danger text-white" title="Изтрий продукта">
-                                        <i class="fas fa-trash"></i>
+                                }
+                                else if (product.StockQuantity > 0)
+                                {
+                                    <a class="btn btn-primary flex-fill add-to-cart-link shadow-sm"
+                                       asp-controller="Cart"
+                                       asp-action="AddToCart"
+                                       asp-route-id="@product.Id">
+                                        <i class="fas fa-cart-plus me-1"></i> Купи
                                     </a>
                                 }
                                 else
                                 {
-                                    @if (product.StockQuantity > 0)
-                                    {
-                                        <a class="btn btn-warning rounded-pill shadow-sm fw-semibold add-to-cart-link"
-                                           asp-controller="Cart"
-                                           asp-action="AddToCart"
-                                           asp-route-id="@product.Id">
-                                            Добави в количката
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <button class="btn btn-secondary flex-fill" disabled>
-                                            <i class="fas fa-times me-2"></i> ИЗЧЕРПАНО
-                                        </button>
-                                    }
+                                    <button class="btn btn-secondary flex-fill" disabled>Изчерпано</button>
                                 }
                             </div>
                         </div>
@@ -320,7 +269,7 @@
 
     @if (!Model.Any())
     {
-        <div class="text-center py-5 text-white">
+        <div class="text-center py-5">
             <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
             <h3>Няма намерени продукти</h3>
             <p class="text-muted">Няма налични продукти в тази категория в момента.</p>
@@ -341,15 +290,16 @@
             const url = link.getAttribute("href");
 
             try {
-                const response = await fetch(url, {
+                const response = await fetch(url + "?t=" + new Date().getTime(), { // Prevent cache
                     method: "GET",
-                    credentials: "same-origin",
-                    redirect: "follow"
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
                 });
 
-                if (response.status >= 200 && response.status < 400) {
+                if (response.ok) {
                     showToast("✅ Продуктът е добавен в количката!");
-                    bumpCartBadge();
+                    if(typeof updateCartCount === 'function') {
+                        updateCartCount();
+                    }
                 } else {
                     showToast("⚠️ Неуспешно добавяне на продукта.", true);
                 }
@@ -379,14 +329,6 @@
                 toast.style.opacity = "0";
                 setTimeout(() => toast.remove(), 500);
             }, 2000);
-        }
-
-        function bumpCartBadge() {
-            const badge = document.querySelector("#cartCountBadge");
-            if (!badge) return;
-            const n = parseInt(badge.textContent || "0", 10);
-            badge.textContent = (n + 1).toString();
-            badge.style.display = "inline-block";
         }
     </script>
 }

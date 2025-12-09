@@ -1,0 +1,164 @@
+@model GymPower.Services.DashboardViewModel
+@{
+    ViewData["Title"] = "Анализи и Инсайти";
+}
+
+<section class="hero-section text-center text-white py-5 mb-5" style="background: var(--gradient-dark);">
+    <div class="container">
+        <h1 class="hero-title fw-bold mb-3 text-warning">📊 Анализи и Инсайти</h1>
+        <p class="lead text-light">
+            Интелигентен преглед на твоя бизнес.
+        </p>
+    </div>
+</section>
+
+<div class="container py-4">
+
+    <!-- KPI Cards Row -->
+    <div class="row g-4 mb-5">
+        <!-- Revenue -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 bg-card">
+                <div class="mb-2 text-warning fs-2"><i class="fas fa-coins"></i></div>
+                <h6 class="text-muted fw-bold text-uppercase small">Общи Приходи</h6>
+                <h3 class="fw-bold mb-0">@GymPower.Helpers.CurrencyHelper.ToEuro(Model.TotalRevenue)</h3>
+            </div>
+        </div>
+        <!-- Orders -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 bg-card">
+                <div class="mb-2 text-primary fs-2"><i class="fas fa-shopping-cart"></i></div>
+                <h6 class="text-muted fw-bold text-uppercase small">Общ брой поръчки</h6>
+                <h3 class="fw-bold mb-0">@Model.TotalOrders</h3>
+            </div>
+        </div>
+         <!-- Active Users -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 bg-card">
+                <div class="mb-2 text-info fs-2"><i class="fas fa-users"></i></div>
+                <h6 class="text-muted fw-bold text-uppercase small">Активни Клиенти</h6>
+                <h3 class="fw-bold mb-0">@Model.ActiveUsersCount</h3>
+            </div>
+        </div>
+         <!-- AOV -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 bg-card">
+                <div class="mb-2 text-success fs-2"><i class="fas fa-receipt"></i></div>
+                <h6 class="text-muted fw-bold text-uppercase small">Средна стойност</h6>
+                <h3 class="fw-bold mb-0">@GymPower.Helpers.CurrencyHelper.ToEuro(Model.AverageOrderValue)</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        
+        <!-- Top Products Table -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-primary"><i class="fas fa-trophy me-2"></i>Най-продавани продукти</h5>
+                </div>
+                <div class="card-body p-0 table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-4">Продукт</th>
+                                <th class="text-center">Бр.</th>
+                                <th class="text-end pe-4">Приход</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var prod in Model.TopProducts)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <img src="@prod.ImageUrl" class="rounded me-3 border" width="40" height="40" style="object-fit:cover;">
+                                            <span class="fw-semibold small">@prod.Name</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center fw-bold text-dark">@prod.QuantitySold</td>
+                                    <td class="text-end pe-4 text-success fw-bold">@GymPower.Helpers.CurrencyHelper.ToEuro(prod.RevenueCode)</td>
+                                </tr>
+                            }
+                            @if(!Model.TopProducts.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">Няма данни за поръчки.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Stats -->
+        <div class="col-lg-5">
+             <div class="card border-0 shadow h-100">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-primary"><i class="fas fa-layer-group me-2"></i>Топ Категории</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.CategoryStats.Any())
+                    {
+                        var maxRev = Model.CategoryStats.Max(c => c.Revenue);
+                        foreach(var cat in Model.CategoryStats.Take(5))
+                        {
+                            var pct = maxRev > 0 ? (cat.Revenue / maxRev) * 100 : 0;
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-1 small fw-bold">
+                                    <span>@cat.Category</span>
+                                    <span>@GymPower.Helpers.CurrencyHelper.ToEuro(cat.Revenue)</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @pct%"></div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                         <p class="text-center text-muted py-4">Няма данни.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AI Insights Section -->
+    <div class="card border-0 shadow-lg bg-card-dark text-white mb-5" style="background: linear-gradient(135deg, #2b32b2 0%, #1488cc 100%);">
+        <div class="card-body p-4 p-md-5">
+            <h3 class="fw-bold mb-4"><i class="fas fa-robot me-2 text-warning"></i>Инсайти за бизнеса</h3>
+            <div class="row">
+                <div class="col-md-12">
+                     <ul class="list-unstyled mb-0">
+                        @foreach(var insight in Model.Insights)
+                        {
+                             <li class="mb-3 d-flex align-items-start fs-5">
+                                 <i class="fas fa-check-circle text-warning mt-1 me-3"></i>
+                                 <span style="opacity:0.95">@Html.Raw(insight)</span>
+                             </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center pb-5">
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">← Назад към Админ Панел</a>
+    </div>
+
+</div>
+
+<style>
+    .bg-card { background-color: var(--bs-body-bg); }
+    [data-theme="dark"] .bg-card { background-color: #2b3035 !important; }
+    
+    [data-theme="dark"] .table { color: #fff; }
+    [data-theme="dark"] .table thead { background-color: #1a1e21; color: #aaa; }
+    [data-theme="dark"] .table-hover tbody tr:hover { color: #fff; background-color: rgba(255,255,255,0.05); }
+    [data-theme="dark"] .text-dark { color: #eee !important; } /* Fix dark text in dark mode */
+</style>

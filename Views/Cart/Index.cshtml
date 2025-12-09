@@ -1,13 +1,13 @@
 ﻿@model List<GymPower.Models.CartItem>
 
-<div class="container my-5 text-white">
-    <h2 class="mb-4 text-center fw-bold text-warning">
+<div class="container my-5">
+    <h2 class="mb-4 text-center fw-bold text-primary">
         <i class="fas fa-shopping-cart me-2"></i> Твоята количка
     </h2>
 
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-warning text-center shadow-sm p-4 bg-dark text-white border-warning">
+        <div class="alert alert-warning text-center shadow-sm p-4">
             Количката ти е празна.
             <a asp-controller="Products" asp-action="Index" class="btn btn-warning ms-2 fw-semibold">
                 Разгледай продукти
@@ -16,10 +16,10 @@
     }
     else
     {
-        <div class="card shadow-sm rounded-4 bg-dark border-0">
+        <div class="card shadow-sm rounded-4 border-0">
             <div class="card-body p-4">
-                <table class="table align-middle bg-white text-dark rounded-3 overflow-hidden">
-                    <thead style="background-color: #ff8c00; color: #fff;">
+                <table class="table align-middle">
+                    <thead style="background: var(--gradient-primary); color: #fff;">
                         <tr>
                             <th>Продукт</th>
                             <th>Цена</th>
@@ -35,17 +35,17 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <img src="@item.ImageUrl" alt="@item.ProductName" width="70"
-                                             class="rounded me-3 shadow-sm border border-warning" />
-                                        <span class="fw-semibold text-dark">@item.ProductName</span>
+                                             class="rounded me-3 shadow-sm" />
+                                        <span class="fw-semibold">@item.ProductName</span>
                                     </div>
                                 </td>
-                                <td class="text-dark fw-semibold">@item.Price.ToString("F2") лв.</td>
-                                <td class="text-dark">@item.Quantity</td>
-                                <td class="fw-bold text-dark">@((item.Price * item.Quantity).ToString("F2")) лв.</td>
+                                <td class="fw-semibold">@GymPower.Helpers.CurrencyHelper.ToEuro(item.Price)</td>
+                                <td>@item.Quantity</td>
+                                <td class="fw-bold text-price">@GymPower.Helpers.CurrencyHelper.ToEuro(item.Price * item.Quantity)</td>
                                 <td>
                                     <a asp-action="RemoveFromCart" asp-route-id="@item.ProductId"
                                        class="btn btn-outline-danger btn-sm rounded-pill fw-semibold">
-                                        <i class="bi bi-trash"></i> Премахни
+                                        <i class="fas fa-trash"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -54,8 +54,8 @@
                 </table>
 
                 <div class="text-end mt-3">
-                    <a asp-action="ClearCart" class="btn btn-outline-light me-2 rounded-pill">Изчисти количката</a>
-                    <a asp-action="Checkout" class="btn btn-warning rounded-pill shadow-sm fw-semibold text-dark">
+                    <a asp-action="ClearCart" class="btn btn-outline-secondary me-2 rounded-pill">Изчисти количката</a>
+                    <a asp-action="Checkout" class="btn btn-primary rounded-pill shadow-sm fw-semibold">
                         Продължи към плащане
                     </a>
                 </div>
@@ -63,29 +63,56 @@
         </div>
 
         <div class="d-flex justify-content-end mt-4">
-            <div class="card shadow-sm border-0 bg-dark text-white" style="width: 320px;">
+            <div class="card shadow-sm border-0" style="width: 320px;">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold text-warning">Обобщение на поръчката</h5>
-                    <hr class="border-warning" />
+                    <h5 class="card-title fw-bold">Обобщение на поръчката</h5>
+                    <hr />
                     <p class="mb-2">
                         Междинна сума:
-                        <span class="float-end fw-semibold text-warning">
-                            @Model.Sum(x => x.Price * x.Quantity).ToString("F2") лв.
+                        <span class="float-end fw-semibold">
+                            @GymPower.Helpers.CurrencyHelper.ToEuro(Model.Sum(x => x.Price * x.Quantity))
                         </span>
                     </p>
-                    <p class="mb-2 text-white">
+                    <p class="mb-2">
                         Доставка:
                         <span class="float-end text-success">Безплатна</span>
                     </p>
-                    <hr class="border-secondary" />
-                    <h5 class="text-warning">
+                    <hr />
+                    <h5>
                         Общо:
-                        <span class="float-end text-success fw-bold">
-                            @Model.Sum(x => x.Price * x.Quantity).ToString("F2") лв.
+                        <span class="float-end text-price fw-bold">
+                            @GymPower.Helpers.CurrencyHelper.ToEuro(Model.Sum(x => x.Price * x.Quantity))
                         </span>
                     </h5>
                 </div>
             </div>
         </div>
+
+        <!-- 📦 Frequently Bought Together (Sidebar/Bottom) -->
+        @if (ViewBag.FreqBought != null && ((IEnumerable<GymPower.Models.Product>)ViewBag.FreqBought).Any())
+        {
+            <div class="mt-5 pt-4 border-top">
+                <h4 class="fw-bold mb-4 text-secondary">📦 Често купувани заедно</h4>
+                <div class="row g-3">
+                    @foreach (var p in ViewBag.FreqBought as IEnumerable<GymPower.Models.Product>)
+                    {
+                        <div class="col-md-4">
+                            <div class="card h-100 shadow-sm border-0 d-flex flex-row align-items-center p-2">
+                                <img src="@p.ImageUrl" alt="@p.Name" class="rounded ms-2"
+                                     style="width: 80px; height: 80px; object-fit: cover;">
+                                <div class="card-body py-1 px-3 d-flex flex-column justify-content-center">
+                                    <h6 class="fw-bold mb-1 text-truncate" style="max-width: 150px;">@p.Name</h6>
+                                    <span class="text-price small fw-bold mb-2">@GymPower.Helpers.CurrencyHelper.ToEuro(p.Price)</span>
+                                    <a href="@Url.Action("AddToCart", "Cart", new { id = p.Id })" 
+                                       class="btn btn-outline-primary btn-sm rounded-pill fw-bold" style="font-size: 0.8rem;">
+                                       + Добави
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     }
 </div>

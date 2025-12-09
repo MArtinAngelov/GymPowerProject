@@ -16,10 +16,12 @@ namespace GymPower.Controllers
     public class ProductsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly GymPower.Services.RecommendationService _recommendationService;
 
-        public ProductsController(AppDbContext context)
+        public ProductsController(AppDbContext context, GymPower.Services.RecommendationService recommendationService)
         {
             _context = context;
+            _recommendationService = recommendationService;
         }
 
         // GET: Products
@@ -90,6 +92,14 @@ namespace GymPower.Controllers
                 .ToListAsync();
 
             ViewBag.RelatedProducts = relatedProducts;
+
+            // ✅ Smart Recommendations (Personalized)
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var recommended = await _recommendationService.GetRecommendedProductsForUserAsync(userId, 4) ?? new List<Product>();
+            
+            // Filter out current product from recommendations just in case
+            ViewBag.RecommendedProducts = recommended.Where(p => p.Id != product.Id).Take(4).ToList();
+
             return View(product);
         }
         // GET: Products/Create
@@ -102,7 +112,7 @@ namespace GymPower.Controllers
         // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product)
+        public async Task<IActionResult> Create(Product product, string? ExtraImages)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
@@ -116,6 +126,22 @@ namespace GymPower.Controllers
 
                 _context.Add(product);
                 await _context.SaveChangesAsync();
+
+                // Process Extra Images
+                if (!string.IsNullOrWhiteSpace(ExtraImages))
+                {
+                    var urls = ExtraImages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    foreach (var url in urls)
+                    {
+                        _context.ProductImages.Add(new ProductImage
+                        {
+                            ProductId = product.Id,
+                            ImageUrl = url
+                        });
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 TempData["SuccessMessage"] = "Product created successfully!";
                 return RedirectToAction(nameof(Index));
             }
@@ -127,23 +153,27 @@ namespace GymPower.Controllers
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
-            if (id == null)
+            if (id == null) return NotFound();
+
+            var product = await _context.Products
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null) return NotFound();
+            
+            // Populate Extra Images CSV for Admin
+            if (product.Images != null && product.Images.Any())
             {
-                return NotFound();
+                ViewBag.ExtraImages = string.Join(", ", product.Images.Select(i => i.ImageUrl));
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
             return View(product);
         }
 
         // POST: Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Product product)
+        public async Task<IActionResult> Edit(int id, Product product, string? ExtraImages)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
@@ -157,19 +187,31 @@ namespace GymPower.Controllers
                 try
                 {
                     _context.Update(product);
+
+                    // Update Images: Clear old, Add new
+                    var existingImages = await _context.ProductImages.Where(i => i.ProductId == id).ToListAsync();
+                    _context.ProductImages.RemoveRange(existingImages);
+                    
+                    if (!string.IsNullOrWhiteSpace(ExtraImages))
+                    {
+                        var urls = ExtraImages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                        foreach (var url in urls)
+                        {
+                            _context.ProductImages.Add(new ProductImage
+                            {
+                                ProductId = id,
+                                ImageUrl = url
+                            });
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Product updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ProductExists(product.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }

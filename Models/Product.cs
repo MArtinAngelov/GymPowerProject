@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace GymPower.Models
 {
@@ -27,5 +28,8 @@ namespace GymPower.Models
         public bool IsRecommendedForMassGain { get; set; } = false;
         public bool IsRecommendedForWeightLoss { get; set; } = false;
         public bool IsRecommendedForMaintenance { get; set; } = false;
+
+        public string? LongDescription { get; set; }
+        public List<ProductImage> Images { get; set; } = new List<ProductImage>();
     }
 }

@@ -2,20 +2,24 @@
 using GymPower.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GymPower.Controllers
 {
     public class CartController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly GymPower.Services.RecommendationService _recommendationService;
 
-        public CartController(AppDbContext context)
+        public CartController(AppDbContext context, GymPower.Services.RecommendationService recommendationService)
         {
             _context = context;
+            _recommendationService = recommendationService;
         }
 
         private List<CartItem> GetCart()
@@ -36,7 +40,7 @@ namespace GymPower.Controllers
             var cartJson = HttpContext.Session.GetString("Cart");
             var cart = string.IsNullOrEmpty(cartJson)
                 ? new List<CartItem>()
-                : JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+                : JsonConvert.DeserializeObject<List<CartItem>>(cartJson) ?? new List<CartItem>();
 
             var existing = cart.FirstOrDefault(x => x.ProductId == id);
             if (existing != null)
@@ -79,12 +83,30 @@ namespace GymPower.Controllers
         }
 
         // ✅ Show cart
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var cartJson = HttpContext.Session.GetString("Cart");
             var cart = string.IsNullOrEmpty(cartJson)
                 ? new List<CartItem>()
-                : JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+                : JsonConvert.DeserializeObject<List<CartItem>>(cartJson) ?? new List<CartItem>();
+            
+            // ✅ Smart Frequent Recommendations
+            if (cart.Any())
+            {
+               // We need product categories. CartItem doesn't store category, so we fetch product details or re-fetch from DB.
+               // Optimization: Fetch categories based on ProductIds in cart.
+               var productIds = cart.Select(c => c.ProductId).ToList();
+               var categories = await _context.Products
+                   .Where(p => productIds.Contains(p.Id))
+                   .Select(p => p.Category)
+                   .Distinct()
+                   .ToListAsync();
+
+               var freqProducts = await _recommendationService.GetFrequentlyBoughtTogetherAsync(categories, 3);
+               
+               // Remove items already in cart
+               ViewBag.FreqBought = freqProducts.Where(p => !productIds.Contains(p.Id)).ToList();
+            }
 
             return View(cart);
         }
@@ -95,7 +117,7 @@ namespace GymPower.Controllers
             var cartJson = HttpContext.Session.GetString("Cart");
             if (string.IsNullOrEmpty(cartJson)) return RedirectToAction("Index");
 
-            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson) ?? new List<CartItem>();
             var item = cart.FirstOrDefault(x => x.ProductId == id);
             if (item != null)
                 cart.Remove(item);
@@ -117,7 +139,7 @@ namespace GymPower.Controllers
             var cartJson = HttpContext.Session.GetString("Cart");
             var cart = string.IsNullOrEmpty(cartJson)
                 ? new List<CartItem>()
-                : JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+                : JsonConvert.DeserializeObject<List<CartItem>>(cartJson) ?? new List<CartItem>();
 
             if (!cart.Any())
                 return RedirectToAction("Index");
@@ -136,7 +158,7 @@ namespace GymPower.Controllers
                 return RedirectToAction("Index");
             }
 
-            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson) ?? new List<CartItem>();
             if (cart == null || !cart.Any())
             {
                 TempData["ErrorMessage"] = "Количката ти е празна.";
@@ -193,6 +215,18 @@ namespace GymPower.Controllers
             // ✅ 7. Success message
             TempData["SuccessMessage"] = "✅ Поръчката е приета успешно!";
             return RedirectToAction("OrderSuccess");
+        }
+
+        // ✅ Get Cart Count API
+        [HttpGet]
+        public IActionResult GetCartCount()
+        {
+            var cartJson = HttpContext.Session.GetString("Cart");
+            var cart = string.IsNullOrEmpty(cartJson)
+                ? new List<CartItem>()
+                : JsonConvert.DeserializeObject<List<CartItem>>(cartJson) ?? new List<CartItem>();
+
+            return Json(new { count = cart.Sum(x => x.Quantity) });
         }
 
         // ✅ Add this new method right BELOW PlaceOrder()

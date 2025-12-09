@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +15,27 @@ namespace GymPower.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly GymPower.Services.RecommendationService _recommendationService;
 
-        public HomeController(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+        public HomeController(AppDbContext context, IHttpContextAccessor httpContextAccessor, GymPower.Services.RecommendationService recommendationService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _recommendationService = recommendationService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var featuredProducts = _context.Products.Take(3).ToList();
+            var featuredProducts = await _context.Products.Take(3).ToListAsync();
+            
+            // ✅ Smart Personal Offers
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId.HasValue)
+            {
+               var personalOffers = await _recommendationService.GetRecommendedProductsForUserAsync(userId, 4);
+               ViewBag.PersonalOffers = personalOffers;
+            }
+
             return View(featuredProducts);
         }
 

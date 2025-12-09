@@ -134,6 +134,9 @@ public IActionResult EditProfile()
         // ✅ Update only allowed fields
         user.Email = form.Email;
         user.FitnessGoal = form.FitnessGoal;
+        user.Age = form.Age;
+        user.Gender = form.Gender;
+        user.TrainingLevel = form.TrainingLevel;
 
         // ✅ Update password only when provided
         if (!string.IsNullOrWhiteSpace(form.Password))

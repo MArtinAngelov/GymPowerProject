@@ -14,13 +14,21 @@
                 <p class="mb-2"><strong>Фитнес цел:</strong> @Model.FitnessGoal</p>
             </div>
 
-            <a asp-action="EditProfile" class="btn btn-warning fw-bold w-100 rounded-pill mt-3 shadow">
-                ✏️ Редактирай профила
-            </a>
+            <div class="d-grid gap-2 mt-4">
+                <form asp-controller="Planner" asp-action="Generate" method="post">
+                     <button type="submit" class="btn btn-primary fw-bold w-100 rounded-pill shadow-lg py-3">
+                        ⚡ Генерирай Фитнес План
+                    </button>
+                </form>
 
-            <a asp-action="Logout" class="btn btn-outline-light fw-bold w-100 rounded-pill mt-3">
-                🚪 Изход
-            </a>
+                <a asp-action="EditProfile" class="btn btn-warning fw-bold rounded-pill shadow">
+                    ✏️ Редактирай профила
+                </a>
+
+                <a asp-action="Logout" class="btn btn-outline-light fw-bold rounded-pill">
+                    🚪 Изход
+                </a>
+            </div>
         </div>
     </div>
 </section>

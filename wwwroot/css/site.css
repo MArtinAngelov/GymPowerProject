@@ -1,32 +1,232 @@
-﻿main {
-    animation: fadeIn 0.8s ease-in;
+﻿/* =========================================
+   1. CSS VARIABLES & THEME SYSTEM
+   ========================================= */
+:root {
+    /* Brand Colors */
+    --primary: #ff6b35;
+    --primary-hover: #e85d2a;
+    --secondary: #2ec4b6;
+    --accent: #ffc107;
+
+    /* Light Mode Defaults */
+    --bg-body: #ffffff;
+    --bg-surface: #f8f9fa;
+    --bg-card: #ffffff;
+    --bg-input: #ffffff;
+    --text-main: #1a1a2e;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
-@@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* DARK MODE OVERRIDES */
+[data-theme="dark"] {
+    --bg-body: #0d0d1a;
+    --bg-surface: #1a1a2e;
+    --bg-card: #252631;
+    --bg-input: #1a1a2e;
+    --text-main: #e0e0e0;
+    --text-muted: #adb5bd;
+    --border-color: #444;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
+/* =========================================
+   2. GLOBAL RESET & BASE STYLES
+   ========================================= */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Montserrat', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-/* Loading animation */
-.loading-spinner {
-    border: 3px solid #f3f3f3;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+span,
+div {
+    color: var(--text-main);
+}
+
+a {
+    text-decoration: none;
+}
+
+/* =========================================
+   3. COMPONENTS
+   ========================================= */
+
+/* Buttons */
+.btn {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+}
+
+.btn-outline-primary {
+    color: var(--primary) !important;
+    border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    color: white !important;
+}
+
+/* Cards (Commercial Look) */
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+}
+
+.card-title {
+    color: var(--text-main) !important;
+    font-weight: 700;
+}
+
+.card-text {
+    color: var(--text-muted) !important;
+}
+
+/* Forms (Inputs & Selects) */
+.form-control,
+.form-select {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.25);
+}
+
+/* Tables */
+.table {
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+.table> :not(caption)>*>* {
+    background-color: transparent;
+    /* Let card bg show through */
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+/* =========================================
+   4. LAYOUT ELEMENTS
+   ========================================= */
+
+/* Navbar */
+.navbar {
+    background: var(--gradient-dark) !important;
+    border-bottom: 2px solid var(--primary);
+    padding: 1rem 0;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--primary) !important;
+}
+
+/* Footer */
+footer {
+    background: var(--gradient-dark);
+    color: white;
+    margin-top: auto;
     border-top: 3px solid var(--primary);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
 }
 
-@@keyframes spin {
+footer p,
+footer a,
+footer div {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* =========================================
+   5. UTILITIES & ANIMATIONS
+   ========================================= */
+
+.text-price {
+    color: var(--primary) !important;
+    font-weight: 800;
+    font-size: 1.25rem;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Search Input (Navbar) */
+#searchInput {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #1a1a2e !important;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    background-color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+}
+
+#searchInput::placeholder {
+    color: #6c757d !important;
+}
+
+/* Loading */
+.loader {
+    border: 5px solid var(--border-color);
+    border-top: 5px solid var(--primary);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
     0% {
         transform: rotate(0deg);
     }
@@ -36,292 +236,130 @@
     }
 }
 
-/* Button hover effects */
-.btn {
-    position: relative;
+/* =========================================
+   6. AI CHAT WIDGET
+   ========================================= */
+.chat-widget-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 65px;
+    height: 65px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid white;
+}
+
+.chat-widget-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+}
+
+.chat-widget-btn i {
+    color: white !important;
+    font-size: 28px;
+}
+
+.chat-window {
+    position: fixed;
+    bottom: 110px;
+    left: 30px;
+    width: 380px;
+    height: 550px;
+    background: var(--bg-card);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 9998;
+    display: none;
+    flex-direction: column;
     overflow: hidden;
-    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s;
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
     }
 
-    .btn:hover::before {
-        left: 100%;
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
-.navbar {
-    font-size: 1.05rem;
 }
 
-.navbar-brand i {
-    margin-right: 5px;
-}
-
-.navbar .form-control {
-    border-radius: 25px;
-}
-
-.navbar .btn-outline-warning:hover {
-    color: #000;
-    background-color: #ffc107;
-    border-color: #ffc107;
-}
-/* Cart Page Colors & Outlines */
-.cart-container {
-    background-color: #16171b;
-    color: #f8f9fa;
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 0 25px rgba(255, 193, 7, 0.05);
-}
-
-/* Table Header */
-.table thead {
-    background: linear-gradient(90deg, #ff8c00, #ffa733);
-    color: #fff;
-    font-weight: 700;
-    border-radius: 12px 12px 0 0;
-}
-
-/* Table Body */
-.table tbody tr {
-    background-color: #1e1f25;
-    color: #fff;
-}
-
-.table tbody td {
-    vertical-align: middle;
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.table tbody tr:hover {
-    background-color: rgba(255, 193, 7, 0.05);
-}
-
-/* Buttons */
-.btn-warning {
-    background-color: #ffc107;
-    color: #000;
-    border: none;
-    font-weight: 600;
-}
-
-    .btn-warning:hover {
-        background-color: #ffae00;
-        color: #fff;
-    }
-
-.btn-outline-danger {
-    border-color: #ff6b6b;
-    color: #ff6b6b;
-}
-
-    .btn-outline-danger:hover {
-        background-color: #ff6b6b;
-        color: #fff;
-    }
-
-/* 🧮 Order Summary Fix */
-.order-summary {
-    background-color: #1e1f25;
-    color: #fff;
-    border-radius: 12px;
+.chat-header {
+    background: var(--gradient-primary);
+    color: white;
     padding: 20px;
-    box-shadow: 0 0 20px rgba(255, 193, 7, 0.05);
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-    .order-summary h5,
-    .order-summary h6 {
-        color: #ffc107;
-        font-weight: 600;
-    }
-
-    .order-summary .text-success {
-        color: #28a745 !important;
-    }
-
-    .order-summary .text-warning {
-        color: #ffc107 !important;
-    }
-
-/* Cart Image */
-.cart-item-img {
-    width: 70px;
-    height: 70px;
-    border-radius: 10px;
-    object-fit: cover;
-    border: 2px solid #ffc107;
-}
-/* 🔍 Make search bar text and placeholder white */
-.navbar .form-control {
-    color: #fff !important; /* text color */
-    background-color: transparent !important; /* keeps it sleek */
-    border: 1px solid #fff !important; /* optional white border */
+.chat-header span,
+.chat-header i {
+    color: white !important;
 }
 
-    .navbar .form-control::placeholder {
-        color: #ccc !important; /* slightly gray placeholder */
-        opacity: 1; /* ensures it’s visible */
-    }
-    .navbar .form-control:focus {
-        box-shadow: 0 0 5px #ff8c00; /* soft orange glow */
-        border-color: #ff8c00;
-        outline: none;
-    }
-/* 🏋️‍♂️ Product Page Styling */
-.product-card {
-    background-color: #1a1a1a; /* dark background for contrast */
-    color: #fff; /* white text */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+.chat-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: var(--bg-surface);
+}
+
+.chat-footer {
     padding: 15px;
-    transition: all 0.3s ease;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
 }
 
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); /* orange glow */
-    }
-
-    .product-card img {
-        border-radius: 10px;
-        object-fit: cover;
-    }
-
-    .product-card h5,
-    .product-card p,
-    .product-card span {
-        color: #fff !important; /* force white text */
-    }
-
-    .product-card .price {
-        color: #ffc107 !important; /* orange/gold for price */
-        font-weight: bold;
-    }
-
-    .product-card .btn {
-        background-color: #ff8c00;
-        border: none;
-        color: #000;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-        .product-card .btn:hover {
-            background-color: #ffa500;
-            color: #fff;
-        }
-/* 🏠 Home Page Dark Theme Styling (keeps animations intact) */
-/* 🏠 Ensure home page text is visible on dark backgrounds */
-.hero-section,
-.hero-section h1,
-.hero-section p,
-.hero-section .lead {
-    color: #fff !important;
+/* Chat Messages */
+.message {
+    margin-bottom: 15px;
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
-.feature-card,
-.feature-card h5,
-.feature-card p {
-    color: #fff !important;
+.text-white {
+    color: white !important;
 }
 
-.stats-card,
-.stats-card div {
-    color: #fff !important;
+.message.user {
+    background: var(--primary);
+    color: white !important;
+    margin-left: auto;
+    border-bottom-right-radius: 2px;
 }
 
-.stats-number {
-    color: #ffc107 !important; /* GymBeam orange for numbers */
+.message.ai {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    margin-right: auto;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* Highlight main call-to-action buttons */
-.hero-section .btn,
-.feature-card .btn,
-.stats-card .btn {
-    background-color: #ff8c00 !important;
-    border: none;
-    color: #000 !important;
+/* Chat Input Specifics */
+#chatInput {
+    background-color: var(--bg-input) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
 }
 
-    .hero-section .btn:hover,
-    .feature-card .btn:hover,
-    .stats-card .btn:hover {
-        background-color: #ffa500 !important;
-        color: #fff !important;
-    }
-/*/* 🌟 Fade-in & slide animations */
-@keyframes fadeUp {
-    0% {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-.animate-up {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 0.8s ease;
-}
-
-.animate-fade {
-    opacity: 0;
-    transition: all 1s ease;
-}
-
-.animate-show {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-}
-
-/* 🖱️ Hover effects */
-.card:hover {
-    transform: translateY(-8px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.2);
-}
-
-.btn:hover {
-    transform: scale(1.05);
-    transition: all 0.3s ease;
-}
-
-/* 🧡 Floating icon pulse */
-.feature-icon i {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-    }
+#chatInput:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.25);
 }

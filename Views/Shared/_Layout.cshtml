@@ -5,99 +5,24 @@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 }
 <!DOCTYPE html>
-<html lang="bg">
+<html lang="bg" data-theme="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GymPower</title>
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap & Custom CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #ff6b35;
-            --secondary: #2ec4b6;
-            --dark: #1a1a2e;
-            --darker: #0d0d1a;
-            --light: #f8f9fa;
-            --gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-            --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        }
-
-        * {
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        body {
-            background: var(--darker);
-            color: var(--light);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .navbar {
-            background: var(--gradient-dark) !important;
-            border-bottom: 2px solid var(--primary);
-            padding: 1rem 0;
-        }
-
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.8rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .nav-link {
-            color: var(--light) !important;
-            font-weight: 600;
-            margin: 0 0.5rem;
-            border-radius: 25px;
-            padding: 0.5rem 1rem !important;
-            transition: all 0.3s ease;
-        }
-
-            .nav-link:hover {
-                background: var(--primary);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
-            }
-
-        footer {
-            background: var(--gradient-dark);
-            border-top: 2px solid var(--primary);
-            margin-top: auto;
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: var(--gradient);
-            border-radius: 50%;
-            color: white;
-            margin: 0 0.5rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-            .social-links a:hover {
-                transform: translateY(-3px) rotate(5deg);
-                box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
-            }
-    </style>
+    <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
-    <!-- ✅ Navigation -->
+    <!-- ✅ Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand text-uppercase" asp-controller="Home" asp-action="Index">
-                GymPower
+            <a class="navbar-brand text-uppercase fw-bold" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-dumbbell me-2"></i> GymPower
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -107,68 +32,49 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" asp-controller="Chat" asp-action="Index" title="AI Треньор">
-                            <i class="fas fa-robot"></i>
-                        </a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Начало</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">🏠 Начало</a>
+                        <a class="nav-link" asp-controller="Products" asp-action="Index">Продукти</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Products" asp-action="Index">🛒 Продукти</a>
-                    </li>
-
-                    @if (role == "Admin")
+                    @if (Context.Session.GetString("Role") == "Admin")
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-warning fw-bold" asp-controller="Admin" asp-action="Index">
-                                ⚙️ Админ Панел
-                            </a>
+                            <a class="nav-link text-warning" asp-controller="Admin" asp-action="Index">Админ Панел</a>
                         </li>
                     }
                 </ul>
 
+                <!-- Theme Toggle -->
+                <button class="btn btn-sm btn-outline-light me-3" id="themeToggle" title="Смени тема">
+                    <i class="fas fa-moon"></i>
+                </button>
+
+                <!-- Search -->
                 <form class="d-flex me-3 position-relative" asp-controller="Products" asp-action="Index" method="get">
-                    <input class="form-control me-2" type="search" name="search" id="searchInput" placeholder="🔍 Търси продукти..." autocomplete="off" />
-                    <button class="btn btn-outline-warning" type="submit"><i class="fas fa-search"></i></button>
-                    <!-- Search Results Dropdown -->
-                    <div id="searchResults" class="list-group position-absolute w-100 shadow-lg" style="top: 100%; left: 0; z-index: 1050; display: none;"></div>
+                    <input class="form-control me-2 rounded-pill" type="search" name="search" id="searchInput" placeholder="Търси..." autocomplete="off">
+                    <!-- Results Dropdown -->
+                    <div id="searchResults" class="list-group position-absolute w-100 shadow-lg mt-1" style="top: 100%; display: none; z-index: 1000;"></div>
                 </form>
 
-                <ul class="navbar-nav">
-
-
-                    @if (!string.IsNullOrEmpty(username))
+                <!-- Auth & Cart -->
+                <ul class="navbar-nav align-items-center">
+                    @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
                     {
-                        <li class="nav-item">
-                            <span class="nav-link">👋 Здравей, @username!</span>
+                        <li class="nav-item me-2">
+                            <span class="nav-link text-white">Здравей, @Context.Session.GetString("Username")</span>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="MyOrders" asp-action="Index">🧾 Моите поръчки</a>
-                        </li>
-
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Profile">👤 Моят профил</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Logout">🚪 Изход</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="MyOrders" asp-action="Index">Поръчки</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Logout">Изход</a></li>
                     }
-                    else if (currentController != "Account")
+                    else
                     {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">🔑 Вход</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Register">🧾 Регистрация</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Вход</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Register">Регистрация</a></li>
                     }
-
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Cart" asp-action="Index">
-                            <i class="fa fa-shopping-cart"></i> Количка
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-warning rounded-pill px-3" asp-controller="Cart" asp-action="Index">
+                            <i class="fa fa-shopping-cart"></i> <span id="cartCountBadge" class="badge bg-dark ms-1">0</span>
                         </a>
                     </li>
                 </ul>
@@ -176,95 +82,193 @@
         </div>
     </nav>
 
-    <!-- ✅ Body -->
-    <main class="flex-grow-1">
-        <div class="container mt-4">
+    <!-- ✅ Main Content -->
+    <main class="flex-grow-1 py-4">
+        <div class="container">
             @RenderBody()
         </div>
     </main>
 
     <!-- ✅ Footer -->
-    <footer class="mt-5">
-        <div class="container py-5">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h4 class="fw-bold"><i class="fas fa-dumbbell"></i> GYMPOWER</h4>
-                    <p>Твоят източник на премиум добавки и аксесоари. Постигни целите си с качествени продукти.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold">Контакти</h5>
-                    <p><i class="fas fa-phone me-2"></i> +359 888 123 456</p>
-                    <p><i class="fas fa-envelope me-2"></i> support@gympower.bg</p>
-                    <p><i class="fas fa-map-marker-alt me-2"></i> ул. „Фитнес“ 123, гр. София</p>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold">Бързи връзки</h5>
-                    <p><a href="#" class="text-light text-decoration-none">За нас</a></p>
-                    <p><a href="#" class="text-light text-decoration-none">Доставка</a></p>
-                    <p><a href="#" class="text-light text-decoration-none">Връщане и замяна</a></p>
-                    <p><a href="#" class="text-light text-decoration-none">Политика за поверителност</a></p>
-                </div>
+    <footer class="text-center py-4">
+        <div class="container">
+            <div class="mb-3">
+                <a href="#" class="text-white mx-2"><i class="fab fa-facebook fa-lg"></i></a>
+                <a href="#" class="text-white mx-2"><i class="fab fa-instagram fa-lg"></i></a>
             </div>
-            <hr class="my-4">
-            <div class="text-center">
-                <p>&copy; 2024 GymPower — Зареди своята сила. Всички права запазени.</p>
-            </div>
+            <p class="mb-0 text-white-50">&copy; 2024 GymPower. Всички права запазени.</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ✅ AI Chat Widget (Floating) -->
+    <div id="aiChatButton" class="chat-widget-btn" title="AI Треньор">
+        <i class="fas fa-robot"></i>
+    </div>
 
-    <!-- Autocomplete Script -->
+    <div id="aiChatWindow" class="chat-window">
+        <!-- Header -->
+        <div class="chat-header">
+            <span><i class="fas fa-dumbbell me-2"></i>GymPower AI</span>
+            <button id="closeChat" class="btn btn-sm text-white"><i class="fas fa-times"></i></button>
+        </div>
+        <!-- Body -->
+        <div id="chatMessages" class="chat-body">
+            <div class="message ai">
+                Здравей! Аз съм твоят виртуален треньор. С какво мога да ти помогна днес? 🏋️‍♂️
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="chat-footer">
+            <div class="input-group">
+                <input type="text" id="chatInput" class="form-control hover-shadow" placeholder="Попитай нещо..." style="border-radius: 20px 0 0 20px;">
+                <button id="sendMessage" class="btn btn-primary" style="border-radius: 0 20px 20px 0;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-
-        searchInput.addEventListener('input', async function() {
-            const query = this.value;
-            if (query.length < 2) {
-                searchResults.style.display = 'none';
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/products/search?term=${encodeURIComponent(query)}`);
-                const products = await response.json();
-
-                searchResults.innerHTML = '';
-                if (products.length > 0) {
-                    products.forEach(p => {
-                        const item = document.createElement('a');
-                        item.href = `/Products/Details/${p.id}`;
-                        item.className = 'list-group-item list-group-item-action d-flex align-items-center bg-dark text-white border-secondary';
-                        item.innerHTML = `
-                            <img src="${p.imageUrl}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border-radius: 5px;">
-                            <div>
-                                <div class="fw-bold">${p.name}</div>
-                                <small class="text-white-50">${p.category}</small>
-                            </div>
-                        `;
-                        searchResults.appendChild(item);
-                    });
-                    searchResults.style.display = 'block';
-                } else {
-                    searchResults.style.display = 'none';
-                }
-            } catch (e) {
-                console.error('Search error:', e);
-            }
+        // 🌓 Theme Toggle
+        const themeBtn = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        
+        themeBtn.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            themeBtn.innerHTML = next === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
         });
 
-        // Hide when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                searchResults.style.display = 'none';
+        // Restore Theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        themeBtn.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+
+        // 🤖 Chat Widget Logic
+        const chatBtn = document.getElementById('aiChatButton');
+        const chatWin = document.getElementById('aiChatWindow');
+        const closeChat = document.getElementById('closeChat');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendMessage');
+        const messages = document.getElementById('chatMessages');
+
+        // Open/Close
+        chatBtn.addEventListener('click', () => {
+            chatWin.style.display = 'flex';
+            chatBtn.style.display = 'none'; // Optional: hide button when open
+        });
+        
+        closeChat.addEventListener('click', () => {
+            chatWin.style.display = 'none';
+            chatBtn.style.display = 'flex';
+        });
+
+        // Send Message
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if(!text) return;
+
+            // Add User Message
+            appendMessage(text, 'user');
+            chatInput.value = '';
+
+            // Add Loading Bubble
+            const loadingId = 'loading-' + Date.now();
+            appendMessage('<i class="fas fa-ellipsis-h fa-fade"></i>', 'ai', loadingId);
+
+            try {
+                // Call API
+                const response = await fetch('/Chat/SendMessage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(errText || `Server Error ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Remove Loading & Add AI Response
+                document.getElementById(loadingId).remove();
+                appendMessage(data.response, 'ai');
+            } catch (err) {
+                console.error(err);
+                document.getElementById(loadingId).remove();
+                appendMessage('⚠️ Грешка: ' + err.message, 'ai');
+            }
+        }
+
+        function appendMessage(text, role, id = null) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            if(id) div.id = id;
+            div.innerHTML = text; // Allow HTML for icons
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendMessage();
+        });
+
+        // 🛒 Update Cart Count
+        async function updateCartCount() {
+            try {
+                const res = await fetch('/Cart/GetCartCount');
+                if(res.ok) {
+                    const data = await res.json();
+                    const badge = document.getElementById('cartCountBadge');
+                    if(badge) {
+                        badge.innerText = data.count;
+                        badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+                    }
+                }
+            } catch(e) { console.error('Failed to load cart count', e); }
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', () => {
+             updateCartCount();
+        });
+
+        // 🔍 Autocomplete logic (Simplified)
+        const searchIn = document.getElementById('searchInput');
+        const searchRes = document.getElementById('searchResults');
+        
+        searchIn.addEventListener('input', async (e) => {
+             const term = e.target.value;
+             if(term.length < 2) { searchRes.style.display = 'none'; return; }
+             
+             const res = await fetch(`/api/products/search?term=${term}`);
+             const data = await res.json();
+             
+             searchRes.innerHTML = '';
+             if(data.length > 0) {
+                 searchRes.style.display = 'block';
+                 data.forEach(p => {
+                     const a = document.createElement('a');
+                     a.className = 'list-group-item list-group-item-action';
+                     a.href = `/Products/Details/${p.id}`;
+                     // Currency Conversion Display in JS (Simple approx)
+                     const priceEur = (p.price / 1.95583).toFixed(2);
+                     a.innerHTML = `<img src="${p.imageUrl}" width="30" class="me-2 rounded">${p.name} - <strong>${priceEur} €</strong>`;
+                     searchRes.appendChild(a);
+                 });
+             } else {
+                 searchRes.style.display = 'none';
+             }
+        });
+
+        // Close search when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchIn.contains(e.target) && !searchRes.contains(e.target)) {
+                searchRes.style.display = 'none';
             }
         });
     </script>

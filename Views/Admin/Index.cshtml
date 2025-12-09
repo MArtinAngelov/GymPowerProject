@@ -17,49 +17,65 @@
     <div class="row g-4">
 
         <!-- Управление на продукти -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card bg-dark border-0 shadow-sm h-100 text-center p-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 text-center p-4">
                 <div class="mb-3">
-                    <i class="fas fa-box-open fa-3x text-warning"></i>
+                    <i class="fas fa-box-open fa-3x text-primary"></i>
                 </div>
-                <h4 class="fw-bold mb-3 text-warning">Продукти</h4>
-                <p class="text-light mb-4">
+                <h4 class="fw-bold mb-3">Продукти</h4>
+                <p class="text-muted mb-4">
                     Добавяй, редактирай и изтривай продуктите в твоя онлайн магазин.
                 </p>
-                <a asp-controller="Products" asp-action="Index" class="btn btn-warning fw-bold text-dark px-4 py-2 rounded-pill shadow">
-                    Управлявай продукти
+                <a asp-controller="Products" asp-action="Index" class="btn btn-outline-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                    Управлявай
                 </a>
             </div>
         </div>
 
         <!-- Управление на поръчки -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card bg-dark border-0 shadow-sm h-100 text-center p-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 text-center p-4">
                 <div class="mb-3">
-                    <i class="fas fa-shopping-cart fa-3x text-warning"></i>
+                    <i class="fas fa-shopping-cart fa-3x text-primary"></i>
                 </div>
-                <h4 class="fw-bold mb-3 text-warning">Поръчки</h4>
-                <p class="text-light mb-4">
+                <h4 class="fw-bold mb-3">Поръчки</h4>
+                <p class="text-muted mb-4">
                     Преглеждай и обработвай направените поръчки от клиентите.
                 </p>
-                <a asp-controller="Orders" asp-action="Index" class="btn btn-warning fw-bold text-dark px-4 py-2 rounded-pill shadow">
-                     Управлявай поръчки
+                <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                     Управлявай
                 </a>
             </div>
         </div>
 
         <!-- Управление на потребители -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card bg-dark border-0 shadow-sm h-100 text-center p-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 text-center p-4">
                 <div class="mb-3">
-                    <i class="fas fa-users fa-3x text-warning"></i>
+                    <i class="fas fa-users fa-3x text-primary"></i>
                 </div>
-                <h4 class="fw-bold mb-3 text-warning">Потребители</h4>
-                <p class="text-light mb-4">
+                <h4 class="fw-bold mb-3">Потребители</h4>
+                <p class="text-muted mb-4">
                     Управлявай акаунтите на потребителите и техните данни.
                 </p>
-                <a asp-controller="Users" asp-action="Index" class="btn btn-warning fw-bold text-dark px-4 py-2 rounded-pill shadow">
-                    Управлявай потребители
+                <a asp-controller="Users" asp-action="Index" class="btn btn-outline-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                    Управлявай
+                </a>
+            </div>
+        </div>
+        
+        <!-- 📊 Анализи и Инсайти -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 text-center p-4 border-warning shadow-sm" style="border-width:2px;">
+                <div class="mb-3">
+                    <i class="fas fa-chart-line fa-3x text-warning"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Анализи</h4>
+                <p class="text-muted mb-4">
+                    Виж смар инсайти за продажбите и клиентите си.
+                </p>
+                <a asp-controller="Admin" asp-action="Insights" class="btn btn-warning text-dark fw-bold px-4 py-2 rounded-pill shadow-lg">
+                    Към Анализи
                 </a>
             </div>
         </div>

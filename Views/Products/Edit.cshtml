@@ -1,73 +1,185 @@
 ﻿@model GymPower.Models.Product
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редактиране на продукт";
 }
 
-<h1>Edit</h1>
+<!-- 🎨 Main styling wrapper -->
+<div class="container py-5">
+    
+    <!-- Hero / Header -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8 text-center">
+            <h1 class="fw-bold text-primary mb-2">
+                <i class="fas fa-edit me-2"></i> Редактиране на продукт
+            </h1>
+            <p class="text-muted">Промени данните и обнови наличностите за онлайн магазина.</p>
+        </div>
+    </div>
 
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+    <!-- Form Card -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold text-white"><i class="fas fa-box-open me-2 text-white"></i> Данни за продукта</h5>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Basic Specs Row -->
+                        <div class="row g-3 mb-4">
+                            <!-- Name -->
+                            <div class="col-md-12">
+                                <label asp-for="Name" class="form-label fw-bold text-muted text-uppercase small">Име на продукта</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-tag text-secondary"></i></span>
+                                    <input asp-for="Name" class="form-control hover-shadow" placeholder="Напр. Whey Protein Gold" />
+                                </div>
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Category -->
+                             <div class="col-md-6">
+                                <label asp-for="Category" class="form-label fw-bold text-muted text-uppercase small">Категория</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-list text-secondary"></i></span>
+                                    <select asp-for="Category" class="form-select hover-shadow">
+                                        <option value="">Избери категория...</option>
+                                        <option value="Изграждане на мускулна маса">Изграждане на мускулна маса</option>
+                                        <option value="Отслабване">Отслабване</option>
+                                        <option value="Висока производителност">Висока производителност</option>
+                                        <option value="Регенерация">Регенерация</option>
+                                        <option value="Имунитет">Имунитет</option>
+                                        <option value="Здравословна закуска">Здравословна закуска</option>
+                                        <option value="Облекло">Облекло</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Category" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="col-md-6">
+                                <label asp-for="Price" class="form-label fw-bold text-muted text-uppercase small">Цена (лв)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-euro-sign text-secondary"></i></span>
+                                    <input asp-for="Price" class="form-control hover-shadow" type="number" step="0.01" />
+                                </div>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Quantities -->
+                         <div class="row g-3 mb-4">
+                             <div class="col-md-12">
+                                <label asp-for="StockQuantity" class="form-label fw-bold text-muted text-uppercase small">Наличност (Брой)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-warehouse text-secondary"></i></span>
+                                    <input asp-for="StockQuantity" class="form-control hover-shadow" type="number" />
+                                </div>
+                                <span asp-validation-for="StockQuantity" class="text-danger small"></span>
+                            </div>
+                         </div>
+
+                        <!-- Descriptions -->
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold text-muted text-uppercase small">Кратко описание</label>
+                            <textarea asp-for="Description" class="form-control hover-shadow" rows="2" placeholder="Едно или две изречения за картата на продукта..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                         <div class="mb-4">
+                            <label asp-for="LongDescription" class="form-label fw-bold text-muted text-uppercase small">Детайлно описание</label>
+                            <textarea asp-for="LongDescription" class="form-control hover-shadow" rows="6" placeholder="Пълно описание на съставките, ползите и начина на употреба..."></textarea>
+                            <span asp-validation-for="LongDescription" class="text-danger small"></span>
+                        </div>
+
+                        <hr class="my-4 text-muted">
+
+                        <!-- Images Section -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-primary mb-3"><i class="fas fa-images me-2"></i>Снимки</h6>
+                            
+                            <!-- Main Image -->
+                            <div class="mb-3">
+                                <label asp-for="ImageUrl" class="form-label small fw-bold text-muted">Основна снимка (URL)</label>
+                                <input asp-for="ImageUrl" class="form-control hover-shadow mb-2" onchange="document.getElementById('img-preview').src = this.value" />
+                                <div class="p-2 border rounded bg-light text-center" style="min-height: 100px;">
+                                    <img id="img-preview" src="@Model.ImageUrl" alt="Preview" style="max-height: 150px; object-fit: contain;" onerror="this.src='/images/products/default-product.jpg'">
+                                </div>
+                                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Extra Images -->
+                             <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted">Допълнителни снимки (URL адреси, разделени със запетая)</label>
+                                <textarea name="ExtraImages" class="form-control hover-shadow" rows="3" placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg ...">@ViewBag.ExtraImages</textarea>
+                                <small class="text-muted fst-italic">Въведи URL адреси, разделени със запетая.</small>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted">
+
+                        <!-- Recommendations / Goals -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-primary mb-3"><i class="fas fa-bullseye me-2"></i>Препоръчително за цели</h6>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check form-switch p-2 border rounded bg-light-subtle flex-fill">
+                                    <input class="form-check-input ms-0 me-2" type="checkbox" asp-for="IsRecommendedForMassGain" style="float:none;">
+                                    <label class="form-check-label fw-semibold cursor-pointer" asp-for="IsRecommendedForMassGain">
+                                        💪 Мускулна маса
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch p-2 border rounded bg-light-subtle flex-fill">
+                                    <input class="form-check-input ms-0 me-2" type="checkbox" asp-for="IsRecommendedForWeightLoss" style="float:none;">
+                                    <label class="form-check-label fw-semibold cursor-pointer" asp-for="IsRecommendedForWeightLoss">
+                                        🔥 Отслабване
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch p-2 border rounded bg-light-subtle flex-fill">
+                                    <input class="form-check-input ms-0 me-2" type="checkbox" asp-for="IsRecommendedForMaintenance" style="float:none;">
+                                    <label class="form-check-label fw-semibold cursor-pointer" asp-for="IsRecommendedForMaintenance">
+                                        ⚖️ Поддържане
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between align-items-center mt-5">
+                             <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+                                <i class="fas fa-arrow-left me-2"></i> Назад
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold px-5 rounded-pill shadow">
+                                <i class="fas fa-save me-2"></i> Запази промените
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsRecommendedForMassGain" /> @Html.DisplayNameFor(model => model.IsRecommendedForMassGain)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsRecommendedForWeightLoss" /> @Html.DisplayNameFor(model => model.IsRecommendedForWeightLoss)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsRecommendedForMaintenance" /> @Html.DisplayNameFor(model => model.IsRecommendedForMaintenance)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="StockQuantity" class="control-label"></label>
-                <input asp-for="StockQuantity" class="form-control" />
-                <span asp-validation-for="StockQuantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<style>
+    /* Custom Styling for Form Elements */
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.25);
+    }
+    .hover-shadow:focus {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .text-white { color: #fff !important; }
+    
+    /* Support Dark Mode Form Check */
+    [data-theme="dark"] .bg-light-subtle { background-color: rgba(255,255,255,0.05) !important; border-color: #444 !important; }
+    .cursor-pointer { cursor: pointer; }
+</style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

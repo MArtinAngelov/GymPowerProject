@@ -1,45 +1,84 @@
-﻿@model GymPower.Models.Product
+﻿@using Microsoft.AspNetCore.Http
+@model GymPower.Models.Product
 @{
     ViewData["Title"] = "Детайли за продукта";
 }
 
-<section class="py-5" style="background-color:#0b0b14; color:white;">
+<section class="py-5">
     <div class="container">
         <div class="row justify-content-center align-items-start g-5">
 
-            <!-- 🖼️ Product Image -->
+            <!-- 🖼️ Product Image / Gallery -->
             <div class="col-lg-6 col-md-6">
-                <div class="bg-dark rounded-4 overflow-hidden shadow-sm">
-                    <img src="@Model.ImageUrl"
+                <!-- Main Image -->
+                <div class="card border-0 overflow-hidden shadow-sm mb-3">
+                    <img id="mainImage" src="@Model.ImageUrl"
                          alt="@Model.Name"
                          class="img-fluid w-100"
-                         style="object-fit: cover; height: 500px; border-radius: 0;">
+                         style="object-fit: cover; height: 500px; transition: opacity 0.3s ease-in-out;">
                 </div>
+                
+                <!-- Thumbnails -->
+                @if (Model.Images != null && Model.Images.Any())
+                {
+                    <div class="d-flex gap-2 overflow-auto pb-2">
+                        <!-- Main Image Thumbnail -->
+                        <div class="cursor-pointer border border-2 border-warning rounded overflow-hidden" 
+                             style="width: 80px; height: 80px; min-width: 80px;"
+                             onclick="changeImage('@Model.ImageUrl', this)">
+                            <img src="@Model.ImageUrl" class="w-100 h-100" style="object-fit: cover;">
+                        </div>
+
+                        <!-- Extra Images -->
+                        @foreach (var img in Model.Images)
+                        {
+                            <div class="cursor-pointer border border-secondary rounded overflow-hidden opacity-75" 
+                                 style="width: 80px; height: 80px; min-width: 80px;"
+                                 onmouseover="this.classList.remove('opacity-75'); this.classList.add('border-warning');"
+                                 onmouseout="if(!this.classList.contains('active-thumb')) { this.classList.add('opacity-75'); this.classList.remove('border-warning'); }"
+                                 onclick="changeImage('@img.ImageUrl', this)">
+                                <img src="@img.ImageUrl" class="w-100 h-100" style="object-fit: cover;">
+                            </div>
+                        }
+                    </div>
+                }
             </div>
 
             <!-- 🧾 Product Info -->
             <div class="col-lg-6 col-md-6">
-                <h1 class="fw-bold text-warning mb-3">@Model.Name</h1>
+                <h1 class="fw-bold text-primary mb-3">@Model.Name</h1>
 
                 <span class="badge bg-secondary mb-3 fs-6">@Model.Category</span>
 
-                <p class="lead mb-4" style="color:#e0e0e0; line-height:1.7;">
+                <!-- Short Description -->
+                <p class="lead mb-4 text-muted" style="line-height:1.7;">
                     @Model.Description
                 </p>
 
-                <!-- Long Description / Benefits Section -->
-                <div class="mb-4">
-                    <h5 class="text-warning fw-semibold mb-2">Ползи от продукта:</h5>
-                    <ul class="text-light" style="line-height:1.7;">
-                        <li>Подпомага мускулния растеж и възстановяването.</li>
-                        <li>Повишава енергията и издръжливостта при тренировки.</li>
-                        <li>Осигурява необходимите нутриенти за постигане на целите ти.</li>
-                        <li>Идеален за активно трениращи и спортисти.</li>
-                    </ul>
-                </div>
+                <!-- 📖 Long Description Section -->
+                @if (!string.IsNullOrEmpty(Model.LongDescription))
+                {
+                    <div class="mb-4 p-3 bg-card rounded border border-light-subtle">
+                        <h5 class="fw-bold text-warning mb-2">📜 Детайлно описание:</h5>
+                        <p class="text-secondary small mb-0" style="white-space: pre-line; line-height: 1.6;">
+                            @Model.LongDescription
+                        </p>
+                    </div>
+                }
 
-                <h3 class="fw-bold text-warning mb-4">
-                    Цена: @Model.Price.ToString("F2") лв.
+                <!-- Benefits Legacy Section (Optional, keep if needed or merge) -->
+                @if (string.IsNullOrEmpty(Model.LongDescription)) 
+                {
+                     <div class="mb-4">
+                        <h5 class="fw-semibold mb-2">Ползи от продукта:</h5>
+                        <ul class="text-muted" style="line-height:1.7;">
+                            <li>Подпомага мускулния растеж и възстановяването.</li>
+                        </ul>
+                    </div>
+                }
+
+                <h3 class="fw-bold text-price mb-4">
+                    Цена: @GymPower.Helpers.CurrencyHelper.ToEuro(Model.Price)
                 </h3>
 
                 <div class="mb-4">
@@ -58,45 +97,82 @@
                 <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3">
                     <input type="hidden" name="id" value="@Model.Id" />
 
-                    <div class="d-flex align-items-center bg-dark rounded-3 px-3 py-2">
-                        <label for="quantity" class="me-2 fw-semibold text-light">Количество:</label>
+                    <div class="d-flex align-items-center bg-card rounded-3 px-3 py-2 border">
+                        <label for="quantity" class="me-2 fw-semibold">Количество:</label>
                         <input type="number" id="quantity" name="quantity" value="1" min="1" max="@Model.StockQuantity"
-                               class="form-control text-center bg-dark text-white border-0" style="width:80px;">
+                               class="form-control text-center border-0 shadow-none" style="width:80px; background: transparent; color: inherit;">
                     </div>
 
-                    <button type="submit" class="btn btn-warning fw-bold px-4 py-2 text-dark rounded-3 shadow-sm">
+                    <button type="submit" class="btn btn-warning fw-bold px-4 py-2 shadow-sm">
                         🛒 Добави в количката
                     </button>
                 </form>
 
-                <a asp-controller="Products" asp-action="Index"
-                   class="btn btn-outline-light px-4 py-2 mt-4 rounded-3">
-                    ← Назад към продуктите
-                </a>
+                <div class="d-flex gap-2 mt-4">
+                    <a asp-controller="Products" asp-action="Index"
+                       class="btn btn-outline-primary px-4 py-2 rounded-3">
+                        ← Назад към продуктите
+                    </a>
+                    
+                    @if (Context.Session.GetString("Role") == "Admin")
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold px-4 py-2 rounded-3 shadow-sm">
+                            <i class="fas fa-edit me-2"></i> Редактирай
+                        </a>
+                    }
+                </div>
             </div>
         </div>
 
         <!-- 🧩 Related Products -->
-        <div class="mt-5 pt-4 border-top border-secondary">
-            <h3 class="text-center text-warning fw-bold mb-4">Подобни продукти</h3>
+        <div class="mt-5 pt-4 border-top">
+            <h3 class="text-center fw-bold mb-4">Подобни продукти</h3>
             <div class="row g-4 justify-content-center">
                 @foreach (var related in ViewBag.RelatedProducts as IEnumerable<GymPower.Models.Product> ?? Enumerable.Empty<GymPower.Models.Product>())
                 {
                     <div class="col-md-4 col-lg-3">
-                        <div class="card bg-dark border-0 h-100 shadow-sm text-center">
+                        <div class="card h-100 shadow-sm text-center border-0">
                             <img src="@related.ImageUrl" class="card-img-top" alt="@related.Name"
                                  style="height:200px; object-fit:cover;">
                             <div class="card-body">
-                                <h6 class="fw-bold text-light">@related.Name</h6>
-                                <p class="text-warning fw-semibold">@related.Price.ToString("F2") лв.</p>
+                                <h6 class="fw-bold card-title">@related.Name</h6>
+                                <p class="text-price fw-bold">@GymPower.Helpers.CurrencyHelper.ToEuro(related.Price)</p>
                                 <a asp-action="Details" asp-route-id="@related.Id"
-                                   class="btn btn-outline-warning btn-sm">Виж продукта</a>
+                                   class="btn btn-outline-primary btn-sm">Виж продукта</a>
                             </div>
                         </div>
                     </div>
                 }
             </div>
         </div>
+
+        <!-- 🔁 Smart Recommendations -->
+        @if (ViewBag.RecommendedProducts != null && ((IEnumerable<GymPower.Models.Product>)ViewBag.RecommendedProducts).Any())
+        {
+            <div class="mt-5 pt-4 border-top">
+                <h3 class="text-center fw-bold mb-4 text-warning">🔁 Препоръчано за теб</h3>
+                <div class="row g-4 justify-content-center">
+                    @foreach (var rec in ViewBag.RecommendedProducts as IEnumerable<GymPower.Models.Product>)
+                    {
+                        <div class="col-md-4 col-lg-3">
+                            <div class="card h-100 shadow-lg text-center border-warning">
+                                <div class="position-relative">
+                                    <img src="@rec.ImageUrl" class="card-img-top" alt="@rec.Name"
+                                         style="height:200px; object-fit:cover;">
+                                    <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">💡 Топ избор</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="fw-bold card-title">@rec.Name</h6>
+                                    <p class="text-price fw-bold">@GymPower.Helpers.CurrencyHelper.ToEuro(rec.Price)</p>
+                                    <a asp-action="Details" asp-route-id="@rec.Id"
+                                       class="btn btn-primary text-white btn-sm shadow-sm">Виж детайли</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
     @if (TempData["SuccessMessage"] != null)
     {
@@ -112,19 +188,26 @@
                 if (toast) toast.remove();
             }, 2500);
         </script>
-
-        <style>
-            @@keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        </style>
     }
 </section>
+
+<script>
+    function changeImage(src, thumbnail) {
+        // Change Main Image
+        const mainImg = document.getElementById('mainImage');
+        mainImg.style.opacity = 0;
+        setTimeout(() => {
+            mainImg.src = src;
+            mainImg.style.opacity = 1;
+        }, 150);
+
+        // Update Active State
+        document.querySelectorAll('.cursor-pointer').forEach(el => {
+            el.classList.remove('border-warning', 'active-thumb');
+            el.classList.add('border-secondary', 'opacity-75');
+        });
+
+        thumbnail.classList.remove('border-secondary', 'opacity-75');
+        thumbnail.classList.add('border-warning', 'active-thumb');
+    }
+</script>

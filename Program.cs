@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<GymPower.Services.FreeAIService>();
+builder.Services.AddScoped<GymPower.Services.RecommendationService>();
+builder.Services.AddScoped<GymPower.Services.InsightsService>();
 
 
 // ✅ Database connection
@@ -31,7 +33,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<GymPower.Data.AppDbContext>();
-
+    
+    // ✅ Auto-migrate database on startup
+    db.Database.Migrate();
+    
     // Optional if you want: db.Database.EnsureCreated();
     StartupDbPatcher.FixOrdersTableSchema(db);
 }

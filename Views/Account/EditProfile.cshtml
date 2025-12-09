@@ -27,12 +27,35 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-light">Фитнес цел:</label>
-                    <select asp-for="FitnessGoal" class="form-select bg-dark text-white border-secondary">
-                        <option value="Maintenance">Поддържане</option>
-                        <option value="MuscleGain">Покачване на мускулна маса</option>
-                        <option value="FatLoss">Изгаряне на мазнини</option>
+                    <label class="form-label text-light">Възраст:</label>
+                    <input type="number" asp-for="Age" class="form-control bg-dark text-white border-secondary" required min="14" max="100" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Пол:</label>
+                    <select asp-for="Gender" class="form-select bg-dark text-white border-secondary">
+                        <option value="Male">Мъж</option>
+                        <option value="Female">Жена</option>
                     </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Фитнес цел:</label>
+                        <select asp-for="FitnessGoal" class="form-select bg-dark text-white border-secondary">
+                            <option value="Maintenance">Поддържане</option>
+                            <option value="MuscleGain">Покачване на мускулна маса</option>
+                            <option value="FatLoss">Изгаряне на мазнини</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Ниво:</label>
+                        <select asp-for="TrainingLevel" class="form-select bg-dark text-white border-secondary">
+                            <option value="Beginner">Начинаещ</option>
+                            <option value="Intermediate">Напреднал</option>
+                            <option value="Advanced">Професионалист</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="mb-3">

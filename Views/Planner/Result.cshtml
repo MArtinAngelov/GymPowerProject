@@ -1,0 +1,125 @@
+@model GymPower.Models.FitnessPlan
+@{
+    ViewData["Title"] = "Твоят Фитнес План";
+    var totalCost = Model.RecommendedProducts.Sum(p => p.Price);
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">🧬 Твоят Персонализиран План</h1>
+        <p class="lead text-muted">Генериран специално за теб от GymPower AI</p>
+    </div>
+
+    <div class="row">
+        <!-- Training Split -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 border-0 shadow-lg">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-dumbbell me-2"></i> Тренировъчна Програма</h4>
+                </div>
+                <div class="card-body bg-surface">
+                    <div class="markdown-content">
+                        @Html.Raw(Model.WeeklySplit.Replace("\n", "<br>"))
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nutrition -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 border-0 shadow-lg">
+                <div class="card-header bg-success text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-apple-alt me-2"></i> Хранене и Диета</h4>
+                </div>
+                <div class="card-body bg-surface">
+                    <div class="markdown-content">
+                        @Html.Raw(Model.NutritionAdvice.Replace("\n", "<br>"))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="mt-5">
+        <h3 class="fw-bold mb-4 text-center">🏆 Препоръчани Продукти за Твоята Цел</h3>
+        
+        <div class="row g-4">
+            @foreach (var product in Model.RecommendedProducts)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow product-card">
+                         <div class="position-relative overflow-hidden" style="height: 250px;">
+                            <img src="@product.ImageUrl" class="card-img-top w-100 h-100 object-fit-cover" alt="@product.Name">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@product.Name</h5>
+                            <p class="card-text text-muted small">@product.Category</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="h5 fw-bold text-primary mb-0">@GymPower.Helpers.CurrencyHelper.Format(product.Price)</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-0 pt-0 pb-3">
+                            <button onclick="addToCart(@product.Id)" class="btn btn-outline-primary w-100 rounded-pill">
+                                <i class="fas fa-cart-plus me-2"></i> Добави
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Add All Actions -->
+        @if (Model.RecommendedProducts.Any())
+        {
+            <div class="text-center mt-5">
+                <div class="card bg-dark text-white p-4 d-inline-block rounded-3 shadow-lg">
+                    <h4 class="fw-bold text-warning">Обща стойност: @GymPower.Helpers.CurrencyHelper.Format(totalCost)</h4>
+                    <p class="text-white-50">Вземи целия пакет за максимални резултати</p>
+                    <button onclick="addAllToCart(@Json.Serialize(Model.RecommendedProducts.Select(p => p.Id)))" 
+                            class="btn btn-primary btn-lg rounded-pill px-5 fw-bold pulse-animation">
+                        🛒 Купи целия пакет
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    async function addToCart(productId) {
+        try {
+            const response = await fetch('/Cart/AddToCart?productId=' + productId, { method: 'POST' });
+            if (response.ok) {
+                // Show toast or alert
+                const toast = document.createElement('div');
+                toast.className = 'position-fixed bottom-0 end-0 p-3';
+                toast.style.zIndex = '9999';
+                toast.innerHTML = `<div class="toast show bg-success text-white"><div class="toast-body">Продуктът е добавен!</div></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function addAllToCart(productIds) {
+        for (const id of productIds) {
+            await addToCart(id);
+        }
+        window.location.href = '/Cart';
+    }
+</script>
+
+<style>
+    .bg-gradient-primary { background: linear-gradient(45deg, var(--primary), #ff8c42); }
+    .bg-surface { background: var(--bg-surface); }
+    .pulse-animation { animation: pulse 2s infinite; }
+    
+    @@keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 107, 53, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); }
+    }
+</style>

@@ -29,6 +29,11 @@ namespace GymPower.Models
 
         public string Role { get; set; } = "Customer";
         public string FitnessGoal { get; set; } = "Maintenance";
+        
+        // New Fitness Profile Fields
+        public int Age { get; set; }
+        public string Gender { get; set; } = "Not Specified"; 
+        public string TrainingLevel { get; set; } = "Beginner"; // Beginner, Intermediate, Advanced
 
         [DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

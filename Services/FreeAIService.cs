@@ -7,7 +7,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using GymPower.Constants;
 using GymPower.Data;
+using GymPower.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -29,23 +31,85 @@ namespace GymPower.Services
             _logger = logger;
         }
 
+        public async Task<FitnessPlan> GetFitnessPlanAsync(User user)
+        {
+            try
+            {
+                var products = await _context.Products.AsNoTracking().ToListAsync();
+                var productContext = string.Join("\n", products.Select(p => $"{p.Id}: {p.Name} ({p.Category}) - {p.Price:C}"));
+
+                var prompt = $@"
+                    Generate a personalized fitness plan for:
+                    - Age: {user.Age}
+                    - Gender: {user.Gender}
+                    - Level: {user.TrainingLevel}
+                    - Goal: {user.FitnessGoal}
+
+                    Output strictly valid JSON with this structure:
+                    {{
+                        ""WeeklySplit"": ""Detailed weekly workout schedule..."",
+                        ""NutritionAdvice"": ""Specific daily nutrition tips..."",
+                        ""RecommendedProductIds"": [1, 5, 10] // Choose 3 best product IDs from the list below based on the goal.
+                    }}
+
+                    Product List:
+                    {productContext}
+                ";
+
+                var requestBody = new
+                {
+                    model = _configuration["AiSettings:Model"] ?? "gpt-4o-mini",
+                    messages = new[]
+                    {
+                        new { role = "system", content = "You are a fitness expert. Output JSON only." },
+                        new { role = "user", content = prompt }
+                    },
+                    max_tokens = 1000,
+                    response_format = new { type = "json_object" }
+                };
+
+                var apiKey = _configuration["AiSettings:ApiKey"];
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+                
+                var response = await _httpClient.PostAsJsonAsync(_configuration["AiSettings:BaseUrl"], requestBody);
+                response.EnsureSuccessStatusCode();
+
+                var jsonResponse = await response.Content.ReadFromJsonAsync<JsonElement>();
+                var content = jsonResponse.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+
+                return JsonSerializer.Deserialize<FitnessPlan>(content) ?? new FitnessPlan();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating fitness plan");
+                return new FitnessPlan 
+                { 
+                    WeeklySplit = "Error generating plan.", 
+                    NutritionAdvice = "Please try again later." 
+                };
+            }
+        }
+
         public async Task<string> GetAIResponseAsync(string userMessage, int userId)
         {
             try
             {
-                // 1. Validate Config
-                var apiKey = _configuration["TogetherAiSettings:ApiKey"];
-                var model = _configuration["TogetherAiSettings:Model"] ?? "meta-llama/Llama-3-8b-chat-hf";
+                // 1. Load Configuration
+                var apiKey = _configuration["AiSettings:ApiKey"];
+                var model = _configuration["AiSettings:Model"] ?? "gpt-4o-mini";
+                var baseUrl = _configuration["AiSettings:BaseUrl"] ?? "https://api.openai.com/v1/chat/completions";
+                var staticPrompt = _configuration["AiSettings:SystemPrompt"] ?? "You are a helpful assistant.";
 
-                if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Contains("PASTE_TOGETHER_KEY_HERE"))
+                // Validate Key
+                if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Contains("PASTE_KEY_HERE") || apiKey.Contains("PASTE_TOGETHER_KEY"))
                 {
-                    _logger.LogWarning($"TogetherAI API Key is missing or placeholder: '{apiKey}'");
-                    return "Грешка: Липсва валиден API Key за TogetherAI. Моля, конфигурирайте го в appsettings.json.";
+                    _logger.LogWarning($"API Key is missing or invalid.");
+                    return ChatConstants.ErrorMissingKey;
                 }
 
                 if (string.IsNullOrWhiteSpace(userMessage))
                 {
-                    return "Моля, въведете въпрос.";
+                    return ChatConstants.ErrorEmptyMessage;
                 }
 
                 // 2. Build Context (Products)
@@ -56,54 +120,47 @@ namespace GymPower.Services
                     .ToListAsync();
 
                 var productContext = new StringBuilder();
-                productContext.AppendLine("Налични продукти в магазина:");
+                productContext.AppendLine("Product context:");
                 foreach (var p in products)
                 {
                     productContext.AppendLine($"- {p.Name} ({p.Category}): {p.Price:C}. {p.Description}");
                 }
 
-                // 3. System Prompt for Llama-3
-                var systemPrompt = $@"
-You are a helpful fitness assistant for the 'GymPower' online store.
-Your goal is to help customers with fitness advice and recommend OUR products.
-RULES:
-1. ALWAYS reply in BULGARIAN language.
-2. Use the provided Product List to make specific recommendations.
-3. Be polite, concise, and professional.
-4. Do NOT recommend products not in the list.
-5. Do NOT use markdown formatting.
+                // 3. Combine Static Prompt with Dynamic Context
+                var fullSystemPrompt = $"{staticPrompt}\n\n{productContext}";
 
-PRODUCT LIST:
-{productContext}
-";
-
-                // 4. Request Payload (TogetherAI is OpenAI compatible)
+                // 4. Request Payload (Standard OpenAI Compatible)
                 var requestBody = new
                 {
                     model = model,
                     messages = new[]
                     {
-                        new { role = "system", content = systemPrompt },
+                        new { role = "system", content = fullSystemPrompt },
                         new { role = "user", content = userMessage }
                     },
                     max_tokens = 512,
-                    temperature = 0.7,
-                    top_p = 0.7,
-                    top_k = 50,
-                    repetition_penalty = 1
+                    temperature = 0.7
+                    // Removed provider-specific params like top_k to ensure cross-compatibility
                 };
 
                 // 5. Send Request
                 _httpClient.DefaultRequestHeaders.Authorization = 
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 
-                var response = await _httpClient.PostAsJsonAsync("https://api.together.xyz/v1/chat/completions", requestBody);
+                var response = await _httpClient.PostAsJsonAsync(baseUrl, requestBody);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogError($"TogetherAI API Error: {response.StatusCode} - {error}");
-                    return $"Извинете, възникна грешка при връзката с AI услугата. (Status: {response.StatusCode})";
+                    _logger.LogError($"AI API Error: {response.StatusCode} - {error}");
+                    
+                    var hint = "";
+                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        hint = " (Съвет: Уверете се, че 'Generative Language API' е включено във вашия Google Cloud Console проект)";
+                    }
+
+                    return $"Грешка от доставчика ({response.StatusCode}): {error}{hint}";
                 }
 
                 // 6. Parse Response
@@ -120,15 +177,14 @@ PRODUCT LIST:
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception in FreeAIService.GetAIResponseAsync");
-                return "Извинете, възникна техническа грешка. Моля, опитайте по-късно.";
+                return ChatConstants.ErrorServiceUnavailable;
             }
         }
 
         private string CleanText(string? input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
-            // Remove markdown
-            var cleaned = Regex.Replace(input, @"[\*\_`\#]", ""); 
+            var cleaned = Regex.Replace(input, @"[\*`\#]", ""); 
             return cleaned.Trim();
         }
     }
