@@ -32,17 +32,26 @@ namespace GymPower.Controllers
         }
 
         // ✅ Shared helper for all AddToCart requests
-        private void AddProductToCart(int id, int quantity)
+        private void AddProductToCart(int id, int quantity, int? variantId = null)
         {
             var product = _context.Products.Find(id);
             if (product == null) return;
+
+            // Get variant info if variant was selected
+            ProductVariant variant = null;
+            if (variantId.HasValue)
+            {
+                variant = _context.ProductVariants.Find(variantId.Value);
+                if (variant == null || variant.ProductId != id) return; // Invalid variant
+            }
 
             var cartJson = HttpContext.Session.GetString("Cart");
             var cart = string.IsNullOrEmpty(cartJson)
                 ? new List<CartItem>()
                 : JsonConvert.DeserializeObject<List<CartItem>>(cartJson) ?? new List<CartItem>();
 
-            var existing = cart.FirstOrDefault(x => x.ProductId == id);
+            // Match by both ProductId AND VariantId (products with different variants are separate cart items)
+            var existing = cart.FirstOrDefault(x => x.ProductId == id && x.VariantId == variantId);
             if (existing != null)
                 existing.Quantity += quantity;
             else
@@ -50,9 +59,12 @@ namespace GymPower.Controllers
                 {
                     ProductId = product.Id,
                     ProductName = product.Name,
-                    Price = product.Price,
+                    Price = product.Price + (variant?.PriceAdjustment ?? 0), // Add variant price adjustment
                     ImageUrl = product.ImageUrl,
-                    Quantity = quantity
+                    Quantity = quantity,
+                    VariantId = variant?.Id,
+                    VariantType = variant?.VariantType,
+                    VariantValue = variant?.VariantValue
                 });
 
             HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cart));
@@ -60,14 +72,25 @@ namespace GymPower.Controllers
 
         // ✅ Handles both Products page buttons (GET) and Details page form (POST)
         [HttpGet, HttpPost]
-        public IActionResult AddToCart(int id, int quantity = 1)
+        public IActionResult AddToCart(int id, int quantity = 1, int? variantId = null)
         {
             var product = _context.Products.Find(id);
             if (product == null)
                 return NotFound();
 
-            AddProductToCart(id, quantity);
-            TempData["SuccessMessage"] = $"{product.Name} беше добавен в количката!";
+            AddProductToCart(id, quantity, variantId);
+            
+            // Build message with variant info if present
+            var message = $"{product.Name} беше добавен в количката!";
+            if (variantId.HasValue)
+            {
+                var variant = _context.ProductVariants.Find(variantId.Value);
+                if (variant != null)
+                {
+                    message = $"{product.Name} ({variant.VariantType}: {variant.VariantValue}) беше добавен в количката!";
+                }
+            }
+            TempData["SuccessMessage"] = message;
 
             // 🔹 Detect AJAX call (from fetch in Details page)
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -190,6 +213,9 @@ namespace GymPower.Controllers
                 ProductId = c.ProductId,
                 Quantity = c.Quantity,
                 Price = c.Price,
+                VariantId = c.VariantId,
+                VariantType = c.VariantType,
+                VariantValue = c.VariantValue
             }).ToList();
             
             _context.Orders.Add(order);

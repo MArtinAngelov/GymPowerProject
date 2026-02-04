@@ -36,7 +36,15 @@
                                     <div class="d-flex align-items-center">
                                         <img src="@item.ImageUrl" alt="@item.ProductName" width="70"
                                              class="rounded me-3 shadow-sm" />
-                                        <span class="fw-semibold">@item.ProductName</span>
+                                        <div>
+                                            <span class="fw-semibold d-block">@item.ProductName</span>
+                                            @if (!string.IsNullOrEmpty(item.VariantType) && !string.IsNullOrEmpty(item.VariantValue))
+                                            {
+                                                <small class="badge bg-secondary mt-1">
+                                                    @item.VariantType: @item.VariantValue
+                                                </small>
+                                            }
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="fw-semibold">@GymPower.Helpers.CurrencyHelper.ToEuro(item.Price)</td>

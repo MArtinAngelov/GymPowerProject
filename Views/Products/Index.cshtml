@@ -173,6 +173,38 @@
         </div>
     </div>
 
+    <!-- 🎯 Goal Selector Button -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <a href="/GoalSelector" class="btn btn-lg btn-warning text-dark fw-bold px-5 py-3 shadow-lg" style="border-radius: 50px; font-size: 1.2rem;">
+                <i class="fas fa-bullseye me-2"></i> 🎯 Избери цел
+            </a>
+            <p class="text-muted mt-2 small">Открий продуктите, които идеално пасват на твоите цели</p>
+        </div>
+    </div>
+
+    <!-- 🔥 Recommended Stack Section (shown if user has preferences) -->
+    <div id="recommendedStackSection" class="row mb-5" style="display: none;">
+        <div class="col-12">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(135deg, #ff6b35 0%, #f7b733 100%); border-radius: 20px;">
+                <div class="card-body p-4">
+                    <h3 class="text-white fw-bold mb-3">
+                        🔥 Твоят персонален стек
+                    </h3>
+                    <p class="text-white mb-4">Тези продукти са подбрани специално за теб</p>
+                    
+                    <div id="stackProducts" class="d-flex gap-3 overflow-auto pb-3">
+                        <!-- Products will be inserted here via JavaScript -->
+                    </div>
+
+                    <button id="addStackToCart" class="btn btn-dark btn-lg w-100 mt-3 fw-bold">
+                        <i class="fas fa-cart-plus me-2"></i> Добави всички в количката
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Бутон за админ -->
     @if (Context.Session.GetString("Role") == "Admin")
     {
@@ -330,5 +362,77 @@
                 setTimeout(() => toast.remove(), 500);
             }, 2000);
         }
+
+        // 🔥 Load Recommended Stack on page load
+        async function loadRecommendedStack() {
+            try {
+                const response = await fetch('/GoalSelector/GetStack');
+                const data = await response.json();
+
+                if (data.success && data.products && data.products.length > 0) {
+                    // Show the stack section
+                    document.getElementById('recommendedStackSection').style.display = 'block';
+
+                    // Populate products
+                    const stackContainer = document.getElementById('stackProducts');
+                    stackContainer.innerHTML = '';
+
+                    data.products.forEach(product => {
+                        const productCard = `
+                            <div class="card" style="min-width: 200px; max-width: 200px; background: white; border-radius: 15px;">
+                                <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}" 
+                                     style="height: 150px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;"
+                                     onerror="this.src='/images/products/default-product.jpg'">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title text-dark fw-bold mb-2" style="font-size: 0.9rem;">${product.name}</h6>
+                                    <p class="text-warning fw-bold mb-0">${formatPrice(product.price)}</p>
+                                </div>
+                            </div>
+                        `;
+                        stackContainer.innerHTML += productCard;
+                    });
+
+                    // Handle "Add Stack to Cart" button
+                    document.getElementById('addStackToCart').addEventListener('click', async function() {
+                        this.disabled = true;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Добавяне...';
+
+                        try {
+                            const res = await fetch('/GoalSelector/AddStackToCart', { method: 'POST' });
+                            const result = await res.json();
+
+                            if (result.success) {
+                                showToast(`✅ ${result.count} продукта са добавени в количката!`);
+                                if(typeof updateCartCount === 'function') {
+                                    updateCartCount();
+                                }
+                                this.innerHTML = '<i class="fas fa-check me-2"></i> Добавени!';
+                                setTimeout(() => {
+                                    this.disabled = false;
+                                    this.innerHTML = '<i class="fas fa-cart-plus me-2"></i> Добави всички в количката';
+                                }, 2000);
+                            } else {
+                                showToast('⚠️ Грешка при добавяне.', true);
+                                this.disabled = false;
+                                this.innerHTML = '<i class="fas fa-cart-plus me-2"></i> Добави всички в количката';
+                            }
+                        } catch {
+                            showToast('⚠️ Грешка от сървъра.', true);
+                            this.disabled = false;
+                            this.innerHTML = '<i class="fas fa-cart-plus me-2"></i> Добави всички в количката';
+                        }
+                    });
+                }
+            } catch (error) {
+                console.log('No stack preferences found');
+            }
+        }
+
+        function formatPrice(price) {
+            return `€${(price * 0.51).toFixed(2)}`;
+        }
+
+        // Load stack on page load
+        loadRecommendedStack();
     </script>
 }

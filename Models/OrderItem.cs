@@ -18,6 +18,11 @@ namespace GymPower.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
 
+        // Variant tracking (nullable for backward compatibility)
+        public int? VariantId { get; set; }
+        public string? VariantType { get; set; } // e.g., "Taste", "Color"
+        public string? VariantValue { get; set; } // e.g., "Chocolate", "Black"
+
         public Order Order { get; set; }
         public Product Product { get; set; }
     }

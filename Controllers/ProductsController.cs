@@ -82,7 +82,11 @@ namespace GymPower.Controllers
         {
             if (id == null) return NotFound();
 
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products
+                .Include(p => p.Variants)
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == id);
+                
             if (product == null) return NotFound();
 
             // Load related products from the same category

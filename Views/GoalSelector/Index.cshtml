@@ -1,0 +1,348 @@
+@model GymPower.Models.UserGoalPreference
+@{
+    ViewData["Title"] = "Избери цел";
+    Layout = null; // Modal design, no layout needed
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-orange: #ff6b35;
+            --dark-bg: #1a1a1a;
+            --card-bg: #2a2a2a;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .goal-selector-container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(42, 42, 42, 0.95);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff6b35, #f7b733);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .goal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .goal-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 183, 51, 0.05));
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            border-color: var(--primary-orange);
+        }
+
+        .goal-card.selected {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(247, 183, 51, 0.2));
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 25px rgba(255, 107, 53, 0.5);
+        }
+
+        .goal-card .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .goal-card .title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .option-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 107, 53, 0.1);
+            border-color: var(--primary-orange);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, #ff6b35, #f7b733);
+            border-color: transparent;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #ff6b35, #f7b733);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @@media (max-width: 768px) {
+            .goal-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .option-group {
+                flex-direction: column;
+            }
+
+            .option-btn {
+                flex: none;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="goal-selector-container">
+        <div class="header">
+            <h1>🎯 Избери цел</h1>
+            <p>Открий добавките, които идеално пасват на твоите цели</p>
+        </div>
+
+        <!-- Goal Selection -->
+        <div class="section-title">
+            <i class="fas fa-bullseye"></i> Каква е твоята цел?
+        </div>
+        <div class="goal-grid">
+            <div class="goal-card" data-goal="Изграждане на мускулна маса">
+                <span class="icon">💪</span>
+                <span class="title">Изграждане на мускулна маса</span>
+            </div>
+            <div class="goal-card" data-goal="Отслабване">
+                <span class="icon">🔥</span>
+                <span class="title">Отслабване</span>
+            </div>
+            <div class="goal-card" data-goal="Енергия">
+                <span class="icon">⚡</span>
+                <span class="title">Енергия</span>
+            </div>
+            <div class="goal-card" data-goal="Регенерация">
+                <span class="icon">♻️</span>
+                <span class="title">Регенерация</span>
+            </div>
+        </div>
+
+        <!-- Experience Level -->
+        <div class="section-title">
+            <i class="fas fa-layer-group"></i> Ниво на опит
+        </div>
+        <div class="option-group">
+            <div class="option-btn" data-level="Beginner">
+                <i class="fas fa-seedling"></i> Начинаещ
+            </div>
+            <div class="option-btn" data-level="Intermediate">
+                <i class="fas fa-running"></i> Напреднал
+            </div>
+            <div class="option-btn" data-level="Advanced">
+                <i class="fas fa-trophy"></i> Експерт
+            </div>
+        </div>
+
+        <!-- Budget -->
+        <div class="section-title">
+            <i class="fas fa-wallet"></i> Бюджет
+        </div>
+        <div class="option-group">
+            <div class="option-btn" data-budget="Low">
+                <i class="fas fa-coins"></i> Нисък
+            </div>
+            <div class="option-btn" data-budget="Medium">
+                <i class="fas fa-money-bill-wave"></i> Среден
+            </div>
+            <div class="option-btn" data-budget="High">
+                <i class="fas fa-gem"></i> Висок
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <button class="save-btn" id="saveBtn" disabled>
+            <i class="fas fa-check-circle me-2"></i> Покажи ми продуктите
+        </button>
+    </div>
+
+    <script>
+        let selectedGoal = '@Model?.Goal';
+        let selectedLevel = '@Model?.ExperienceLevel';
+        let selectedBudget = '@Model?.Budget';
+
+        // Goal selection
+        document.querySelectorAll('.goal-card').forEach(card => {
+            if (card.dataset.goal === selectedGoal) {
+                card.classList.add('selected');
+            }
+
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedGoal = this.dataset.goal;
+                validateForm();
+            });
+        });
+
+        // Experience level selection
+        document.querySelectorAll('[data-level]').forEach(btn => {
+            if (btn.dataset.level === selectedLevel) {
+                btn.classList.add('selected');
+            }
+
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-level]').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedLevel = this.dataset.level;
+                validateForm();
+            });
+        });
+
+        // Budget selection
+        document.querySelectorAll('[data-budget]').forEach(btn => {
+            if (btn.dataset.budget === selectedBudget) {
+                btn.classList.add('selected');
+            }
+
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-budget]').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedBudget = this.dataset.budget;
+                validateForm();
+            });
+        });
+
+        // Validate form
+        function validateForm() {
+            const saveBtn = document.getElementById('saveBtn');
+            if (selectedGoal && selectedLevel && selectedBudget) {
+                saveBtn.disabled = false;
+            } else {
+                saveBtn.disabled = true;
+            }
+        }
+
+        // Save preferences
+        document.getElementById('saveBtn').addEventListener('click', async function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Запазване...';
+
+            try {
+                const response = await fetch('/GoalSelector/SavePreferences', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `goal=${encodeURIComponent(selectedGoal)}&experienceLevel=${encodeURIComponent(selectedLevel)}&budget=${encodeURIComponent(selectedBudget)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirect to products page
+                    window.location.href = '/Products';
+                } else {
+                    alert('Грешка при запазване. Опитайте отново.');
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-check-circle me-2"></i> Покажи ми продуктите';
+                }
+            } catch (error) {
+                alert('Грешка от сървъра. Опитайте отново.');
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-check-circle me-2"></i> Покажи ми продуктите';
+            }
+        });
+
+        // Validate on load
+        validateForm();
+    </script>
+</body>
+</html>

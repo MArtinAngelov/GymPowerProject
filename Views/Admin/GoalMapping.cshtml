@@ -1,0 +1,172 @@
+@{
+    ViewData["Title"] = "Goal Mapping Management";
+}
+@using Microsoft.AspNetCore.Http
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold mb-3">
+                <i class="fas fa-bullseye text-warning"></i> Product Goal Mapping
+            </h2>
+            <p class="text-muted">Configure which products are recommended for specific goals and experience levels</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Note:</strong> Changes will affect product recommendations shown to users based on their selected goals.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    <i class="fas fa-cog me-2"></i> Product Mappings
+                </div>
+                <div class="card-body">
+                    <div id="mappingContainer">
+                        <div class="text-center py-5">
+                            <i class="fas fa-spinner fa-spin fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Loading products...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <button id="saveAllMappings" class="btn btn-warning btn-lg text-dark fw-bold px-5" disabled>
+                <i class="fas fa-save me-2"></i> Save All Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const goals = ["Изграждане на мускулна маса", "Отслабване", "Енергия", "Регенерация"];
+        const experienceLevels = ["Beginner", "Intermediate", "Advanced"];
+        let mappingChanges = [];
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/Api/Products');
+                const products = await response.json();
+
+                const container = document.getElementById('mappingContainer');
+                container.innerHTML = '';
+
+                products.slice(0, 20).forEach(product => {
+                    const productCard = createProductMappingCard(product);
+                    container.innerHTML += productCard;
+                });
+
+                attachEventListeners();
+            } catch (error) {
+                document.getElementById('mappingContainer').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading products. Please refresh the page.
+                    </div>
+                `;
+            }
+        }
+
+        function createProductMappingCard(product) {
+            return `
+                <div class="card mb-3" data-product-id="${product.id}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <img src="${product.imageUrl}" class="img-fluid rounded" alt="${product.name}" 
+                                     style="max-height: 80px; object-fit: cover;" 
+                                     onerror="this.src='/images/products/default-product.jpg'">
+                            </div>
+                            <div class="col-md-9">
+                                <h5 class="fw-bold">${product.name}</h5>
+                                <p class="text-muted small mb-2">${product.category || 'No category'}</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label small fw-bold">Suitable for Goals:</label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            ${goals.map(goal => `
+                                                <div class="form-check">
+                                                    <input class="form-check-input goal-checkbox" type="checkbox" 
+                                                           value="${goal}" id="goal_${product.id}_${goal.replace(/\s/g, '_')}"
+                                                           data-product="${product.id}" data-goal="${goal}">
+                                                    <label class="form-check-label small" for="goal_${product.id}_${goal.replace(/\s/g, '_')}">
+                                                        ${goal}
+                                                    </label>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label small fw-bold">Quick Actions:</label>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-warning mark-best-choice" data-product="${product.id}">
+                                                <i class="fas fa-trophy"></i> Best Choice
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info mark-recommended" data-product="${product.id}">
+                                                <i class="fas fa-star"></i> Recommended
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('.goal-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    document.getElementById('saveAllMappings').disabled = false;
+                });
+            });
+
+            document.querySelectorAll('.mark-best-choice, .mark-recommended').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    alert('Feature coming soon: Mark this product for specific goal/experience combinations');
+                });
+            });
+        }
+
+        document.getElementById('saveAllMappings').addEventListener('click', async function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saving...';
+
+            // Collect all changes
+            const mappings = [];
+            document.querySelectorAll('.goal-checkbox:checked').forEach(checkbox => {
+                mappings.push({
+                    productId: parseInt(checkbox.dataset.product),
+                    goal: checkbox.dataset.goal,
+                    experienceLevel: "All",
+                    priority: 5,
+                    isRecommended: true,
+                    isBestChoice: false
+                });
+            });
+
+            alert(`Would save ${mappings.length} mappings. Feature in development.`);
+            
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-save me-2"></i> Save All Changes';
+        });
+
+        // Load products on page load
+        loadProducts();
+    </script>
+}

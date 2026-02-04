@@ -4,6 +4,29 @@
     ViewData["Title"] = "Детайли за продукта";
 }
 
+@functions {
+    // Helper function to map Bulgarian color names to CSS color codes
+    string GetColorCode(string colorName)
+    {
+        return colorName?.ToLower() switch
+        {
+            "черен" => "#000000",
+            "бял" => "#FFFFFF",
+            "сив" => "#808080",
+            "въглено сив" => "#36454F",
+            "син" => "#0000FF",
+            "тъмносин" => "#00008B",
+            "червен" => "#FF0000",
+            "оранжев" => "#FFA500",
+            "корал" => "#FF7F50",
+            "розов" => "#FFC0CB",
+            "лилав" => "#9370DB",
+            "люляк" => "#C8A2C8",
+            _ => "#CCCCCC" // Default gray for unknown colors
+        };
+    }
+}
+
 <section class="py-5">
     <div class="container">
         <div class="row justify-content-center align-items-start g-5">
@@ -93,9 +116,70 @@
                     }
                 </div>
 
+                <!-- 🎨 Variant Selector (if product has variants) -->
+                @if (Model.Variants != null && Model.Variants.Any())
+                {
+                    <div class="mb-4">
+                        <h5 class="fw-semibold mb-3">
+                            @(Model.Variants.First().VariantType == "Цвят" ? "🎨 Избери цвят:" : "🍫 Избери вкус:")
+                        </h5>
+                        
+                        <div id="variantSelector" class="d-flex flex-wrap gap-2">
+                            @if (Model.Variants.First().VariantType == "Цвят")
+                            {
+                                <!-- Color swatches -->
+                                @foreach (var variant in Model.Variants.Where(v => v.IsAvailable))
+                                {
+                                    <div class="variant-option color-swatch position-relative" 
+                                         data-variant-id="@variant.Id" 
+                                         data-variant-name="@variant.VariantValue"
+                                         data-stock="@variant.StockQuantity"
+                                         onclick="selectVariant(@variant.Id, '@variant.VariantValue', @variant.StockQuantity)"
+                                         title="@variant.VariantValue (@variant.StockQuantity бр.)">
+                                        <div class="color-box rounded-2 border border-2" 
+                                             style="width: 50px; height: 50px; background-color: @GetColorCode(variant.VariantValue); cursor: pointer;">
+                                        </div>
+                                        <small class="d-block text-center mt-1" style="font-size: 0.7rem;">@variant.VariantValue</small>
+                                        @if (variant.StockQuantity <= 0)
+                                        {
+                                            <span class="badge bg-danger position-absolute top-0 end-0" style="font-size: 0.6rem;">Изчерпан</span>
+                                        }
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <!-- Taste pills -->
+                                @foreach (var variant in Model.Variants.Where(v => v.IsAvailable))
+                                {
+                                    <button type="button" 
+                                            class="btn btn-outline-secondary variant-option taste-pill" 
+                                            data-variant-id="@variant.Id" 
+                                            data-variant-name="@variant.VariantValue"
+                                            data-stock="@variant.StockQuantity"
+                                            onclick="selectVariant(@variant.Id, '@variant.VariantValue', @variant.StockQuantity)"
+                                            @(variant.StockQuantity <= 0 ? "disabled" : "")>
+                                        @variant.VariantValue
+                                        @if (variant.StockQuantity <= 5 && variant.StockQuantity > 0)
+                                        {
+                                            <small class="text-warning">(Остават @variant.StockQuantity)</small>
+                                        }
+                                        else if (variant.StockQuantity <= 0)
+                                        {
+                                            <small class="text-danger">(Изчерпан)</small>
+                                        }
+                                    </button>
+                                }
+                            }
+                        </div>
+                        <small id="variantError" class="text-danger d-none mt-2">⚠️ Моля, изберете @(Model.Variants.First().VariantType.ToLower())!</small>
+                    </div>
+                }
+
                 <!-- Quantity + Add to Cart -->
-                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3">
+                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3" id="addToCartForm">
                     <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="hidden" name="variantId" id="selectedVariantId" value="" />
 
                     <div class="d-flex align-items-center bg-card rounded-3 px-3 py-2 border">
                         <label for="quantity" class="me-2 fw-semibold">Количество:</label>
@@ -210,4 +294,87 @@
         thumbnail.classList.remove('border-secondary', 'opacity-75');
         thumbnail.classList.add('border-warning', 'active-thumb');
     }
+
+    // ✅ Variant Selection Logic
+    let selectedVariant = null;
+
+    function selectVariant(variantId, variantName, stock) {
+        if (stock <= 0) return; // Don't allow selection of out-of-stock variants
+
+        selectedVariant = variantId;
+        document.getElementById('selectedVariantId').value = variantId;
+        document.getElementById('variantError').classList.add('d-none');
+
+        // Update visual selection for color swatches
+        document.querySelectorAll('.variant-option').forEach(el => {
+            el.classList.remove('selected');
+            const colorBox = el.querySelector('.color-box');
+            if (colorBox) {
+                colorBox.classList.remove('border-warning', 'border-3');
+                colorBox.classList.add('border-2');
+            }
+        });
+
+        const selected = document.querySelector(`[data-variant-id="${variantId}"]`);
+        selected.classList.add('selected');
+        
+        const selectedColorBox = selected.querySelector('.color-box');
+        if (selectedColorBox) {
+            selectedColorBox.classList.remove('border-2');
+            selectedColorBox.classList.add('border-warning', 'border-3');
+        }
+
+        // Update visual selection for taste pills
+        document.querySelectorAll('.taste-pill').forEach(btn => {
+            btn.classList.remove('btn-warning', 'fw-bold');
+            btn.classList.add('btn-outline-secondary');
+        });
+        
+        if (selected.classList.contains('taste-pill')) {
+            selected.classList.remove('btn-outline-secondary');
+            selected.classList.add('btn-warning', 'fw-bold');
+        }
+
+        // Update max quantity based on variant stock
+        const quantityInput = document.getElementById('quantity');
+        if (quantityInput) {
+            quantityInput.max = stock;
+            if (parseInt(quantityInput.value) > stock) {
+                quantityInput.value = stock;
+            }
+        }
+    }
+
+    // Form validation
+    document.getElementById('addToCartForm')?.addEventListener('submit', function(e) {
+        const hasVariants = document.getElementById('variantSelector');
+        if (hasVariants && !selectedVariant) {
+            e.preventDefault();
+            document.getElementById('variantError').classList.remove('d-none');
+            document.getElementById('variantSelector').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+        }
+    });
 </script>
+
+<style>
+    .variant-option {
+        transition: all 0.2s ease;
+    }
+    
+    .color-swatch:hover .color-box {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .taste-pill {
+        border-radius: 20px;
+        padding: 8px 16px;
+        transition: all 0.2s ease;
+    }
+    
+    .taste-pill:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+</style>

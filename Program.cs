@@ -13,6 +13,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<GymPower.Services.FreeAIService>();
 builder.Services.AddScoped<GymPower.Services.RecommendationService>();
 builder.Services.AddScoped<GymPower.Services.InsightsService>();
+builder.Services.AddScoped<GymPower.Services.GoalSelectorService>();
 
 
 // ✅ Database connection

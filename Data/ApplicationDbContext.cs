@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GymPower.Models;
+using System.Collections.Generic;
 
 namespace GymPower.Data
 {
@@ -16,6 +17,10 @@ namespace GymPower.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<UserGoalPreference> UserGoalPreferences { get; set; }
+        public DbSet<ProductGoalMapping> ProductGoalMappings { get; set; }
+        public DbSet<RecommendedStack> RecommendedStacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -379,6 +384,173 @@ namespace GymPower.Data
             }
 
             modelBuilder.Entity<ProductImage>().HasData(productImages);
+
+            // ✅ Seed ProductVariants
+            var variants = new List<ProductVariant>();
+            int variantId = 1;
+
+            // Helper to add taste variants for supplement products
+            void AddTasteVariants(int productId, params (string taste, int stock)[] tastes)
+            {
+                foreach (var (taste, stock) in tastes)
+                {
+                    variants.Add(new ProductVariant
+                    {
+                        Id = variantId++,
+                        ProductId = productId,
+                        VariantType = "Вкус",
+                        VariantValue = taste,
+                        PriceAdjustment = 0,
+                        StockQuantity = stock,
+                        IsAvailable = true
+                    });
+                }
+            }
+
+            // Helper to add color variants for clothing products
+            void AddColorVariants(int productId, params (string color, int stock)[] colors)
+            {
+                foreach (var (color, stock) in colors)
+                {
+                    variants.Add(new ProductVariant
+                    {
+                        Id = variantId++,
+                        ProductId = productId,
+                        VariantType = "Цвят",
+                        VariantValue = color,
+                        PriceAdjustment = 0,
+                        StockQuantity = stock,
+                        IsAvailable = true
+                    });
+                }
+            }
+
+            // Supplements with Taste Variants
+            AddTasteVariants(1, ("Шоколад", 20), ("Ванилия", 15), ("Ягода", 15)); // Суроватъчен протеин
+            AddTasteVariants(2, ("Шоколад", 15), ("Ванилия", 10), ("Банан", 5)); // Mass Gainer
+            AddTasteVariants(3, ("Портокал", 20), ("Лимон", 20), ("Ябълка", 20)); // BCAA Complex
+            AddTasteVariants(4, ("Шоколад", 15), ("Ванилия", 15), ("Кокос", 10)); // Casein Protein
+            AddTasteVariants(8, ("Неутрален", 30), ("Лимон", 25)); // Glutamine Recovery
+            AddTasteVariants(11, ("Червени плодове", 25), ("Тропически", 25), ("Енергийна напитка", 20)); // Energy Rush
+            AddTasteVariants(12, ("Портокал", 22), ("Грейпфрут", 22), ("Ябълка", 21)); // Pump Formula
+            AddTasteVariants(13, ("Енергийна напитка", 35), ("Кола", 35), ("Лимон", 30)); // Focus Shot
+            AddTasteVariants(23, ("Шоколад", 25), ("Ванилия", 20), ("Карамел", 15)); // True Whey Protein
+            AddTasteVariants(24, ("Шоколад", 20), ("Ванилия", 20), ("Ягода", 15)); // Hydro Whey Zero
+            AddTasteVariants(25, ("Ванилия", 20), ("Шоколад", 15), ("Неутрален", 15)); // Pure IsoWhey
+            AddTasteVariants(26, ("Шоколад", 15), ("Ванилия", 15), ("Бисквити и крем", 10)); // Micellar Casein
+            AddTasteVariants(28, ("Лимон", 25), ("Портокал", 25), ("Диня", 20)); // BCAA Instant
+            AddTasteVariants(29, ("Тропически", 22), ("Портокал", 22), ("Лимон", 21)); // EAA Mega Stack
+            AddTasteVariants(30, ("Лимон", 20), ("Грейпфрут", 20), ("Неутрален", 20)); // Citrulline Malate Pump
+            AddTasteVariants(31, ("Неутрален", 25), ("Лимон", 25)); // Arginine AAKG
+            AddTasteVariants(32, ("Боровинка", 15), ("Тропически", 15), ("Лимон", 10)); // Focus Power Formula
+            AddTasteVariants(33, ("Портокал", 20), ("Грейпфрут", 18), ("Ябълка", 17)); // Pump 3D
+            AddTasteVariants(34, ("Синя малина", 15), ("Червени плодове", 15), ("Енергийна напитка", 15)); // Black Blood NO Booster
+            AddTasteVariants(35, ("Енергийна напитка", 22), ("Портокал", 22), ("Манго", 21)); // Nitro Shot Energy
+            AddTasteVariants(36, ("Червени плодове", 25), ("Синя малина", 25), ("Портокал", 20)); // Thor PreWorkout
+            AddTasteVariants(46, ("Шоколад и фъстъци", 50), ("Карамел", 50), ("Кокос", 50)); // Protein Bar Deluxe
+
+            // Clothing with Color Variants
+            AddColorVariants(19, ("Черен", 15), ("Бял", 10), ("Син", 8), ("Сив", 7)); // GymPower Тениска
+            AddColorVariants(20, ("Черен", 15), ("Сив", 10), ("Тъмносин", 10)); // GymPower Суичър
+            AddColorVariants(21, ("Черен", 25), ("Червен", 25), ("Син", 20)); // GymPower Ръкавици
+            AddColorVariants(22, ("Черен", 20), ("Червен", 20), ("Син", 20)); // GymPower Ластици
+            AddColorVariants(42, ("Оранжев", 30), ("Черен", 30), ("Син", 30)); // Resistance Band
+            AddColorVariants(43, ("Черен", 25), ("Сив", 25), ("Червен", 25)); // Training Gloves Pro
+            AddColorVariants(44, ("Черен", 35), ("Оранжев", 35)); // Lifting Straps
+            AddColorVariants(45, ("Черен", 40), ("Бял", 40), ("Оранжев", 40)); // Shaker Bottle Elite
+            AddColorVariants(47, ("Въглено сив", 15), ("Черен", 15), ("Тъмносин", 10)); // GymPower Joggers
+            AddColorVariants(48, ("Черен", 20), ("Бял", 15), ("Сив", 15)); // Performance T-Shirt Black
+            AddColorVariants(49, ("Бял", 20), ("Черен", 15), ("Сив", 15)); // Training Tank Top White
+            AddColorVariants(50, ("Оранжев", 12), ("Черен", 12), ("Сив", 11)); // GymPower Hoodie Orange Edition
+            AddColorVariants(51, ("Черен", 20), ("Тъмносин", 15), ("Сив", 15)); // Shorts Flex Fit
+            AddColorVariants(52, ("Корал", 15), ("Черен", 15), ("Лилав", 15)); // Seamless Leggings Coral
+            AddColorVariants(53, ("Черен", 20), ("Син", 20), ("Розов", 20)); // Sport Bra Power Fit
+            AddColorVariants(54, ("Черен", 20), ("Бял", 18), ("Сив", 17)); // Crop Top Black Edition
+            AddColorVariants(55, ("Розов", 15), ("Лилав", 15), ("Син", 15)); // High Waist Shorts Pink
+            AddColorVariants(56, ("Люляк", 15), ("Сив", 13), ("Розов", 12)); // Oversized Hoodie Lilac
+
+            modelBuilder.Entity<ProductVariant>().HasData(variants);
+
+            // ✅ Seed ProductGoalMappings (mapping products to goals based on categories)
+            var goalMappings = new List<ProductGoalMapping>();
+            int mappingId = 1;
+
+            // Helper to create mappings
+            void AddMapping(int productId, string goal, string expLevel = "All", int priority = 5, bool isBest = false, bool isRec = true)
+            {
+                goalMappings.Add(new ProductGoalMapping
+                {
+                    Id = mappingId++,
+                    ProductId = productId,
+                    Goal = goal,
+                    ExperienceLevel = expLevel,
+                    Priority = priority,
+                    IsBestChoice = isBest,
+                    IsRecommended = isRec
+                });
+            }
+
+            // Muscle Building Products
+            AddMapping(1, "Изграждане на мускулна маса", "Beginner", 9, true, true); // Whey
+            AddMapping(1, "Изграждане на мускулна маса", "Intermediate", 7, false, true);
+            AddMapping(2, "Изграждане на мускулна маса", "Beginner", 6, false, true); // Mass Gainer
+            AddMapping(3, "Изграждане на мускулна маса", "Intermediate", 8, false, true); // BCAA
+            AddMapping(3, "Изграждане на мускулна маса", "Advanced", 7, false, true);
+            AddMapping(4, "Изграждане на мускулна маса", "Advanced", 6, false, true); // Casein
+            AddMapping(23, "Изграждане на мускулна маса", "Intermediate", 8, true, true); // True Whey
+            AddMapping(24, "Изграждане на мускулна маса", "Advanced", 9, false, true); // Hydro Whey
+            AddMapping(25, "Изграждане на мускулна маса", "Advanced", 10, true, true); // Pure IsoWhey
+            AddMapping(27, "Изграждане на мускулна маса", "Beginner", 8, false, true); // Creatine
+            AddMapping(27, "Изграждане на мускулна маса", "Intermediate", 9, true, true);
+            AddMapping(27, "Изграждане на мускулна маса", "Advanced", 8, false, true);
+
+            // Fat Loss Products
+            AddMapping(5, "Отслабване", "All", 9, true, true); // Fat Burner
+            AddMapping(6, "Отслабване", "All", 9, true, true); // L-Carnitine
+            AddMapping(7, "Отслабване", "Beginner", 6, false, true); // Detox
+            AddMapping(1, "Отслабване", "All", 7, false, true); // Protein for lean mass
+            AddMapping(3, "Отслабване", "Intermediate", 7, false, true); // BCAA
+
+            // Energy Products
+            AddMapping(11, "Енергия", "All", 8, false, true); // Energy Rush
+            AddMapping(36, "Енергия", "Intermediate", 10, true, true); // Thor PreWorkout
+            AddMapping(34, "Енергия", "Advanced", 9, true, true); // Black Blood
+            AddMapping(35, "Енергия", "Beginner", 7, false, true); // Nitro Shot
+            AddMapping(3, "Енергия", "All", 6, false, true); // BCAA for endurance
+            AddMapping(12, "Енергия", "All", 7, false, true); // Pump Formula
+            AddMapping(13, "Енергия", "All", 7, false, true); // Focus Shot
+
+            // Recovery/Regeneration Products
+            AddMapping(8, "Регенерация", "All", 9, true, true); // Glutamine
+            AddMapping(9, "Регенерация", "All", 8, true, true); // Omega-3
+            AddMapping(10, "Регенерация", "All", 8, false, true); // Collagen
+            AddMapping(26, "Регенерация", "All", 7, false, true); // Casein
+            AddMapping(15, "Регенерация", "Beginner", 7, false, true); // Multivitamin
+            AddMapping(29, "Регенерация", "Advanced", 8, false, true); // EAA
+
+            modelBuilder.Entity<ProductGoalMapping>().HasData(goalMappings);
+
+            // ✅ Seed RecommendedStacks
+            modelBuilder.Entity<RecommendedStack>().HasData(
+                // Muscle Building Stacks
+                new RecommendedStack { Id = 1, Name = "Начинаещ мускулен пакет", Goal = "Изграждане на мускулна маса", ExperienceLevel = "Beginner", Budget = "All", ProductIds = "1,27,15", DisplayOrder = 1, IsActive = true },
+                new RecommendedStack { Id = 2, Name = "Напреднал мускулен пакет", Goal = "Изграждане на мускулна маса", ExperienceLevel = "Intermediate", Budget = "All", ProductIds = "23,3,27", DisplayOrder = 2, IsActive = true },
+                new RecommendedStack { Id = 3, Name = "Експертен мускулен пакет", Goal = "Изграждане на мускулна маса", ExperienceLevel = "Advanced", Budget = "All", ProductIds = "25,29,33", DisplayOrder = 3, IsActive = true },
+                
+                // Fat Loss Stacks
+                new RecommendedStack { Id = 4, Name = "Начинаещ пакет за отслабване", Goal = "Отслабване", ExperienceLevel = "Beginner", Budget = "All", ProductIds = "5,6,1", DisplayOrder = 4, IsActive = true },
+                new RecommendedStack { Id = 5, Name = "Напреднал пакет за отслабване", Goal = "Отслабване", ExperienceLevel = "Intermediate", Budget = "All", ProductIds = "5,6,3", DisplayOrder = 5, IsActive = true },
+                new RecommendedStack { Id = 6, Name = "Експертен пакет за отслабване", Goal = "Отслабване", ExperienceLevel = "Advanced", Budget = "All", ProductIds = "5,6,3,7", DisplayOrder = 6, IsActive = true },
+                
+                // Energy Stacks
+                new RecommendedStack { Id = 7, Name = "Начинаещ енергиен пакет", Goal = "Енергия", ExperienceLevel = "Beginner", Budget = "All", ProductIds = "35,3,11", DisplayOrder = 7, IsActive = true },
+                new RecommendedStack { Id = 8, Name = "Напреднал енергиен пакет", Goal = "Енергия", ExperienceLevel = "Intermediate", Budget = "All", ProductIds = "36,3,12", DisplayOrder = 8, IsActive = true },
+                new RecommendedStack { Id = 9, Name = "Експертен енергиен пакет", Goal = "Енергия", ExperienceLevel = "Advanced", Budget = "All", ProductIds = "34,36,3", DisplayOrder = 9, IsActive = true },
+                
+                // Recovery Stacks
+                new RecommendedStack { Id = 10, Name = "Пакет за възстановяване", Goal = "Регенерация", ExperienceLevel = "All", Budget = "All", ProductIds = "8,9,10", DisplayOrder = 10, IsActive = true },
+                new RecommendedStack { Id = 11, Name = "Напреднал пакет за регенерация", Goal = "Регенерация", ExperienceLevel = "Advanced", Budget = "All", ProductIds = "8,9,29", DisplayOrder = 11, IsActive = true }
+            );
         }
     }
 }

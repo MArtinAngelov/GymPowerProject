@@ -12,6 +12,11 @@ namespace GymPower.Models
         public int Quantity { get; set; }
         public string ImageUrl { get; set; }
 
+        // Variant tracking (nullable for backward compatibility)
+        public int? VariantId { get; set; }
+        public string? VariantType { get; set; } // e.g., "Taste", "Color"
+        public string? VariantValue { get; set; } // e.g., "Chocolate", "Black"
+
         public decimal TotalPrice => Price * Quantity;
     }
 }

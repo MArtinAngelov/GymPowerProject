@@ -31,5 +31,6 @@ namespace GymPower.Models
 
         public string? LongDescription { get; set; }
         public List<ProductImage> Images { get; set; } = new List<ProductImage>();
+        public List<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
     }
 }
