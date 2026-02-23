@@ -4,83 +4,86 @@
     ViewData["Title"] = "Регистрация";
 }
 
-<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="col-md-6">
-        <div class="card shadow-lg" style="background: rgba(26, 26, 46, 0.95); border: 1px solid var(--secondary); border-radius: 20px; backdrop-filter: blur(10px);">
-            <div class="card-body p-5">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold text-uppercase" style="letter-spacing: 2px;">
-                        <i class="fas fa-user-plus text-info"></i> Нов Профил
-                    </h2>
-                    <p class="text-white-50">Присъедини се към отбора на GymPower</p>
-                </div>
+<div class="auth-page-wrapper">
+    <!-- Background Sides -->
+    <div class="auth-bg-side auth-bg-left"></div>
+    <div class="auth-bg-side auth-bg-right"></div>
 
-                <!-- Форма за регистрация -->
-                <form asp-action="Register">
-                    
-                    <div class="form-floating mb-3">
-                        <input asp-for="Username" class="form-control" id="regUsername" placeholder="Потребителско име" 
-                               style="background: #0d0d1a; color: white; border: 1px solid #444;" />
-                        <label for="regUsername" class="text-white-50">👤 Потребителско име</label>
+    <div class="auth-card-container" style="max-width: 600px;">
+        <div class="auth-glass-card">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-uppercase" style="letter-spacing: 3px; font-size: 2.2rem;">
+                    <i class="fas fa-user-plus text-warning me-2"></i> Нов Профил
+                </h2>
+                <div class="h5 text-white-50 mt-2 fw-light">Присъедини се към GymPower</div>
+            </div>
+
+            <form asp-action="Register" class="row g-3">
+                <div class="col-md-12">
+                    <div class="form-floating auth-floating-label">
+                        <input asp-for="Username" class="form-control" id="regUsername" placeholder="Потребителско име" required />
+                        <label for="regUsername">👤 Потребителско име</label>
                         <span asp-validation-for="Username" class="text-danger small"></span>
                     </div>
+                </div>
 
-                    <div class="form-floating mb-3">
-                        <input asp-for="Email" class="form-control" id="regEmail" placeholder="Имейл" 
-                               style="background: #0d0d1a; color: white; border: 1px solid #444;" />
-                        <label for="regEmail" class="text-white-50">📧 Имейл</label>
+                <div class="col-md-12">
+                    <div class="form-floating auth-floating-label">
+                        <input asp-for="Email" class="form-control" id="regEmail" placeholder="Имейл" required />
+                        <label for="regEmail">📧 Имейл</label>
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
+                </div>
 
-                    <div class="form-floating mb-3">
-                        <input asp-for="Password" type="password" class="form-control" id="regPass" placeholder="Парола" 
-                               style="background: #0d0d1a; color: white; border: 1px solid #444;" />
-                        <label for="regPass" class="text-white-50">🔒 Парола</label>
+                <div class="col-md-6">
+                    <div class="form-floating auth-floating-label">
+                        <input asp-for="Password" type="password" class="form-control" id="regPass" placeholder="Парола" required />
+                        <label for="regPass">🔒 Парола</label>
                         <span asp-validation-for="Password" class="text-danger small"></span>
                     </div>
+                </div>
 
-                    <div class="form-floating mb-4">
-                        <select asp-for="FitnessGoal" class="form-control" id="regGoal" 
-                                style="background: #0d0d1a; color: white; border: 1px solid #444;">
+                <div class="col-md-6">
+                    <div class="form-floating auth-floating-label">
+                        <input type="password" class="form-control" id="regConfirmPass" name="ConfirmPassword" placeholder="Потвърди парола" required />
+                        <label for="regConfirmPass">🔒 Потвърди парола</label>
+                        <span id="confirmPasswordError" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-floating auth-floating-label">
+                        <select asp-for="FitnessGoal" class="form-select" id="regGoal">
                             <option value="MassGain">💪 Покачване на мускулна маса</option>
                             <option value="WeightLoss">🥗 Отслабване</option>
                             <option value="Maintenance">⚖️ Поддържане</option>
                         </select>
-                        <label for="regGoal" class="text-white-50">🎯 Фитнес цел</label>
+                        <label for="regGoal">🎯 Фитнес цел</label>
                         <span asp-validation-for="FitnessGoal" class="text-danger small"></span>
                     </div>
-
-                    <button type="submit" class="btn btn-lg w-100 fw-bold text-white shadow-sm" 
-                            style="background: linear-gradient(135deg, #2ec4b6 0%, #20a094 100%); border-radius: 50px; transition: transform 0.3s;">
-                        ✅ РЕГИСТРАЦИЯ
-                    </button>
-                </form>
-
-                <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
-
-                <!-- Линк към вход -->
-                <div class="text-center">
-                    <p class="text-white-50 mb-2">Вече имаш акаунт?</p>
-                    <a asp-action="Login" class="text-info fw-bold text-decoration-none">
-                        🔑 Влез в профила си
-                    </a>
                 </div>
+
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-auth btn-lg w-100">
+                        Регистрирай се <i class="fas fa-check-circle ms-2 small"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-4 pt-4 border-top border-secondary border-opacity-25 text-center">
+                <p class="text-white-50 mb-2">Вече имаш акаунт?</p>
+                <a asp-action="Login" class="text-warning fw-bold text-decoration-none h6">
+                    Влез в профила си <i class="fas fa-sign-in-alt ms-1"></i>
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .form-control:focus {
-        background: #1a1a2e;
-        color: white;
-        border-color: var(--secondary);
-        box-shadow: 0 0 10px rgba(46, 196, 182, 0.3);
-    }
-    button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 5px 15px rgba(46, 196, 182, 0.4);
-    }
+    /* Prevent default layout padding if any */
+    body { padding-top: 0 !important; }
+    main.container { max-width: 100% !important; padding: 0 !important; }
 </style>
 
 @section Scripts {
@@ -88,6 +91,10 @@
         document.addEventListener("DOMContentLoaded", function () {
             const usernameInput = document.getElementById("regUsername");
             const emailInput = document.getElementById("regEmail");
+            const passwordInput = document.getElementById("regPass");
+            const confirmPasswordInput = document.getElementById("regConfirmPass");
+            const confirmPasswordError = document.getElementById("confirmPasswordError");
+            const submitButton = document.querySelector("button[type='submit']");
 
             async function validateField(field, type) {
                 const value = field.value;
@@ -132,6 +139,45 @@
 
             usernameInput.addEventListener("blur", () => validateField(usernameInput, "username"));
             emailInput.addEventListener("blur", () => validateField(emailInput, "email"));
+
+            // Password matching validation
+            function validatePasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (confirmPassword.length === 0) {
+                    confirmPasswordInput.style.borderColor = '#444';
+                    confirmPasswordError.textContent = '';
+                    return true;
+                }
+
+                if (password === confirmPassword) {
+                    confirmPasswordInput.style.borderColor = '#2ec4b6';
+                    confirmPasswordError.style.color = '#2ec4b6';
+                    confirmPasswordError.innerHTML = '<i class="fas fa-check-circle"></i> Паролите съвпадат';
+                    return true;
+                } else {
+                    confirmPasswordInput.style.borderColor = '#ff6b35';
+                    confirmPasswordError.style.color = '#ff6b35';
+                    confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Паролите не съвпадат';
+                    return false;
+                }
+            }
+
+            confirmPasswordInput.addEventListener("input", validatePasswordMatch);
+            passwordInput.addEventListener("input", () => {
+                if (confirmPasswordInput.value.length > 0) {
+                    validatePasswordMatch();
+                }
+            });
+
+            // Prevent form submission if passwords don't match
+            document.querySelector("form").addEventListener("submit", function(e) {
+                if (!validatePasswordMatch() && confirmPasswordInput.value.length > 0) {
+                    e.preventDefault();
+                    confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Моля, уверете се, че паролите съвпадат';
+                }
+            });
         });
     </script>
 }

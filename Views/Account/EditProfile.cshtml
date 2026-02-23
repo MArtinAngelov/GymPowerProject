@@ -62,8 +62,16 @@
                     <label class="form-label text-light">Парола (по избор):</label>
                     <!-- Make client-side validation ignore Required on edit -->
                     <input type="password" asp-for="Password" data-val="false"
-                           class="form-control bg-dark text-white border-secondary"
+                           class="form-control bg-dark text-white border-secondary" id="editPassword"
                            placeholder="Остави празно, ако не искаш да я променяш" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Потвърди парола (по избор):</label>
+                    <input type="password" name="ConfirmPassword" data-val="false"
+                           class="form-control bg-dark text-white border-secondary" id="editConfirmPassword"
+                           placeholder="Остави празно, ако не променяш паролата" />
+                    <span id="confirmPasswordError" class="text-danger small"></span>
                 </div>
 
                 <button type="submit"
@@ -79,3 +87,63 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.getElementById("editPassword");
+            const confirmPasswordInput = document.getElementById("editConfirmPassword");
+            const confirmPasswordError = document.getElementById("confirmPasswordError");
+
+            function validatePasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                // If both are empty, it's valid (no password change)
+                if (password.length === 0 && confirmPassword.length === 0) {
+                    confirmPasswordInput.style.borderColor = '';
+                    confirmPasswordError.textContent = '';
+                    return true;
+                }
+
+                // If password is entered but confirm is empty
+                if (password.length > 0 && confirmPassword.length === 0) {
+                    confirmPasswordInput.style.borderColor = '#444';
+                    confirmPasswordError.textContent = '';
+                    return true;
+                }
+
+                // Check if passwords match
+                if (password === confirmPassword) {
+                    confirmPasswordInput.style.borderColor = '#2ec4b6';
+                    confirmPasswordError.style.color = '#2ec4b6';
+                    confirmPasswordError.innerHTML = '<i class="fas fa-check-circle"></i> Паролите съвпадат';
+                    return true;
+                } else {
+                    confirmPasswordInput.style.borderColor = '#ff6b35';
+                    confirmPasswordError.style.color = '#ff6b35';
+                    confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Паролите не съвпадат';
+                    return false;
+                }
+            }
+
+            confirmPasswordInput.addEventListener("input", validatePasswordMatch);
+            passwordInput.addEventListener("input", () => {
+                if (confirmPasswordInput.value.length > 0) {
+                    validatePasswordMatch();
+                }
+            });
+
+            // Prevent form submission if passwords don't match
+            document.querySelector("form").addEventListener("submit", function(e) {
+                // Only validate if user is trying to change password
+                if (passwordInput.value.length > 0 || confirmPasswordInput.value.length > 0) {
+                    if (!validatePasswordMatch()) {
+                        e.preventDefault();
+                        confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Моля, уверете се, че паролите съвпадат';
+                    }
+                }
+            });
+        });
+    </script>
+}

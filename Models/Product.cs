@@ -9,20 +9,20 @@ namespace GymPower.Models
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; } // replaces 'Name'
+        public string Name { get; set; } = string.Empty;
 
         [Required]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(10,2)")]
         [Required]
         public decimal Price { get; set; }
 
         [Required]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
         [Required]
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
 
         public int StockQuantity { get; set; } = 0;
         public bool IsRecommendedForMassGain { get; set; } = false;

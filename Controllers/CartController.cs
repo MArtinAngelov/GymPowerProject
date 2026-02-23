@@ -195,20 +195,43 @@ namespace GymPower.Controllers
             var sessionUsername = HttpContext.Session.GetString("Username");
             var sessionEmail = HttpContext.Session.GetString("Email");
 
-            // ✅ Create order
-            var order = new Order
-            {
-                CustomerName = !string.IsNullOrEmpty(sessionUsername) ? sessionUsername : FullName,
-                Email = !string.IsNullOrEmpty(sessionEmail) ? sessionEmail : Email,
-                Address = Address,
-                Phone = Phone,
-                PaymentMethod = PaymentMethod,
-                TotalPrice = total,
-                OrderDate = DateTime.Now,
-                Status = "Обработва се"
-            };
-            // ✅ 4. Create related OrderItems
-            order.OrderItems = cart.Select(c => new OrderItem
+            // ✅ 3. Validate Stock and Create Order
+    foreach (var item in cart)
+    {
+        var product = _context.Products.FirstOrDefault(p => p.Id == item.ProductId);
+        if (product == null) continue;
+
+        if (product.StockQuantity < item.Quantity)
+        {
+            TempData["ErrorMessage"] = $"Няма достатъчно количество от {product.Name}. Налични: {product.StockQuantity}";
+            return RedirectToAction("Index");
+        }
+    }
+
+    // ✅ 4. Create Order
+    var order = new Order
+    {
+        CustomerName = !string.IsNullOrEmpty(sessionUsername) ? sessionUsername : FullName,
+        Email = !string.IsNullOrEmpty(sessionEmail) ? sessionEmail : Email,
+        Address = Address,
+        Phone = Phone,
+        PaymentMethod = PaymentMethod,
+        TotalPrice = total,
+        OrderDate = DateTime.Now,
+        Status = "Обработва се"
+    };
+
+    // ✅ 5. Create OrderItems and Decrement Stock
+    order.OrderItems = new List<OrderItem>();
+    foreach (var c in cart)
+    {
+        var product = _context.Products.FirstOrDefault(p => p.Id == c.ProductId);
+        if (product != null)
+        {
+            // Decrement stock
+            product.StockQuantity -= c.Quantity;
+
+            order.OrderItems.Add(new OrderItem
             {
                 ProductId = c.ProductId,
                 Quantity = c.Quantity,
@@ -216,11 +239,13 @@ namespace GymPower.Controllers
                 VariantId = c.VariantId,
                 VariantType = c.VariantType,
                 VariantValue = c.VariantValue
-            }).ToList();
-            
-            _context.Orders.Add(order);
-            TempData["LastOrderEmail"] = order.Email;
-            _context.SaveChanges();
+            });
+        }
+    }
+    
+    _context.Orders.Add(order);
+    TempData["LastOrderEmail"] = order.Email;
+    _context.SaveChanges();
 
             // Save order info to TempData for success page
             TempData["OrderId"] = order.Id.ToString();

@@ -23,7 +23,7 @@ namespace GymPower.Models
         public string? VariantType { get; set; } // e.g., "Taste", "Color"
         public string? VariantValue { get; set; } // e.g., "Chocolate", "Black"
 
-        public Order Order { get; set; }
-        public Product Product { get; set; }
+        public Order Order { get; set; } = null!;
+        public Product Product { get; set; } = null!;
     }
 }

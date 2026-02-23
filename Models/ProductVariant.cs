@@ -26,6 +26,6 @@ namespace GymPower.Models
         public bool IsAvailable { get; set; } = true;
 
         // Navigation property
-        public Product Product { get; set; }
+        public Product Product { get; set; } = null!;
     }
 }

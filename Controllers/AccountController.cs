@@ -58,8 +58,14 @@ namespace GymPower.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(User user)
+        public IActionResult Register(User user, string confirmPassword)
         {
+            // Validate password confirmation
+            if (user.Password != confirmPassword)
+            {
+                ModelState.AddModelError("Password", "Паролите не съвпадат");
+            }
+
             if (_context.Users.Any(u => u.Username == user.Username))
             {
                 ModelState.AddModelError("Username", "Username already exists");
@@ -109,7 +115,7 @@ public IActionResult EditProfile()
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EditProfile(AppUser form)
+    public IActionResult EditProfile(AppUser form, string confirmPassword)
     {
         string username = Convert.ToString(HttpContext.Session.GetString("Username"));
         if (string.IsNullOrEmpty(username))
@@ -123,6 +129,14 @@ public IActionResult EditProfile()
         if (string.IsNullOrWhiteSpace(form.Password))
         {
             ModelState.Remove(nameof(AppUser.Password));
+        }
+        else
+        {
+            // Validate password confirmation if password is being changed
+            if (form.Password != confirmPassword)
+            {
+                ModelState.AddModelError("Password", "Паролите не съвпадат");
+            }
         }
 
         if (!ModelState.IsValid)
