@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http
 @model GymPower.Models.Product
 @{
     ViewData["Title"] = "Детайли за продукта";
@@ -36,6 +36,7 @@
                 <!-- Main Image -->
                 <div class="card border-0 overflow-hidden shadow-sm mb-3">
                     <img id="mainImage" src="@Model.ImageUrl"
+                         onerror="this.onerror=null;this.src='/images/default-product.jpg';"
                          alt="@Model.Name"
                          class="img-fluid w-100"
                          style="object-fit: cover; height: 500px; transition: opacity 0.3s ease-in-out;">
@@ -49,7 +50,7 @@
                         <div class="cursor-pointer border border-2 border-warning rounded overflow-hidden" 
                              style="width: 80px; height: 80px; min-width: 80px;"
                              onclick="changeImage('@Model.ImageUrl', this)">
-                            <img src="@Model.ImageUrl" class="w-100 h-100" style="object-fit: cover;">
+                            <img src="@Model.ImageUrl" onerror="this.onerror=null;this.src='/images/default-product.jpg';" class="w-100 h-100" style="object-fit: cover;">
                         </div>
 
                         <!-- Extra Images -->
@@ -60,7 +61,7 @@
                                  onmouseover="this.classList.remove('opacity-75'); this.classList.add('border-warning');"
                                  onmouseout="if(!this.classList.contains('active-thumb')) { this.classList.add('opacity-75'); this.classList.remove('border-warning'); }"
                                  onclick="changeImage('@img.ImageUrl', this)">
-                                <img src="@img.ImageUrl" class="w-100 h-100" style="object-fit: cover;">
+                                <img src="@img.ImageUrl" onerror="this.onerror=null;this.src='/images/default-product.jpg';" class="w-100 h-100" style="object-fit: cover;">
                             </div>
                         }
                     </div>
@@ -217,6 +218,7 @@
                     <div class="col-md-4 col-lg-3">
                         <div class="card h-100 shadow-sm text-center border-0">
                             <img src="@related.ImageUrl" class="card-img-top" alt="@related.Name"
+                                 onerror="this.onerror=null;this.src='/images/default-product.jpg';"
                                  style="height:200px; object-fit:cover;">
                             <div class="card-body">
                                 <h6 class="fw-bold card-title">@related.Name</h6>
@@ -236,12 +238,13 @@
             <div class="mt-5 pt-4 border-top">
                 <h3 class="text-center fw-bold mb-4 text-warning">🔁 Препоръчано за теб</h3>
                 <div class="row g-4 justify-content-center">
-                    @foreach (var rec in ViewBag.RecommendedProducts as IEnumerable<GymPower.Models.Product>)
+                    @foreach (var rec in ViewBag.RecommendedProducts as IEnumerable<GymPower.Models.Product> ?? Enumerable.Empty<GymPower.Models.Product>())
                     {
                         <div class="col-md-4 col-lg-3">
                             <div class="card h-100 shadow-lg text-center border-warning">
                                 <div class="position-relative">
                                     <img src="@rec.ImageUrl" class="card-img-top" alt="@rec.Name"
+                                         onerror="this.onerror=null;this.src='/images/default-product.jpg';"
                                          style="height:200px; object-fit:cover;">
                                     <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">💡 Топ избор</span>
                                 </div>

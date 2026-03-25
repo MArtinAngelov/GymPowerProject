@@ -192,15 +192,15 @@ namespace GymPower.Services
     public class BestProductDto
     {
         public int ProductId { get; set; }
-        public string Name { get; set; }
-        public string ImageUrl { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
         public int QuantitySold { get; set; }
         public decimal RevenueCode { get; set; }
     }
 
     public class CategoryStatsDto
     {
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
         public decimal Revenue { get; set; }
     }
 }

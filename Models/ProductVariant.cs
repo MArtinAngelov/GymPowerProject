@@ -12,11 +12,11 @@ namespace GymPower.Models
 
         [Required]
         [MaxLength(50)]
-        public string VariantType { get; set; } // e.g., "Taste", "Color"
+        public string VariantType { get; set; } = string.Empty; // e.g., "Taste", "Color"
 
         [Required]
         [MaxLength(100)]
-        public string VariantValue { get; set; } // e.g., "Chocolate", "Red"
+        public string VariantValue { get; set; } = string.Empty; // e.g., "Chocolate", "Red"
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal PriceAdjustment { get; set; } = 0; // Optional price modifier

@@ -1,4 +1,4 @@
-﻿@model GymPower.Models.Product
+@model GymPower.Models.Product
 
 @{
     ViewData["Title"] = "Редактиране на продукт";
@@ -26,9 +26,10 @@
                 </div>
                 
                 <div class="card-body p-4 p-md-5">
-                    <form asp-action="Edit">
+                    <form asp-action="Edit" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
                         <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="ImageUrl" />
 
                         <!-- Basic Specs Row -->
                         <div class="row g-3 mb-4">
@@ -56,6 +57,13 @@
                                         <option value="Имунитет">Имунитет</option>
                                         <option value="Здравословна закуска">Здравословна закуска</option>
                                         <option value="Облекло">Облекло</option>
+                                        <option value="Мъжко облекло">Мъжко облекло</option>
+                                        <option value="Дамско облекло">Дамско облекло</option>
+                                        <option value="Аксесоари">Аксесоари</option>
+                                        <option value="Предтренировъчни">Предтренировъчни</option>
+                                        <option value="Аминокиселини">Аминокиселини</option>
+                                        <option value="Витамини и Минерали">Витамини и Минерали</option>
+                                        <option value="Храни и Добавки">Храни и Добавки</option>
                                     </select>
                                 </div>
                                 <span asp-validation-for="Category" class="text-danger small"></span>
@@ -101,23 +109,47 @@
 
                         <!-- Images Section -->
                         <div class="mb-4">
-                            <h6 class="fw-bold text-primary mb-3"><i class="fas fa-images me-2"></i>Снимки</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold text-primary mb-0"><i class="fas fa-images me-2"></i>Снимки</h6>
+                                <button type="submit" form="generateAiForm" class="btn btn-outline-primary btn-sm fw-bold rounded-pill">
+                                    <i class="fas fa-magic me-1"></i> Генерирай AI Вариации
+                                </button>
+                            </div>
                             
                             <!-- Main Image -->
                             <div class="mb-3">
-                                <label asp-for="ImageUrl" class="form-label small fw-bold text-muted">Основна снимка (URL)</label>
-                                <input asp-for="ImageUrl" class="form-control hover-shadow mb-2" onchange="document.getElementById('img-preview').src = this.value" />
+                                <label class="form-label small fw-bold text-muted">Смени основната снимка (Остави празно, за да запазиш текущата)</label>
+                                <input type="file" name="MainImageFile" class="form-control hover-shadow mb-2" accept="image/*" />
                                 <div class="p-2 border rounded bg-light text-center" style="min-height: 100px;">
                                     <img id="img-preview" src="@Model.ImageUrl" alt="Preview" style="max-height: 150px; object-fit: contain;" onerror="this.src='/images/products/default-product.jpg'">
                                 </div>
-                                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
                             </div>
 
                             <!-- Extra Images -->
                              <div class="mb-3">
-                                <label class="form-label small fw-bold text-muted">Допълнителни снимки (URL адреси, разделени със запетая)</label>
-                                <textarea name="ExtraImages" class="form-control hover-shadow" rows="3" placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg ...">@ViewBag.ExtraImages</textarea>
-                                <small class="text-muted fst-italic">Въведи URL адреси, разделени със запетая.</small>
+                                <label class="form-label small fw-bold text-muted">Допълнителни снимки за галерията (Избери множество файлове)</label>
+                                <input type="file" name="ExtraImageFiles" class="form-control hover-shadow mb-2" accept="image/*" multiple />
+                                <small class="text-muted fst-italic">Качването на нови снимки ще презапише текущите допълнителни снимки.</small>
+                                
+                                <div class="mt-2 text-muted small d-flex flex-wrap gap-2">
+                                    <div class="w-100 fw-bold">Текущи допълнителни снимки:</div>
+                                    @if(Model.Images != null && Model.Images.Any())
+                                    {
+                                        @foreach (var img in Model.Images)
+                                        {
+                                            <div class="border rounded p-1 position-relative">
+                                                <img src="@img.ImageUrl" style="width: 80px; height: 80px; object-fit: cover;" class="rounded" onerror="this.onerror=null;this.src='/images/default-product.jpg';" />
+                                                <form asp-action="DeleteImage" method="post" class="position-absolute top-0 end-0 m-1">
+                                                    <input type="hidden" name="imageId" value="@img.Id" />
+                                                    <input type="hidden" name="productId" value="@Model.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-danger rounded-circle p-1 lh-1 shadow-sm" style="width: 24px; height: 24px;" title="Изтрий">
+                                                        <i class="fas fa-times" style="font-size: 0.7rem;"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                    }
+                                </div>
                             </div>
                         </div>
 
@@ -164,6 +196,10 @@
         </div>
     </div>
 </div>
+
+<!-- Form to trigger AI generation (Simulated) -->
+<form id="generateAiForm" asp-action="GenerateImages" asp-route-id="@Model.Id" method="post" class="d-none">
+</form>
 
 <style>
     /* Custom Styling for Form Elements */

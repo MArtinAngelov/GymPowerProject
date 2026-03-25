@@ -1,4 +1,4 @@
-﻿using GymPower.Data;
+using GymPower.Data;
 using GymPower.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +17,33 @@ namespace GymPower.Controllers
     {
         private readonly AppDbContext _context;
         private readonly GymPower.Services.RecommendationService _recommendationService;
+        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _webHostEnvironment;
+        private readonly GymPower.Services.IProductImageGeneratorService _imageGeneratorService;
 
-        public ProductsController(AppDbContext context, GymPower.Services.RecommendationService recommendationService)
+        public ProductsController(AppDbContext context, GymPower.Services.RecommendationService recommendationService, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment, GymPower.Services.IProductImageGeneratorService imageGeneratorService)
         {
             _context = context;
             _recommendationService = recommendationService;
+            _webHostEnvironment = webHostEnvironment;
+            _imageGeneratorService = imageGeneratorService;
+        }
+
+        private async Task<string?> UploadImageAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return null;
+            
+            var uploadsFolder = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "products");
+            if (!System.IO.Directory.Exists(uploadsFolder)) System.IO.Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + System.IO.Path.GetFileName(file.FileName);
+            var filePath = System.IO.Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            return "/products/" + uniqueFileName;
         }
 
         // GET: Products
@@ -116,14 +138,18 @@ namespace GymPower.Controllers
         // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product, string? ExtraImages)
+        public async Task<IActionResult> Create(Product product, IFormFile? MainImageFile, List<IFormFile>? ExtraImageFiles)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
             if (ModelState.IsValid)
             {
-                // Set default image if none provided
-                if (string.IsNullOrEmpty(product.ImageUrl))
+                // Process Main Image
+                if (MainImageFile != null)
+                {
+                    product.ImageUrl = await UploadImageAsync(MainImageFile) ?? "/images/products/default-product.jpg";
+                }
+                else if (string.IsNullOrEmpty(product.ImageUrl))
                 {
                     product.ImageUrl = "/images/products/default-product.jpg";
                 }
@@ -132,16 +158,19 @@ namespace GymPower.Controllers
                 await _context.SaveChangesAsync();
 
                 // Process Extra Images
-                if (!string.IsNullOrWhiteSpace(ExtraImages))
+                if (ExtraImageFiles != null && ExtraImageFiles.Any())
                 {
-                    var urls = ExtraImages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    foreach (var url in urls)
+                    foreach (var file in ExtraImageFiles)
                     {
-                        _context.ProductImages.Add(new ProductImage
+                        var imageUrl = await UploadImageAsync(file);
+                        if (!string.IsNullOrEmpty(imageUrl))
                         {
-                            ProductId = product.Id,
-                            ImageUrl = url
-                        });
+                            _context.ProductImages.Add(new ProductImage
+                            {
+                                ProductId = product.Id,
+                                ImageUrl = imageUrl
+                            });
+                        }
                     }
                     await _context.SaveChangesAsync();
                 }
@@ -177,7 +206,7 @@ namespace GymPower.Controllers
         // POST: Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Product product, string? ExtraImages)
+        public async Task<IActionResult> Edit(int id, Product product, IFormFile? MainImageFile, List<IFormFile>? ExtraImageFiles)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
@@ -190,22 +219,36 @@ namespace GymPower.Controllers
             {
                 try
                 {
+                    // Process Main Image modification (keep old if not modified)
+                    if (MainImageFile != null)
+                    {
+                        var imageUrl = await UploadImageAsync(MainImageFile);
+                        if (!string.IsNullOrEmpty(imageUrl))
+                        {
+                            product.ImageUrl = imageUrl;
+                        }
+                    }
+
                     _context.Update(product);
 
-                    // Update Images: Clear old, Add new
-                    var existingImages = await _context.ProductImages.Where(i => i.ProductId == id).ToListAsync();
-                    _context.ProductImages.RemoveRange(existingImages);
-                    
-                    if (!string.IsNullOrWhiteSpace(ExtraImages))
+                    // Update Extra Images
+                    if (ExtraImageFiles != null && ExtraImageFiles.Any())
                     {
-                        var urls = ExtraImages.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                        foreach (var url in urls)
+                        // Clear old, Add new (or append depending on logic, but currently logic clears old)
+                        var existingImages = await _context.ProductImages.Where(i => i.ProductId == id).ToListAsync();
+                        _context.ProductImages.RemoveRange(existingImages);
+
+                        foreach (var file in ExtraImageFiles)
                         {
-                            _context.ProductImages.Add(new ProductImage
+                            var imageUrl = await UploadImageAsync(file);
+                            if (!string.IsNullOrEmpty(imageUrl))
                             {
-                                ProductId = id,
-                                ImageUrl = url
-                            });
+                                _context.ProductImages.Add(new ProductImage
+                                {
+                                    ProductId = id,
+                                    ImageUrl = imageUrl
+                                });
+                            }
                         }
                     }
 
@@ -220,6 +263,62 @@ namespace GymPower.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
+        }
+
+        // POST: Products/GenerateImages/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateImages(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return NotFound();
+
+            var generatedUrls = await _imageGeneratorService.GenerateVariationsAsync(product);
+
+            if (generatedUrls != null && generatedUrls.Any())
+            {
+                // Optionally clear old dynamic images or just add to the gallery
+                var existingImages = await _context.ProductImages.Where(i => i.ProductId == id).ToListAsync();
+                _context.ProductImages.RemoveRange(existingImages);
+
+                foreach (var url in generatedUrls)
+                {
+                    _context.ProductImages.Add(new ProductImage
+                    {
+                        ProductId = id,
+                        ImageUrl = url
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "AI Image variations generated successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to generate AI images.";
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = product.Id });
+        }
+
+        // POST: Products/DeleteImage/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteImage(int imageId, int productId)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var image = await _context.ProductImages.FindAsync(imageId);
+            if (image != null && image.ProductId == productId)
+            {
+                _context.ProductImages.Remove(image);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Image deleted successfully!";
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = productId });
         }
 
 

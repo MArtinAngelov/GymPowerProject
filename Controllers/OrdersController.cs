@@ -1,4 +1,4 @@
-﻿using GymPower.Data;
+using GymPower.Data;
 using GymPower.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ namespace GymPower.Controllers
 
             // Fallback: if session expired but user just ordered, find last used email
             if (string.IsNullOrEmpty(email) && TempData["LastOrderEmail"] != null)
-                email = TempData["LastOrderEmail"].ToString();
+                email = TempData["LastOrderEmail"]?.ToString();
 
             var orders = _context.Orders
                 .Include(o => o.OrderItems)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -102,7 +102,7 @@ namespace GymPower.Controllers
 
 public IActionResult EditProfile()
     {
-        string username = Convert.ToString(HttpContext.Session.GetString("Username"));
+        string username = HttpContext.Session.GetString("Username") ?? string.Empty;
         if (string.IsNullOrEmpty(username))
             return RedirectToAction("Login");
 
@@ -117,7 +117,7 @@ public IActionResult EditProfile()
     [ValidateAntiForgeryToken]
     public IActionResult EditProfile(AppUser form, string confirmPassword)
     {
-        string username = Convert.ToString(HttpContext.Session.GetString("Username"));
+        string username = HttpContext.Session.GetString("Username") ?? string.Empty;
         if (string.IsNullOrEmpty(username))
             return RedirectToAction("Login");
 
@@ -164,7 +164,7 @@ public IActionResult EditProfile()
     }
     public IActionResult Profile()
         {
-            string username = Convert.ToString(HttpContext.Session.GetString("Username"));
+            string username = HttpContext.Session.GetString("Username") ?? string.Empty;
             if (string.IsNullOrEmpty(username))
                 return RedirectToAction("Login");
 

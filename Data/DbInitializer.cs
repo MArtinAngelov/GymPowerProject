@@ -1,4 +1,4 @@
-﻿using GymPower.Models;
+using GymPower.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,34 @@ namespace GymPower.Data
         public static void Seed(AppDbContext context)
         {
             context.Database.Migrate();
+
+            // Force update images for the gallery to have exactly 3 images (1 main + 2 extra)
+            if (context.ProductImages.Any(p => p.ImageUrl == "/products/whey_studio_angle.png") || !context.ProductImages.Any(p => p.ImageUrl == "/products/whey_closeup_label.png"))
+            {
+                if (context.Products.Any())
+                {
+                    context.ProductImages.RemoveRange(context.ProductImages);
+                    context.SaveChanges();
+                    
+                    var existingProducts = context.Products.ToList();
+                    var images = new List<ProductImage>();
+                    foreach (var p in existingProducts)
+                    {
+                        if (p.Category == "Изграждане на мускулна маса" || p.Category == "Висока производителност" || p.Category == "Регенерация")
+                        {
+                            images.Add(new ProductImage { ProductId = p.Id, ImageUrl = "/products/whey_closeup_label.png" });
+                            images.Add(new ProductImage { ProductId = p.Id, ImageUrl = "/products/whey_gym_environment.png" });
+                        }
+                        else 
+                        {
+                            images.Add(new ProductImage { ProductId = p.Id, ImageUrl = p.ImageUrl });
+                            images.Add(new ProductImage { ProductId = p.Id, ImageUrl = p.ImageUrl });
+                        }
+                    }
+                    context.ProductImages.AddRange(images);
+                    context.SaveChanges();
+                }
+            }
 
             if (context.Products.Any()) return; // ✅ Prevent duplicates if data already exists
 
@@ -81,10 +109,18 @@ namespace GymPower.Data
             var productImages = new List<ProductImage>();
             foreach (var p in products)
             {
-                // Assign main image and 2 duplicates for gallery
-                productImages.Add(new ProductImage { ProductId = p.Id, ImageUrl = p.ImageUrl });
-                productImages.Add(new ProductImage { ProductId = p.Id, ImageUrl = p.ImageUrl });
-                productImages.Add(new ProductImage { ProductId = p.Id, ImageUrl = p.ImageUrl });
+                // For supplements, add the 2 generated variant images as gallery items
+                if (p.Category == "Изграждане на мускулна маса" || p.Category == "Висока производителност" || p.Category == "Регенерация")
+                {
+                    productImages.Add(new ProductImage { ProductId = p.Id, ImageUrl = "/products/whey_closeup_label.png" });
+                    productImages.Add(new ProductImage { ProductId = p.Id, ImageUrl = "/products/whey_gym_environment.png" });
+                }
+                else 
+                {
+                    // Fallback duplicates if they are not supplements
+                    productImages.Add(new ProductImage { ProductId = p.Id, ImageUrl = p.ImageUrl });
+                    productImages.Add(new ProductImage { ProductId = p.Id, ImageUrl = p.ImageUrl });
+                }
             }
             context.ProductImages.AddRange(productImages);
             context.SaveChanges();

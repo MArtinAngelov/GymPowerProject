@@ -1,4 +1,4 @@
-﻿@using Newtonsoft.Json
+@using Newtonsoft.Json
 @using GymPower.Models
 @{
     ViewData["Title"] = "Поръчка приета успешно";
@@ -6,7 +6,7 @@
     var total = TempData["OrderTotal"];
     var itemsJson = TempData["OrderItems"] as string;
     var orderItems = !string.IsNullOrEmpty(itemsJson)
-     ? JsonConvert.DeserializeObject<List<dynamic>>(itemsJson)
+     ? JsonConvert.DeserializeObject<List<dynamic>>(itemsJson) ?? new List<dynamic>()
      : new List<dynamic>();
 }
 

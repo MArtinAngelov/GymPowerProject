@@ -1,4 +1,4 @@
-﻿using GymPower.Data;
+using GymPower.Data;
 using GymPower.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +28,7 @@ namespace GymPower.Controllers
             if (string.IsNullOrEmpty(sessionCart))
                 return new List<CartItem>();
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartItem>>(sessionCart) ?? new List<CartItem>();
         }
 
         // ✅ Shared helper for all AddToCart requests
@@ -38,7 +38,7 @@ namespace GymPower.Controllers
             if (product == null) return;
 
             // Get variant info if variant was selected
-            ProductVariant variant = null;
+            ProductVariant? variant = null;
             if (variantId.HasValue)
             {
                 variant = _context.ProductVariants.Find(variantId.Value);

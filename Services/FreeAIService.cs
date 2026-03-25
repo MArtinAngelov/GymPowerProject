@@ -77,6 +77,8 @@ namespace GymPower.Services
                 var jsonResponse = await response.Content.ReadFromJsonAsync<JsonElement>();
                 var content = jsonResponse.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
 
+                if (string.IsNullOrEmpty(content)) return new FitnessPlan();
+                
                 return JsonSerializer.Deserialize<FitnessPlan>(content) ?? new FitnessPlan();
             }
             catch (Exception ex)

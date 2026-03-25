@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http
 @model List<GymPower.Models.Product>
 @{
     ViewData["Title"] = "Начало - GymPower";
@@ -194,7 +194,7 @@
         </div>
 
         <div class="row g-4 text-center justify-content-center">
-            @foreach (var offer in ViewBag.PersonalOffers as IEnumerable<GymPower.Models.Product>)
+            @foreach (var offer in ViewBag.PersonalOffers as IEnumerable<GymPower.Models.Product> ?? Enumerable.Empty<GymPower.Models.Product>())
             {
                 <div class="col-md-3">
                     <div class="card h-100 shadow-lg border-warning bg-dark" 
