@@ -15,7 +15,7 @@ builder.Services.AddHttpClient<GymPower.Services.FreeAIService>();
 builder.Services.AddScoped<GymPower.Services.RecommendationService>();
 builder.Services.AddScoped<GymPower.Services.InsightsService>();
 builder.Services.AddScoped<GymPower.Services.GoalSelectorService>();
-builder.Services.AddHttpClient<GymPower.Services.IProductImageGeneratorService, GymPower.Services.PollinationsImageGeneratorService>();
+
 
 
 // ✅ Database connection
@@ -29,6 +29,21 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromHours(6);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+});
+
+// ✅ Google & Cookie Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+})
+.AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "PLACEHOLDER";
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "PLACEHOLDER";
 });
 
 var app = builder.Build();
@@ -57,6 +72,7 @@ else
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 
@@ -69,46 +85,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     DbInitializer.Seed(db);
 
-    // Auto-generate AI variations
-    var allProducts = db.Products.Include(p => p.Images).ToList();
-    var productsToProcess = allProducts.Where(p => p.Images == null || p.Images.Count < 3).ToList();
-    
-    // Ако за продукта вече има 3 валидни изображения, пропусни го. (already handled by the Where clause above)
-    if (productsToProcess.Any())
-    {
-        Console.WriteLine($"[AI Generator] Found {productsToProcess.Count} products requiring images. Starting generation...");
-        var imageService = scope.ServiceProvider.GetRequiredService<GymPower.Services.IProductImageGeneratorService>();
-        
-        var productImagesToInsert = new System.Collections.Generic.List<GymPower.Models.ProductImage>();
-        int count = 1;
-        
-        foreach (var p in productsToProcess)
-        {
-            Console.WriteLine($"[{count}/{productsToProcess.Count}] Generating 3 images for '{p.Name}'...");
-            
-            if (p.Images != null && p.Images.Any())
-            {
-                db.ProductImages.RemoveRange(p.Images);
-                db.SaveChanges();
-            }
-
-            var urls = imageService.GenerateVariationsAsync(p).GetAwaiter().GetResult();
-            
-            foreach (var url in urls)
-            {
-                productImagesToInsert.Add(new GymPower.Models.ProductImage { ProductId = p.Id, ImageUrl = url });
-            }
-            
-            // Save immediately per product. This way if the app stops, it resumes from the next product!
-            db.ProductImages.AddRange(productImagesToInsert);
-            db.SaveChanges();
-            productImagesToInsert.Clear();
-            
-            count++;
-        }
-    }
-
-    Console.WriteLine($"\n✅ Процесът приключи. Потвърждение: Обектният генератор провери всички {allProducts.Count} продукта.");
+    // AI Image generation loop has been disabled permanently as requested.
+    Console.WriteLine($"\n✅ Startup Complete. Seed checks verified.");
 }
 
 app.Run();

@@ -1,165 +1,312 @@
-﻿@model GymPower.Models.User
+@model GymPower.Models.RegisterViewModel
 
 @{
     ViewData["Title"] = "Регистрация";
 }
 
-<div class="auth-page-wrapper">
-    <!-- Background Sides -->
-    <div class="auth-bg-side auth-bg-left"></div>
-    <div class="auth-bg-side auth-bg-right"></div>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #0d0d0d !important;
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    main[role="main"], .container.pb-3 {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    header, footer {
+        display: none !important;
+    }
 
-    <div class="auth-card-container" style="max-width: 600px;">
-        <div class="auth-glass-card">
-            <div class="text-center mb-4">
-                <h2 class="fw-bold text-uppercase" style="letter-spacing: 3px; font-size: 2.2rem;">
-                    <i class="fas fa-user-plus text-warning me-2"></i> Нов Профил
-                </h2>
-                <div class="h5 text-white-50 mt-2 fw-light">Присъедини се към GymPower</div>
+    .auth-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background-color: #0a0a0a;
+    }
+
+    .auth-box {
+        background-color: #111111;
+        border-radius: 12px;
+        display: flex;
+        width: 100%;
+        max-width: 1000px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    .auth-form-side {
+        flex: 1;
+        padding: 3rem 4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow-y: auto;
+        max-height: 90vh; /* Handle taller forms */
+    }
+
+    /* Scrollbar styling for form side */
+    .auth-form-side::-webkit-scrollbar { width: 6px; }
+    .auth-form-side::-webkit-scrollbar-track { background: #111; }
+    .auth-form-side::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+    .auth-image-side {
+        flex: 1;
+        display: none;
+    }
+
+    @@media (min-width: 992px) {
+        .auth-image-side {
+            display: block;
+        }
+    }
+
+    .auth-image-side img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .brand-logo i {
+        color: #ff5722;
+        font-size: 1.5rem;
+    }
+
+    .auth-title {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+        color: #777;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-google {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        background-color: transparent;
+        border: 1px solid #333;
+        color: white;
+        padding: 0.6rem;
+        border-radius: 24px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        margin-bottom: 2rem;
+        transition: background-color 0.2s;
+    }
+
+    .btn-google:hover {
+        background-color: #222;
+        color: white;
+    }
+
+    .btn-google img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    .form-label {
+        color: #ccc;
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        background-color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    .form-control-custom:focus {
+        outline: 2px solid #ff5722;
+        outline-offset: 1px;
+    }
+
+    .form-control-custom::placeholder {
+        color: #aaa;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .checkbox-group input {
+        accent-color: #ff5722;
+    }
+
+    .checkbox-group label {
+        color: #ccc;
+        font-size: 0.85rem;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.8rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-submit:hover {
+        background-color: #e64a19;
+    }
+
+    .auth-footer {
+        color: #777;
+        font-size: 0.85rem;
+    }
+
+    .auth-footer a {
+        color: #ff5722;
+        text-decoration: none;
+        margin-left: 5px;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .validation-summary {
+        color: #ff4a4a;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-box">
+        <div class="auth-form-side">
+            <div class="brand-logo">
+                <i class="fas fa-dumbbell"></i> GymPower
             </div>
 
-            <form asp-action="Register" class="row g-3">
-                <div class="col-md-12">
-                    <div class="form-floating auth-floating-label">
-                        <input asp-for="Username" class="form-control" id="regUsername" placeholder="Потребителско име" required />
-                        <label for="regUsername">👤 Потребителско име</label>
-                        <span asp-validation-for="Username" class="text-danger small"></span>
+            <h1 class="auth-title">Създайте акаунт</h1>
+            <p class="auth-subtitle">Въведете своите данни, за да се регистрирате</p>
+
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                <div class="form-group">
+                    <label asp-for="Username" class="form-label">Потребителско име</label>
+                    <input asp-for="Username" class="form-control-custom" placeholder="Напр. ivan123" />
+                    <span asp-validation-for="Username" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label">Имейл адрес</label>
+                    <input asp-for="Email" class="form-control-custom" placeholder="example@gmail.com" />
+                    <span asp-validation-for="Email" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Password" class="form-label">Парола</label>
+                        <input asp-for="Password" class="form-control-custom" type="password" placeholder="********" />
+                        <span asp-validation-for="Password" class="text-danger" style="font-size:0.8rem;"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="ConfirmPassword" class="form-label">Потвърди парола</label>
+                        <input asp-for="ConfirmPassword" class="form-control-custom" type="password" placeholder="********" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger" style="font-size:0.8rem;"></span>
                     </div>
                 </div>
 
-                <div class="col-md-12">
-                    <div class="form-floating auth-floating-label">
-                        <input asp-for="Email" class="form-control" id="regEmail" placeholder="Имейл" required />
-                        <label for="regEmail">📧 Имейл</label>
-                        <span asp-validation-for="Email" class="text-danger small"></span>
-                    </div>
+                <div class="form-group">
+                    <label asp-for="FitnessGoal" class="form-label">Фитнес цел</label>
+                    <select asp-for="FitnessGoal" class="form-control-custom" style="appearance: auto;">
+                        <option value="MassGain">💪 Покачване на мускулна маса</option>
+                        <option value="WeightLoss">🥗 Отслабване</option>
+                        <option value="Maintenance">⚖️ Поддържане</option>
+                    </select>
+                    <span asp-validation-for="FitnessGoal" class="text-danger" style="font-size:0.8rem;"></span>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-floating auth-floating-label">
-                        <input asp-for="Password" type="password" class="form-control" id="regPass" placeholder="Парола" required />
-                        <label for="regPass">🔒 Парола</label>
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="acceptTerms" required>
+                    <label for="acceptTerms">Приемам общите условия (I accept the terms)</label>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-floating auth-floating-label">
-                        <input type="password" class="form-control" id="regConfirmPass" name="ConfirmPassword" placeholder="Потвърди парола" required />
-                        <label for="regConfirmPass">🔒 Потвърди парола</label>
-                        <span id="confirmPasswordError" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-floating auth-floating-label">
-                        <select asp-for="FitnessGoal" class="form-select" id="regGoal">
-                            <option value="MassGain">💪 Покачване на мускулна маса</option>
-                            <option value="WeightLoss">🥗 Отслабване</option>
-                            <option value="Maintenance">⚖️ Поддържане</option>
-                        </select>
-                        <label for="regGoal">🎯 Фитнес цел</label>
-                        <span asp-validation-for="FitnessGoal" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <div class="col-12 mt-4">
-                    <button type="submit" class="btn btn-auth btn-lg w-100">
-                        Регистрирай се <i class="fas fa-check-circle ms-2 small"></i>
-                    </button>
-                </div>
+                <button type="submit" class="btn-submit">Регистрация (Sign Up)</button>
+                
+                <a asp-controller="Account" asp-action="GoogleLogin" class="btn-google">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+                    Продължете с Google
+                </a>
             </form>
 
-            <div class="mt-4 pt-4 border-top border-secondary border-opacity-25 text-center">
-                <p class="text-white-50 mb-2">Вече имаш акаунт?</p>
-                <a asp-action="Login" class="text-warning fw-bold text-decoration-none h6">
-                    Влез в профила си <i class="fas fa-sign-in-alt ms-1"></i>
-                </a>
+            <div class="auth-footer">
+                Вече имате акаунт? 
+                <a asp-action="Login">Вход (Sign In)</a>
             </div>
+        </div>
+
+        <div class="auth-image-side">
+            <!-- Using a high-quality gym image -->
+            <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop" alt="Gym Workout">
         </div>
     </div>
 </div>
 
-<style>
-    /* Prevent default layout padding if any */
-    body { padding-top: 0 !important; }
-    main.container { max-width: 100% !important; padding: 0 !important; }
-</style>
-
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const usernameInput = document.getElementById("regUsername");
-            const emailInput = document.getElementById("regEmail");
-            const passwordInput = document.getElementById("regPass");
-            const confirmPasswordInput = document.getElementById("regConfirmPass");
-            const confirmPasswordError = document.getElementById("confirmPasswordError");
-            const submitButton = document.querySelector("button[type='submit']");
+            const passwordInput = document.getElementById("Password");
+            const confirmPasswordInput = document.getElementById("ConfirmPassword");
 
-            async function validateField(field, type) {
-                const value = field.value;
-                if (value.length < 3) return;
-
-                const payload = {};
-                payload[type] = value;
-
-                try {
-                    const response = await fetch('/api/validation/check-user', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-                    
-                    const isValid = type === 'username' ? result.usernameAvailable : result.emailAvailable;
-                    const feedbackId = type === 'username' ? 'usernameFeedback' : 'emailFeedback';
-                    
-                    let feedback = document.getElementById(feedbackId);
-                    if (!feedback) {
-                        feedback = document.createElement('div');
-                        feedback.id = feedbackId;
-                        feedback.style.fontSize = '0.8rem';
-                        feedback.style.marginTop = '5px';
-                        field.parentNode.appendChild(feedback);
-                    }
-
-                    if (isValid) {
-                        field.style.borderColor = '#2ec4b6'; // Success Green
-                        feedback.style.color = '#2ec4b6';
-                        feedback.innerHTML = '<i class="fas fa-check-circle"></i> Свободно';
-                    } else {
-                        field.style.borderColor = '#ff6b35'; // Error Orange
-                        feedback.style.color = '#ff6b35';
-                        feedback.innerHTML = '<i class="fas fa-times-circle"></i> Заето';
-                    }
-                } catch (error) {
-                    console.error('Validation error:', error);
-                }
-            }
-
-            usernameInput.addEventListener("blur", () => validateField(usernameInput, "username"));
-            emailInput.addEventListener("blur", () => validateField(emailInput, "email"));
-
-            // Password matching validation
             function validatePasswordMatch() {
-                const password = passwordInput.value;
-                const confirmPassword = confirmPasswordInput.value;
-
-                if (confirmPassword.length === 0) {
-                    confirmPasswordInput.style.borderColor = '#444';
-                    confirmPasswordError.textContent = '';
+                if (confirmPasswordInput.value.length === 0) {
+                    confirmPasswordInput.setCustomValidity('');
                     return true;
                 }
 
-                if (password === confirmPassword) {
-                    confirmPasswordInput.style.borderColor = '#2ec4b6';
-                    confirmPasswordError.style.color = '#2ec4b6';
-                    confirmPasswordError.innerHTML = '<i class="fas fa-check-circle"></i> Паролите съвпадат';
+                if (passwordInput.value === confirmPasswordInput.value) {
+                    confirmPasswordInput.setCustomValidity('');
                     return true;
                 } else {
-                    confirmPasswordInput.style.borderColor = '#ff6b35';
-                    confirmPasswordError.style.color = '#ff6b35';
-                    confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Паролите не съвпадат';
+                    confirmPasswordInput.setCustomValidity('Паролите не съвпадат');
                     return false;
                 }
             }
@@ -168,14 +315,6 @@
             passwordInput.addEventListener("input", () => {
                 if (confirmPasswordInput.value.length > 0) {
                     validatePasswordMatch();
-                }
-            });
-
-            // Prevent form submission if passwords don't match
-            document.querySelector("form").addEventListener("submit", function(e) {
-                if (!validatePasswordMatch() && confirmPasswordInput.value.length > 0) {
-                    e.preventDefault();
-                    confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Моля, уверете се, че паролите съвпадат';
                 }
             });
         });

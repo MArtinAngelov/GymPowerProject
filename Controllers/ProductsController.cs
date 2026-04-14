@@ -18,14 +18,12 @@ namespace GymPower.Controllers
         private readonly AppDbContext _context;
         private readonly GymPower.Services.RecommendationService _recommendationService;
         private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _webHostEnvironment;
-        private readonly GymPower.Services.IProductImageGeneratorService _imageGeneratorService;
 
-        public ProductsController(AppDbContext context, GymPower.Services.RecommendationService recommendationService, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment, GymPower.Services.IProductImageGeneratorService imageGeneratorService)
+        public ProductsController(AppDbContext context, GymPower.Services.RecommendationService recommendationService, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _recommendationService = recommendationService;
             _webHostEnvironment = webHostEnvironment;
-            _imageGeneratorService = imageGeneratorService;
         }
 
         private async Task<string?> UploadImageAsync(IFormFile file)
@@ -265,43 +263,6 @@ namespace GymPower.Controllers
             return View(product);
         }
 
-        // POST: Products/GenerateImages/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GenerateImages(int id)
-        {
-            if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null) return NotFound();
-
-            var generatedUrls = await _imageGeneratorService.GenerateVariationsAsync(product);
-
-            if (generatedUrls != null && generatedUrls.Any())
-            {
-                // Optionally clear old dynamic images or just add to the gallery
-                var existingImages = await _context.ProductImages.Where(i => i.ProductId == id).ToListAsync();
-                _context.ProductImages.RemoveRange(existingImages);
-
-                foreach (var url in generatedUrls)
-                {
-                    _context.ProductImages.Add(new ProductImage
-                    {
-                        ProductId = id,
-                        ImageUrl = url
-                    });
-                }
-
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "AI Image variations generated successfully!";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Failed to generate AI images.";
-            }
-
-            return RedirectToAction(nameof(Edit), new { id = product.Id });
-        }
 
         // POST: Products/DeleteImage/5
         [HttpPost]

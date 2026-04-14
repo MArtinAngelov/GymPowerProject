@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http
 @{
     var username = Context.Session.GetString("Username");
     var role = Context.Session.GetString("Role");
@@ -61,11 +61,51 @@
                 <ul class="navbar-nav align-items-center">
                     @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
                     {
-                        <li class="nav-item me-2">
-                            <span class="nav-link text-white">Здравей, @Context.Session.GetString("Username")</span>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 user-dropdown-toggle"
+                               href="#" id="userDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="user-avatar-circle">@(Context.Session.GetString("Username")?[0].ToString().ToUpper())</span>
+                                <span class="fw-semibold" data-bg="Здравей, @Context.Session.GetString("Username")" data-en="Hi, @Context.Session.GetString("Username")">Здравей, @Context.Session.GetString("Username")</span>
+                                <i class="fas fa-chevron-down small opacity-75"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu shadow-lg" aria-labelledby="userDropdown">
+                                <!-- Language -->
+                                <li class="px-3 pt-2 pb-1">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-globe me-2 text-warning"></i>
+                                        <span class="small text-muted me-auto" data-bg="Език" data-en="Language">Език</span>
+                                        <div class="lang-toggle-group">
+                                            <button class="lang-btn" id="langBtnBg" onclick="setLanguage('bg')" title="Български">БГ</button>
+                                            <button class="lang-btn" id="langBtnEn" onclick="setLanguage('en')" title="English">EN</button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <!-- Edit Profile -->
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="Account" asp-action="EditProfile">
+                                        <i class="fas fa-user-edit text-warning"></i>
+                                        <span data-bg="Редактирай профил" data-en="Edit Profile">Редактирай профил</span>
+                                    </a>
+                                </li>
+                                <!-- Orders -->
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="MyOrders" asp-action="Index">
+                                        <i class="fas fa-box text-warning"></i>
+                                        <span data-bg="Поръчки" data-en="My Orders">Поръчки</span>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <!-- Logout -->
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 text-danger" asp-controller="Account" asp-action="Logout">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span data-bg="Изход" data-en="Logout">Изход</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="MyOrders" asp-action="Index">Поръчки</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Logout">Изход</a></li>
                     }
                     else
                     {
@@ -128,6 +168,82 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* User Dropdown Styles */
+        .user-dropdown-toggle {
+            padding: 6px 12px;
+            border-radius: 50px;
+            transition: background 0.2s;
+        }
+        .user-dropdown-toggle:hover {
+            background: rgba(255,255,255,0.08) !important;
+        }
+        .user-avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5a623, #e8650a);
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .user-dropdown-menu {
+            min-width: 220px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 8px 0;
+            background: #1a1a2e;
+            margin-top: 8px !important;
+        }
+        .user-dropdown-menu .dropdown-item {
+            color: #e0e0e0;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin: 2px 6px;
+            transition: background 0.15s;
+            font-size: 0.9rem;
+        }
+        .user-dropdown-menu .dropdown-item:hover {
+            background: rgba(245,166,35,0.12);
+            color: #fff;
+        }
+        .user-dropdown-menu .dropdown-item.text-danger:hover {
+            background: rgba(220,53,69,0.12);
+        }
+        .user-dropdown-menu .dropdown-divider {
+            border-color: rgba(255,255,255,0.08);
+        }
+        /* Language Toggle */
+        .lang-toggle-group {
+            display: flex;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .lang-btn.active {
+            background: #f5a623;
+            color: #000;
+        }
+        .lang-btn:hover:not(.active) {
+            color: #fff;
+        }
+    </style>
     <script>
         // 🌓 Theme Toggle
         const themeBtn = document.getElementById('themeToggle');
@@ -270,6 +386,40 @@
             if (!searchIn.contains(e.target) && !searchRes.contains(e.target)) {
                 searchRes.style.display = 'none';
             }
+        });
+    </script>
+    <script>
+        // 🌐 Language Switcher
+        function getCookie(name) {
+            const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+            return v ? v[2] : null;
+        }
+
+        function setLanguage(lang) {
+            document.cookie = 'lang=' + lang + ';path=/;max-age=31536000';
+            applyLanguage(lang);
+            updateLangButtons(lang);
+        }
+
+        function applyLanguage(lang) {
+            document.querySelectorAll('[data-bg][data-en]').forEach(function(el) {
+                el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-bg');
+            });
+        }
+
+        function updateLangButtons(lang) {
+            var bgBtn = document.getElementById('langBtnBg');
+            var enBtn = document.getElementById('langBtnEn');
+            if (bgBtn && enBtn) {
+                bgBtn.classList.toggle('active', lang === 'bg' || !lang);
+                enBtn.classList.toggle('active', lang === 'en');
+            }
+        }
+
+        var _currentLang = getCookie('lang') || 'bg';
+        document.addEventListener('DOMContentLoaded', function() {
+            applyLanguage(_currentLang);
+            updateLangButtons(_currentLang);
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

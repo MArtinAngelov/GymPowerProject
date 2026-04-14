@@ -1,4 +1,4 @@
-﻿@model GymPower.Models.User
+@model GymPower.Models.User
 @{
     ViewData["Title"] = "Редактирай профила";
 }
@@ -18,6 +18,13 @@
             <form asp-action="EditProfile" asp-controller="Account" method="post">
                 @Html.AntiForgeryToken() <!-- ✅ required -->
                 <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Потребителско име:</label>
+                    <input type="text" asp-for="Username"
+                           class="form-control bg-dark text-white border-secondary" required />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
 
                 <div class="mb-3">
                     <label class="form-label text-light">Имейл:</label>

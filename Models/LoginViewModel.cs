@@ -1,0 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace GymPower.Models
+{
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "Потребителското име е задължително.")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Паролата е задължителна.")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+    }
+}

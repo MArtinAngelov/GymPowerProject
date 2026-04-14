@@ -1,70 +1,261 @@
-﻿@{
+@model GymPower.Models.LoginViewModel
+
+@{
     ViewData["Title"] = "Вход";
+    // We can disable layout or hide header/footer via CSS to achieve the full-screen effect
 }
 
-<div class="auth-page-wrapper">
-    <!-- Background Sides -->
-    <div class="auth-bg-side auth-bg-left"></div>
-    <div class="auth-bg-side auth-bg-right"></div>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #0d0d0d !important;
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    /* Override Layout default container */
+    main[role="main"], .container.pb-3 {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    header, footer {
+        display: none !important;
+    }
 
-    <div class="auth-card-container">
-        <div class="auth-glass-card text-center">
-            <div class="mb-4">
-                <h2 class="fw-bold text-uppercase" style="letter-spacing: 3px; font-size: 2.2rem;">
-                    <i class="fas fa-dumbbell text-warning me-2"></i> GymPower
-                </h2>
-                <div class="h5 text-white-50 mt-2 fw-light">Влез в профила си</div>
+    .auth-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background-color: #0a0a0a;
+    }
+
+    .auth-box {
+        background-color: #111111;
+        border-radius: 12px;
+        display: flex;
+        width: 100%;
+        max-width: 1000px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    .auth-form-side {
+        flex: 1;
+        padding: 4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-image-side {
+        flex: 1;
+        display: none;
+    }
+
+    @@media (min-width: 992px) {
+        .auth-image-side {
+            display: block;
+        }
+    }
+
+    .auth-image-side img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 3rem;
+    }
+
+    .brand-logo i {
+        color: #ff5722;
+        font-size: 1.5rem;
+    }
+
+    .auth-title {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+        color: #777;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-google {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        background-color: transparent;
+        border: 1px solid #333;
+        color: white;
+        padding: 0.6rem;
+        border-radius: 24px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        margin-bottom: 2rem;
+        transition: background-color 0.2s;
+    }
+
+    .btn-google:hover {
+        background-color: #222;
+        color: white;
+    }
+
+    .btn-google img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    .form-label {
+        color: #ccc;
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        background-color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    .form-control-custom:focus {
+        outline: 2px solid #ff5722;
+        outline-offset: 1px;
+    }
+
+    .form-control-custom::placeholder {
+        color: #aaa;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .checkbox-group input {
+        accent-color: #ff5722;
+    }
+
+    .checkbox-group label {
+        color: #ccc;
+        font-size: 0.85rem;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.8rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-submit:hover {
+        background-color: #e64a19;
+    }
+
+    .auth-footer {
+        color: #777;
+        font-size: 0.85rem;
+    }
+
+    .auth-footer a {
+        color: #ff5722;
+        text-decoration: none;
+        margin-left: 5px;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .validation-summary {
+        color: #ff4a4a;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-box">
+        <div class="auth-form-side">
+            <div class="brand-logo">
+                <i class="fas fa-dumbbell"></i> GymPower
             </div>
 
-            <!-- Error Messages -->
-            @if (ViewBag.Error != null)
-            {
-                <div class="alert alert-danger border-0 rounded-pill py-2 shadow-sm mb-4" role="alert" style="background: rgba(220, 53, 69, 0.2); color: #ff8e98;">
-                    <i class="fas fa-exclamation-circle me-2"></i> @ViewBag.Error
-                </div>
-            }
+            <h1 class="auth-title">Добре дошли отново</h1>
+            <p class="auth-subtitle">Въведете вашите данни, за да влезете в профила си</p>
 
-            <form method="post" class="mt-4">
-                <div class="form-floating mb-3 auth-floating-label">
-                    <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Потребителско име" required>
-                    <label for="floatingInput">👤 Потребителско име</label>
-                </div>
+            <a asp-controller="Account" asp-action="GoogleLogin" class="btn-google">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+                Продължете с Google
+            </a>
 
-                <div class="form-floating mb-4 auth-floating-label">
-                    <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Парола" required>
-                    <label for="floatingPassword">🔒 Парола</label>
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                <div class="form-group">
+                    <label asp-for="Username" class="form-label">Потребителско име</label>
+                    <input asp-for="Username" class="form-control-custom" placeholder="Напр. ivan123" />
+                    <span asp-validation-for="Username" class="text-danger" style="font-size:0.8rem;"></span>
                 </div>
 
-                <button type="submit" class="btn btn-auth btn-lg w-100 mt-2">
-                    Влез <i class="fas fa-arrow-right ms-2 small"></i>
-                </button>
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label">Парола</label>
+                    <input asp-for="Password" class="form-control-custom" type="password" placeholder="********" />
+                    <span asp-validation-for="Password" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Запомни ме</label>
+                </div>
+
+                <button type="submit" class="btn-submit">Вход</button>
             </form>
 
-            <div class="mt-4 pt-4 border-top border-secondary border-opacity-25">
-                <p class="text-white-50 mb-2">Нямаш акаунт?</p>
-                <a asp-action="Register" class="text-warning fw-bold text-decoration-none h6">
-                    Създай нов профил <i class="fas fa-plus-circle ms-1"></i>
-                </a>
+            <div class="auth-footer">
+                Нямате акаунт? 
+                <a asp-action="Register">Регистрация</a>
             </div>
+        </div>
+
+        <div class="auth-image-side">
+            <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=2070&auto=format&fit=crop" alt="Gym Fitness Lifestyle">
         </div>
     </div>
 </div>
-
-<style>
-    /* Prevent default layout padding if any */
-    body { padding-top: 0 !important; }
-    main.container { max-width: 100% !important; padding: 0 !important; }
-</style>
-
-<style>
-    .form-control:focus {
-        background: #1a1a2e;
-        color: white;
-        border-color: var(--primary);
-        box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
-    }
-    button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
-    }
-</style>

@@ -54,14 +54,14 @@
                         </div>
 
                         <!-- Extra Images -->
-                        @foreach (var img in Model.Images)
+                        @foreach (var imgUrl in Model.Images.Select(i => i.ImageUrl).Where(url => url != Model.ImageUrl).Distinct())
                         {
                             <div class="cursor-pointer border border-secondary rounded overflow-hidden opacity-75" 
                                  style="width: 80px; height: 80px; min-width: 80px;"
                                  onmouseover="this.classList.remove('opacity-75'); this.classList.add('border-warning');"
                                  onmouseout="if(!this.classList.contains('active-thumb')) { this.classList.add('opacity-75'); this.classList.remove('border-warning'); }"
-                                 onclick="changeImage('@img.ImageUrl', this)">
-                                <img src="@img.ImageUrl" onerror="this.onerror=null;this.src='/images/default-product.jpg';" class="w-100 h-100" style="object-fit: cover;">
+                                 onclick="changeImage('@imgUrl', this)">
+                                <img src="@imgUrl" onerror="this.onerror=null;this.src='/images/default-product.jpg';" class="w-100 h-100" style="object-fit: cover;">
                             </div>
                         }
                     </div>

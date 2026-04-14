@@ -39,6 +39,372 @@ namespace GymPower.Data
                 }
             }
 
+            // Replace Creatine images
+            var creatine = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name.Contains("Creatine"));
+            if (creatine != null && creatine.ImageUrl != "/products/creatine_new_1.png")
+            {
+                creatine.ImageUrl = "/products/creatine_new_1.png";
+                if (creatine.Images != null) {
+                    context.ProductImages.RemoveRange(creatine.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = creatine.Id, ImageUrl = "/products/creatine_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = creatine.Id, ImageUrl = "/products/creatine_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = creatine.Id, ImageUrl = "/products/creatine_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Multi Complex images
+            var multiComplex = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Multi Complex");
+            if (multiComplex != null && multiComplex.ImageUrl != "/products/multicomplex_new_1.png")
+            {
+                multiComplex.ImageUrl = "/products/multicomplex_new_1.png";
+                if (multiComplex.Images != null) {
+                    context.ProductImages.RemoveRange(multiComplex.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = multiComplex.Id, ImageUrl = "/products/multicomplex_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = multiComplex.Id, ImageUrl = "/products/multicomplex_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = multiComplex.Id, ImageUrl = "/products/multicomplex_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Peanut Butter images
+            var peanutButter = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Peanut Butter");
+            if (peanutButter != null && peanutButter.ImageUrl != "/products/peanut_butter_new_1.png")
+            {
+                peanutButter.ImageUrl = "/products/peanut_butter_new_1.png";
+                if (peanutButter.Images != null) {
+                    context.ProductImages.RemoveRange(peanutButter.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = peanutButter.Id, ImageUrl = "/products/peanut_butter_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = peanutButter.Id, ImageUrl = "/products/peanut_butter_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = peanutButter.Id, ImageUrl = "/products/peanut_butter_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace BCAA Instant images
+            var bcaaInstant = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "BCAA Instant");
+            if (bcaaInstant != null && (bcaaInstant.Images == null || bcaaInstant.Images.Count < 3))
+            {
+                bcaaInstant.ImageUrl = "/products/bcaa_instant_new_1.jpg";
+                if (bcaaInstant.Images != null) {
+                    context.ProductImages.RemoveRange(bcaaInstant.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = bcaaInstant.Id, ImageUrl = "/products/bcaa_instant_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = bcaaInstant.Id, ImageUrl = "/products/bcaa_instant_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = bcaaInstant.Id, ImageUrl = "/products/bcaa_instant_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Hydro Whey Zero images
+            var hydroWheyZero = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Hydro Whey Zero");
+            if (hydroWheyZero != null && hydroWheyZero.ImageUrl != "/products/hydro_whey_zero_new_1.jpg")
+            {
+                hydroWheyZero.ImageUrl = "/products/hydro_whey_zero_new_1.jpg";
+                if (hydroWheyZero.Images != null) {
+                    context.ProductImages.RemoveRange(hydroWheyZero.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = hydroWheyZero.Id, ImageUrl = "/products/hydro_whey_zero_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = hydroWheyZero.Id, ImageUrl = "/products/hydro_whey_zero_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = hydroWheyZero.Id, ImageUrl = "/products/hydro_whey_zero_new_1.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Mass Gainer images
+            var massGainer = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Mass Gainer");
+            if (massGainer != null && massGainer.ImageUrl != "/products/mass_gainer_new_1.jpg")
+            {
+                massGainer.ImageUrl = "/products/mass_gainer_new_1.jpg";
+                if (massGainer.Images != null) {
+                    context.ProductImages.RemoveRange(massGainer.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = massGainer.Id, ImageUrl = "/products/mass_gainer_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = massGainer.Id, ImageUrl = "/products/mass_gainer_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = massGainer.Id, ImageUrl = "/products/mass_gainer_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Unisex Hoodie GYMPOWER images (Oversized Hoodie Lilac)
+            var hoodie = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Oversized Hoodie Lilac");
+            if (hoodie != null && hoodie.ImageUrl != "/products/hoodie_lilac_new_1.png")
+            {
+                hoodie.ImageUrl = "/products/hoodie_lilac_new_1.png";
+                if (hoodie.Images != null) {
+                    context.ProductImages.RemoveRange(hoodie.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = hoodie.Id, ImageUrl = "/products/hoodie_lilac_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = hoodie.Id, ImageUrl = "/products/hoodie_lilac_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = hoodie.Id, ImageUrl = "/products/hoodie_lilac_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Women's Sports Bra Flex (Sport Bra Power Fit)
+            var sportsBra = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Sport Bra Power Fit");
+            if (sportsBra != null && sportsBra.ImageUrl != "/products/sports_bra_flex_new_1.jpg")
+            {
+                sportsBra.ImageUrl = "/products/sports_bra_flex_new_1.jpg";
+                if (sportsBra.Images != null) {
+                    context.ProductImages.RemoveRange(sportsBra.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = sportsBra.Id, ImageUrl = "/products/sports_bra_flex_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = sportsBra.Id, ImageUrl = "/products/sports_bra_flex_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = sportsBra.Id, ImageUrl = "/products/sports_bra_flex_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Women's Training Shorts images (High Waist Shorts Pink)
+            var shortsPink = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "High Waist Shorts Pink");
+            if (shortsPink != null && shortsPink.ImageUrl != "/products/shorts_pink_new_1.jpg")
+            {
+                shortsPink.ImageUrl = "/products/shorts_pink_new_1.jpg";
+                if (shortsPink.Images != null) {
+                    context.ProductImages.RemoveRange(shortsPink.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = shortsPink.Id, ImageUrl = "/products/shorts_pink_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = shortsPink.Id, ImageUrl = "/products/shorts_pink_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = shortsPink.Id, ImageUrl = "/products/shorts_pink_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Women's Seamless Leggings images (Seamless Leggings Coral)
+            var leggings = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Seamless Leggings Coral");
+            if (leggings != null && leggings.ImageUrl != "/products/leggings_orange_new_1.png")
+            {
+                leggings.ImageUrl = "/products/leggings_orange_new_1.png";
+                if (leggings.Images != null) {
+                    context.ProductImages.RemoveRange(leggings.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = leggings.Id, ImageUrl = "/products/leggings_orange_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = leggings.Id, ImageUrl = "/products/leggings_orange_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = leggings.Id, ImageUrl = "/products/leggings_orange_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace GymPower Joggers Carbon Grey images
+            var joggers = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "GymPower Joggers Carbon Grey");
+            if (joggers != null && joggers.ImageUrl != "/products/joggers_carbon_grey_new_1.png")
+            {
+                joggers.ImageUrl = "/products/joggers_carbon_grey_new_1.png";
+                if (joggers.Images != null) {
+                    context.ProductImages.RemoveRange(joggers.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = joggers.Id, ImageUrl = "/products/joggers_carbon_grey_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = joggers.Id, ImageUrl = "/products/joggers_carbon_grey_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = joggers.Id, ImageUrl = "/products/joggers_carbon_grey_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Resistance Band images
+            var resistanceBand = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Resistance Band");
+            if (resistanceBand != null && resistanceBand.ImageUrl != "/products/resistance_band_new_1.jpg")
+            {
+                resistanceBand.ImageUrl = "/products/resistance_band_new_1.jpg";
+                if (resistanceBand.Images != null) {
+                    context.ProductImages.RemoveRange(resistanceBand.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = resistanceBand.Id, ImageUrl = "/products/resistance_band_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = resistanceBand.Id, ImageUrl = "/products/resistance_band_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = resistanceBand.Id, ImageUrl = "/products/resistance_band_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Lifting Straps images
+            var liftingStraps = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Lifting Straps");
+            if (liftingStraps != null && liftingStraps.ImageUrl != "/products/lifting_straps_new_1.jpg")
+            {
+                liftingStraps.ImageUrl = "/products/lifting_straps_new_1.jpg";
+                if (liftingStraps.Images != null) {
+                    context.ProductImages.RemoveRange(liftingStraps.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = liftingStraps.Id, ImageUrl = "/products/lifting_straps_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = liftingStraps.Id, ImageUrl = "/products/lifting_straps_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = liftingStraps.Id, ImageUrl = "/products/lifting_straps_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Training Gloves Pro images
+            var trainingGloves = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Training Gloves Pro");
+            if (trainingGloves != null && trainingGloves.ImageUrl != "/products/training_gloves_new_1.jpg")
+            {
+                trainingGloves.ImageUrl = "/products/training_gloves_new_1.jpg";
+                if (trainingGloves.Images != null) {
+                    context.ProductImages.RemoveRange(trainingGloves.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = trainingGloves.Id, ImageUrl = "/products/training_gloves_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = trainingGloves.Id, ImageUrl = "/products/training_gloves_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = trainingGloves.Id, ImageUrl = "/products/training_gloves_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Shorts Flex Fit images
+            var shortsFlexFit = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Shorts Flex Fit");
+            if (shortsFlexFit != null && shortsFlexFit.ImageUrl != "/products/shorts_flex_fit_new_1.jpg")
+            {
+                shortsFlexFit.ImageUrl = "/products/shorts_flex_fit_new_1.jpg";
+                if (shortsFlexFit.Images != null) {
+                    context.ProductImages.RemoveRange(shortsFlexFit.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = shortsFlexFit.Id, ImageUrl = "/products/shorts_flex_fit_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = shortsFlexFit.Id, ImageUrl = "/products/shorts_flex_fit_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = shortsFlexFit.Id, ImageUrl = "/products/shorts_flex_fit_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Training Tank Top White images
+            var tankTopWhite = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Training Tank Top White");
+            if (tankTopWhite != null && tankTopWhite.ImageUrl != "/products/tank_top_white_new_1.jpg")
+            {
+                tankTopWhite.ImageUrl = "/products/tank_top_white_new_1.jpg";
+                if (tankTopWhite.Images != null) {
+                    context.ProductImages.RemoveRange(tankTopWhite.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = tankTopWhite.Id, ImageUrl = "/products/tank_top_white_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = tankTopWhite.Id, ImageUrl = "/products/tank_top_white_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = tankTopWhite.Id, ImageUrl = "/products/tank_top_white_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Performance T-Shirt Black images
+            var tshirtBlack = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Performance T-Shirt Black");
+            if (tshirtBlack != null && tshirtBlack.ImageUrl != "/products/tshirt_black_new_1.png")
+            {
+                tshirtBlack.ImageUrl = "/products/tshirt_black_new_1.png";
+                if (tshirtBlack.Images != null) {
+                    context.ProductImages.RemoveRange(tshirtBlack.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = tshirtBlack.Id, ImageUrl = "/products/tshirt_black_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = tshirtBlack.Id, ImageUrl = "/products/tshirt_black_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = tshirtBlack.Id, ImageUrl = "/products/tshirt_black_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Gym Towel Microfiber images
+            var towel = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Gym Towel Microfiber");
+            if (towel != null && towel.ImageUrl != "/products/towel_new_1.jpg")
+            {
+                towel.ImageUrl = "/products/towel_new_1.jpg";
+                if (towel.Images != null) {
+                    context.ProductImages.RemoveRange(towel.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = towel.Id, ImageUrl = "/products/towel_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = towel.Id, ImageUrl = "/products/towel_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = towel.Id, ImageUrl = "/products/towel_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Shaker Bottle images
+            var shaker = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Shaker Bottle Elite 700ml");
+            if (shaker != null && shaker.ImageUrl != "/products/shaker_new_1.png")
+            {
+                shaker.ImageUrl = "/products/shaker_new_1.png";
+                if (shaker.Images != null) {
+                    context.ProductImages.RemoveRange(shaker.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = shaker.Id, ImageUrl = "/products/shaker_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = shaker.Id, ImageUrl = "/products/shaker_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = shaker.Id, ImageUrl = "/products/shaker_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Thor PreWorkout images
+            var thorPreWorkout = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Thor PreWorkout");
+            if (thorPreWorkout != null && thorPreWorkout.ImageUrl != "/products/thor_preworkout_new_1.jpg")
+            {
+                thorPreWorkout.ImageUrl = "/products/thor_preworkout_new_1.jpg";
+                if (thorPreWorkout.Images != null) {
+                    context.ProductImages.RemoveRange(thorPreWorkout.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = thorPreWorkout.Id, ImageUrl = "/products/thor_preworkout_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = thorPreWorkout.Id, ImageUrl = "/products/thor_preworkout_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = thorPreWorkout.Id, ImageUrl = "/products/thor_preworkout_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Collagen Boost images
+            var collagenBoost = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Collagen Boost");
+            if (collagenBoost != null && collagenBoost.ImageUrl != "/products/collagen_boost_new_1.png")
+            {
+                collagenBoost.ImageUrl = "/products/collagen_boost_new_1.png";
+                if (collagenBoost.Images != null) {
+                    context.ProductImages.RemoveRange(collagenBoost.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = collagenBoost.Id, ImageUrl = "/products/collagen_boost_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = collagenBoost.Id, ImageUrl = "/products/collagen_boost_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = collagenBoost.Id, ImageUrl = "/products/collagen_boost_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Oats images
+            var oats = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Oats");
+            if (oats != null && oats.ImageUrl != "/products/oats_new_1.jpg")
+            {
+                oats.ImageUrl = "/products/oats_new_1.jpg";
+                if (oats.Images != null) {
+                    context.ProductImages.RemoveRange(oats.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = oats.Id, ImageUrl = "/products/oats_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = oats.Id, ImageUrl = "/products/oats_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = oats.Id, ImageUrl = "/products/oats_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Pure IsoWhey images
+            var pureIsoWhey = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Pure IsoWhey");
+            if (pureIsoWhey != null && pureIsoWhey.ImageUrl != "/products/pure_iso_whey_new_1.png")
+            {
+                pureIsoWhey.ImageUrl = "/products/pure_iso_whey_new_1.png";
+                if (pureIsoWhey.Images != null) {
+                    context.ProductImages.RemoveRange(pureIsoWhey.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = pureIsoWhey.Id, ImageUrl = "/products/pure_iso_whey_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = pureIsoWhey.Id, ImageUrl = "/products/pure_iso_whey_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = pureIsoWhey.Id, ImageUrl = "/products/pure_iso_whey_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Micellar Casein images
+            var micellarCasein = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Micellar Casein");
+            if (micellarCasein != null && micellarCasein.ImageUrl != "/products/micellar_casein_new_1.png")
+            {
+                micellarCasein.ImageUrl = "/products/micellar_casein_new_1.png";
+                if (micellarCasein.Images != null) {
+                    context.ProductImages.RemoveRange(micellarCasein.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = micellarCasein.Id, ImageUrl = "/products/micellar_casein_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = micellarCasein.Id, ImageUrl = "/products/micellar_casein_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = micellarCasein.Id, ImageUrl = "/products/micellar_casein_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Vegan Protein Blend images
+            var veganBlend = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name.Contains("Vegan"));
+            
+            if (veganBlend == null)
+            {
+                veganBlend = new Product { 
+                    Name = "Vegan Protein Blend", 
+                    Description = "Растителен протеин за мускулен растеж и възстановяване.", 
+                    LongDescription = "Висококачествен веган протеин, съдържащ грахов, конопен и оризов протеин за пълен аминокиселинен профил.", 
+                    Price = 55.99m, 
+                    ImageUrl = "/products/vegan_blend_1.png", 
+                    Category = "Изграждане на мускулна маса", 
+                    StockQuantity = 50 
+                };
+                context.Products.Add(veganBlend);
+                context.SaveChanges();
+            }
+
+            if (veganBlend != null && (veganBlend.Images == null || veganBlend.Images.Count < 3))
+            {
+                veganBlend.ImageUrl = "/products/vegan_blend_1.png";
+                if (veganBlend.Images != null) {
+                    context.ProductImages.RemoveRange(veganBlend.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = veganBlend.Id, ImageUrl = "/products/vegan_blend_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = veganBlend.Id, ImageUrl = "/products/vegan_blend_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = veganBlend.Id, ImageUrl = "/products/vegan_blend_3.jpg" });
+                context.SaveChanges();
+            }
+
             if (context.Products.Any()) return; // ✅ Prevent duplicates if data already exists
 
             // 1. Seed Products

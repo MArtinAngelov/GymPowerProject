@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,5 +16,7 @@ namespace GymPower.Models
 
         [ForeignKey("ProductId")]
         public Product Product { get; set; } = null!;
+
+        public DateTime DateAdded { get; set; } = DateTime.UtcNow;
     }
 }
