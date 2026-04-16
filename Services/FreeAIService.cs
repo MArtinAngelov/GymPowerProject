@@ -31,6 +31,13 @@ namespace GymPower.Services
             _logger = logger;
         }
 
+        private string GetNativeFinalUrl()
+        {
+            var apiKey = _configuration["AiSettings:ApiKey"];
+            var model = _configuration["AiSettings:Model"] ?? "gemini-2.5-flash";
+            return $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}";
+        }
+
         public async Task<FitnessPlan> GetFitnessPlanAsync(User user)
         {
             try
@@ -49,7 +56,7 @@ namespace GymPower.Services
                     {{
                         ""WeeklySplit"": ""Detailed weekly workout schedule..."",
                         ""NutritionAdvice"": ""Specific daily nutrition tips..."",
-                        ""RecommendedProductIds"": [1, 5, 10] // Choose 3 best product IDs from the list below based on the goal.
+                        ""RecommendedProductIds"": [1, 5, 10]
                     }}
 
                     Product List:
@@ -58,24 +65,22 @@ namespace GymPower.Services
 
                 var requestBody = new
                 {
-                    model = _configuration["AiSettings:Model"] ?? "gpt-4o-mini",
-                    messages = new[]
+                    systemInstruction = new { parts = new[] { new { text = "You are a fitness expert. Output JSON only." } } },
+                    contents = new[]
                     {
-                        new { role = "system", content = "You are a fitness expert. Output JSON only." },
-                        new { role = "user", content = prompt }
+                        new { role = "user", parts = new[] { new { text = prompt } } }
                     },
-                    max_tokens = 1000,
-                    response_format = new { type = "json_object" }
+                    generationConfig = new { maxOutputTokens = 1500, responseMimeType = "application/json" }
                 };
 
-                var apiKey = _configuration["AiSettings:ApiKey"];
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+                var finalUrl = GetNativeFinalUrl();
                 
-                var response = await _httpClient.PostAsJsonAsync(_configuration["AiSettings:BaseUrl"], requestBody);
+                var response = await _httpClient.PostAsJsonAsync(finalUrl, requestBody);
                 response.EnsureSuccessStatusCode();
 
                 var jsonResponse = await response.Content.ReadFromJsonAsync<JsonElement>();
-                var content = jsonResponse.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+                var content = jsonResponse.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
 
                 if (string.IsNullOrEmpty(content)) return new FitnessPlan();
                 
@@ -96,14 +101,10 @@ namespace GymPower.Services
         {
             try
             {
-                // 1. Load Configuration
                 var apiKey = _configuration["AiSettings:ApiKey"];
-                var model = _configuration["AiSettings:Model"] ?? "gpt-4o-mini";
-                var baseUrl = _configuration["AiSettings:BaseUrl"] ?? "https://api.openai.com/v1/chat/completions";
                 var staticPrompt = _configuration["AiSettings:SystemPrompt"] ?? "You are a helpful assistant.";
 
-                // Validate Key
-                if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Contains("PASTE_KEY_HERE") || apiKey.Contains("PASTE_TOGETHER_KEY"))
+                if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Contains("PASTE_KEY_HERE"))
                 {
                     _logger.LogWarning($"API Key is missing or invalid.");
                     return ChatConstants.ErrorMissingKey;
@@ -114,12 +115,8 @@ namespace GymPower.Services
                     return ChatConstants.ErrorEmptyMessage;
                 }
 
-                // 2. Build Context (Products)
-                var products = await _context.Products
-                    .AsNoTracking()
-                    .Where(p => p.StockQuantity > 0)
-                    .Select(p => new { p.Name, p.Category, p.Price, p.Description })
-                    .ToListAsync();
+                var products = await _context.Products.AsNoTracking().Where(p => p.StockQuantity > 0)
+                    .Select(p => new { p.Name, p.Category, p.Price, p.Description }).ToListAsync();
 
                 var productContext = new StringBuilder();
                 productContext.AppendLine("Product context:");
@@ -128,82 +125,75 @@ namespace GymPower.Services
                     productContext.AppendLine($"- {p.Name} ({p.Category}): {p.Price:C}. {p.Description}");
                 }
 
-                // 3. Combine Static Prompt with Dynamic Context
                 var fullSystemPrompt = $"{staticPrompt}\n\n{productContext}";
 
-                // 4. Build message payload with conversation memory
-                var messagePayload = new List<object>
-                {
-                    new { role = "system", content = fullSystemPrompt }
-                };
+                var allMessages = new List<(string role, string text)>();
 
-                // Add past conversation memory if it's a logged-in user
                 if (userId > 0)
                 {
-                    var pastMessages = await _context.ChatMessages
-                        .AsNoTracking()
-                        .Where(m => m.UserId == userId)
-                        .OrderByDescending(m => m.CreatedAt)
-                        .Take(10) // fetch last 10 messages to keep context window light
-                        .ToListAsync();
-
-                    // Reverse them so they are in chronological order
+                    var pastMessages = await _context.ChatMessages.AsNoTracking()
+                        .Where(m => m.UserId == userId).OrderByDescending(m => m.CreatedAt).Take(10).ToListAsync();
                     pastMessages.Reverse();
-
-                    foreach (var m in pastMessages)
-                    {
-                        // Match role to OpenAI standards (Assistant -> assistant, User -> user)
-                        var roleStr = m.Role.ToLower(); 
-                        messagePayload.Add(new { role = roleStr, content = m.Message });
-                    }
+                    foreach (var m in pastMessages) allMessages.Add(((m.Role.ToLower() == "assistant" || m.Role.ToLower() == "model") ? "model" : "user", m.Message));
                 }
                 else if (guestHistory != null)
                 {
-                    // Guest memory
-                    foreach (var m in guestHistory)
+                    foreach (var m in guestHistory) allMessages.Add(((m.Role.ToLower() == "assistant" || m.Role.ToLower() == "model") ? "model" : "user", m.Message));
+                }
+
+                allMessages.Add(("user", userMessage));
+
+                var cleanedMessages = new List<(string role, string text)>();
+                string expectedRole = "user";
+                foreach (var m in allMessages)
+                {
+                    if (m.role == expectedRole)
                     {
-                        var roleStr = m.Role.ToLower(); 
-                        messagePayload.Add(new { role = roleStr, content = m.Message });
+                        cleanedMessages.Add(m);
+                        expectedRole = expectedRole == "user" ? "model" : "user";
+                    }
+                    else if (m.role == "user" && cleanedMessages.Count > 0 && cleanedMessages.Last().role == "user")
+                    {
+                        // Merge adjacent user messages to satisfy strictly alternating array if needed
+                        var last = cleanedMessages.Last();
+                        cleanedMessages[cleanedMessages.Count - 1] = ("user", last.text + "\n" + m.text);
                     }
                 }
 
-                messagePayload.Add(new { role = "user", content = userMessage });
+                if (cleanedMessages.Count == 0 || cleanedMessages.Last().role != "user")
+                {
+                     cleanedMessages.Add(("user", userMessage)); 
+                }
 
-                // 5. Request Payload (Standard OpenAI Compatible)
+                var processedMessages = new List<object>();
+                foreach (var m in cleanedMessages)
+                {
+                     processedMessages.Add(new { role = m.role, parts = new[] { new { text = m.text } } });
+                }
+
                 var requestBody = new
                 {
-                    model = model,
-                    messages = messagePayload.ToArray(),
-                    max_tokens = 2048,
-                    temperature = 0.7
+                    systemInstruction = new { parts = new[] { new { text = fullSystemPrompt } } },
+                    contents = processedMessages.ToArray(),
+                    generationConfig = new { temperature = 0.7, maxOutputTokens = 2048 }
                 };
 
-                // 5. Send Request
-                _httpClient.DefaultRequestHeaders.Authorization = 
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+                var finalUrl = GetNativeFinalUrl();
 
-                var response = await _httpClient.PostAsJsonAsync(baseUrl, requestBody);
+                var response = await _httpClient.PostAsJsonAsync(finalUrl, requestBody);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
                     _logger.LogError($"AI API Error: {response.StatusCode} - {error}");
-                    
-                    var hint = "";
-                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    {
-                        hint = " (Съвет: Уверете се, че 'Generative Language API' е включено във вашия Google Cloud Console проект)";
-                    }
-
-                    return $"Грешка от доставчика ({response.StatusCode}): {error}{hint}";
+                    return $"Грешка от доставчика ({response.StatusCode}): {error}";
                 }
 
-                // 6. Parse Response
                 var jsonResponse = await response.Content.ReadFromJsonAsync<JsonElement>();
-                
-                if (jsonResponse.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
+                if (jsonResponse.TryGetProperty("candidates", out var candidates) && candidates.GetArrayLength() > 0)
                 {
-                    var content = choices[0].GetProperty("message").GetProperty("content").GetString();
+                    var content = candidates[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
                     return CleanText(content);
                 }
 
