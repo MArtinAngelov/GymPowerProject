@@ -30,7 +30,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Home" asp-action="Index">Начало</a>
                     </li>
@@ -45,20 +45,37 @@
                     }
                 </ul>
 
-                <!-- Theme Toggle -->
-                <button class="btn btn-sm btn-outline-light me-3" id="themeToggle" title="Смени тема">
-                    <i class="fas fa-moon"></i>
-                </button>
+                <style>
+                    @@media (min-width: 992px) {
+                        .desktop-absolute-center {
+                            position: absolute !important;
+                            left: 50% !important;
+                            top: 50% !important;
+                            transform: translate(-50%, -50%) !important;
+                            width: 100% !important;
+                            max-width: 400px !important;
+                            z-index: 1050;
+                        }
+                    }
+                </style>
+                <!-- Center Search -->
+                <div class="desktop-absolute-center mt-2 mt-lg-0 w-100">
+                    <form class="d-flex position-relative w-100" style="max-width: 400px;" asp-controller="Products" asp-action="Index" method="get">
+                        <input class="form-control rounded-pill w-100" type="search" name="search" id="searchInput" placeholder="Търсене..." autocomplete="off">
+                        <!-- Results Dropdown -->
+                        <div id="searchResults" class="list-group position-absolute w-100 shadow-lg mt-1" style="top: 100%; display: none; z-index: 1000;"></div>
+                    </form>
+                </div>
 
-                <!-- Search -->
-                <form class="d-flex me-3 position-relative" asp-controller="Products" asp-action="Index" method="get">
-                    <input class="form-control me-2 rounded-pill" type="search" name="search" id="searchInput" placeholder="Търси..." autocomplete="off">
-                    <!-- Results Dropdown -->
-                    <div id="searchResults" class="list-group position-absolute w-100 shadow-lg mt-1" style="top: 100%; display: none; z-index: 1000;"></div>
-                </form>
+                <!-- Right Items -->
+                <div class="d-lg-flex align-items-center ms-auto mt-3 mt-lg-0">
+                    <!-- Theme Toggle -->
+                    <button class="btn btn-sm btn-outline-light mb-2 mb-lg-0 me-lg-3" id="themeToggle" title="Смени тема">
+                        <i class="fas fa-moon"></i>
+                    </button>
 
-                <!-- Auth & Cart -->
-                <ul class="navbar-nav align-items-center">
+                    <!-- Auth & Cart -->
+                    <ul class="navbar-nav align-items-lg-center">
                     @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
                     {
                         <li class="nav-item dropdown">
@@ -107,6 +124,7 @@
                         </a>
                     </li>
                 </ul>
+                </div>
             </div>
         </div>
     </nav>
