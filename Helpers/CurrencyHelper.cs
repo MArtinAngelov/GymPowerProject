@@ -12,7 +12,12 @@ namespace GymPower.Helpers
             return $"{priceEur:F2} €";
         }
 
+        public static string ToBgn(this decimal priceBgn)
+        {
+            return $"{priceBgn:F2} лв.";
+        }
+
         // Alias for generic usage
-        public static string Format(decimal priceBgn) => ToEuro(priceBgn);
+        public static string Format(decimal priceBgn) => ToBgn(priceBgn);
     }
 }

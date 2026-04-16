@@ -100,20 +100,20 @@ namespace GymPower.Services
             if (cartCategories == null || !cartCategories.Any())
                 return new List<Product>();
 
-            var targetCategories = new List<string>();
-
-            if (cartCategories.Contains("Изграждане на мускулна маса")) 
-                targetCategories.AddRange(new[] { "Регенерация", "Аксесоари" });
-            
-            if (cartCategories.Contains("Отслабване")) 
-                targetCategories.AddRange(new[] { "Витамини и Минерали", "Здравословна закуска" });
-
-            if (!targetCategories.Any()) 
-                targetCategories.Add("Аксесоари"); // Always safe bet
+            // Dynamically fetch other items that exist in the database and complement the category
+            // (E.g. by querying different available categories dynamically from DB)
+            var allCategories = await _context.Products.Select(p => p.Category).Distinct().ToListAsync();
+            var targetCategories = allCategories.Where(c => !cartCategories.Contains(c)).OrderBy(x => Guid.NewGuid()).Take(2).ToList();
 
             var freqList = await _context.Products
                 .Where(p => p.StockQuantity > 0 && targetCategories.Contains(p.Category))
                 .ToListAsync();
+
+            if (!freqList.Any()) 
+            {
+                // Absolute fallback to any distinct product
+                freqList = await _context.Products.Where(p => p.StockQuantity > 0).ToListAsync();
+            }
 
             return freqList
                 .OrderBy(r => Guid.NewGuid())
@@ -123,24 +123,21 @@ namespace GymPower.Services
 
         private List<string> GetCategoriesForGoal(string goal)
         {
-            // Normalize
             if (string.IsNullOrEmpty(goal)) return new List<string>();
             
-            // Map User.FitnessGoal (which might be "Maintenance", "Muscle", "WeightLoss" - wait, let's check User model values)
-            // Model says default "Maintenance". Assuming strings match frontend or we map loosely.
-            // Based on seed data, categories are specific strings.
-
-            // Heuristic matching based on likely keywords
-            var g = goal.ToLower();
+            // Dynamically filter categories that contain the keywords, matching DB data rather than hardcoded rules
+            var keywords = goal.ToLower().Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
             
-            if (g.Contains("мускул") || g.Contains("muscle")) 
-                return new List<string> { "Изграждане на мускулна маса", "Висока производителност", "Аминокиселини" };
+            var allCategories = _context.Products.Select(p => p.Category).Distinct().ToList();
+            var matchedCategories = allCategories.Where(c => keywords.Any(k => c.ToLower().Contains(k))).ToList();
             
-            if (g.Contains("отслаб") || g.Contains("weight") || g.Contains("fat")) 
-                return new List<string> { "Отслабване", "Здравословна закуска", "Кардио" };
+            if (!matchedCategories.Any()) 
+            {
+                // Fallback to random categories
+                matchedCategories = allCategories.OrderBy(x => Guid.NewGuid()).Take(2).ToList();
+            }
             
-            // Default / Maintenance
-            return new List<string> { "Регенерация", "Имунитет", "Витамини и Минерали" };
+            return matchedCategories;
         }
     }
 }

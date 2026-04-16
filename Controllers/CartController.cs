@@ -15,11 +15,13 @@ namespace GymPower.Controllers
     {
         private readonly AppDbContext _context;
         private readonly GymPower.Services.RecommendationService _recommendationService;
+        private readonly GymPower.Services.IEmailService _emailService;
 
-        public CartController(AppDbContext context, GymPower.Services.RecommendationService recommendationService)
+        public CartController(AppDbContext context, GymPower.Services.RecommendationService recommendationService, GymPower.Services.IEmailService emailService)
         {
             _context = context;
             _recommendationService = recommendationService;
+            _emailService = emailService;
         }
 
         private List<CartItem> GetCart()
@@ -171,7 +173,7 @@ namespace GymPower.Controllers
             return View(cart);
         }
         [HttpPost]
-        public IActionResult PlaceOrder(string FullName, string Address, string Email, string Phone, string PaymentMethod)
+        public async Task<IActionResult> PlaceOrder(string FullName, string Address, string Email, string Phone, string PaymentMethod)
         {
             // ✅ 1. Load cart from session
             var cartJson = HttpContext.Session.GetString("Cart");
@@ -223,6 +225,7 @@ namespace GymPower.Controllers
 
     // ✅ 5. Create OrderItems and Decrement Stock
     order.OrderItems = new List<OrderItem>();
+    string orderItemsHtml = "<ul>";
     foreach (var c in cart)
     {
         var product = _context.Products.FirstOrDefault(p => p.Id == c.ProductId);
@@ -240,32 +243,52 @@ namespace GymPower.Controllers
                 VariantType = c.VariantType,
                 VariantValue = c.VariantValue
             });
+
+            string variantText = string.IsNullOrEmpty(c.VariantValue) ? "" : $" ({c.VariantType}: {c.VariantValue})";
+            orderItemsHtml += $"<li style='margin-bottom: 5px;'><b>{c.ProductName}</b>{variantText} - {c.Quantity} бр. x €{(c.Price * 0.51m):0.00}</li>";
         }
+    }
+    orderItemsHtml += "</ul>";
+    
+    // Link order to logged-in user if available
+    var currentUserId = HttpContext.Session.GetInt32("UserId");
+    if (currentUserId.HasValue)
+    {
+        order.UserId = currentUserId.Value;
     }
     
     _context.Orders.Add(order);
     TempData["LastOrderEmail"] = order.Email;
-    _context.SaveChanges();
-
-            // Save order info to TempData for success page
-            TempData["OrderId"] = order.Id.ToString();
-            TempData["OrderTotal"] = total.ToString("F2");
-            TempData["OrderItems"] = JsonConvert.SerializeObject(
-           order.OrderItems.Select(i => new {
-        ProductId = i.ProductId,
-        ProductName = _context.Products.FirstOrDefault(p => p.Id == i.ProductId)?.Name,
-        ImageUrl = _context.Products.FirstOrDefault(p => p.Id == i.ProductId)?.ImageUrl,
-        Quantity = i.Quantity,
-        Price = i.Price
-    }).ToList()
-);
+    await _context.SaveChangesAsync();
 
             // ✅ 6. Clear the cart
             HttpContext.Session.Remove("Cart");
 
-            // ✅ 7. Success message
+            // ✅ 7. Send automated email receipt using the new email service
+            string subject = $"GymPower - Успешна поръчка #{order.Id}";
+            string body = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;'>
+                    <div style='background-color: #212529; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;'>
+                        <h1 style='color: #ffc107; margin: 0;'>GymPower</h1>
+                    </div>
+                    <div style='padding: 20px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px;'>
+                        <h2 style='color: #28a745;'>Здравейте, {order.CustomerName}!</h2>
+                        <p>Благодарим ви, че избрахте GymPower. Вашата поръчка <b>#{order.Id}</b> беше успешно приета и вече се обработва.</p>
+                        <h3 style='border-bottom: 2px solid #ffc107; padding-bottom: 5px; margin-top: 25px;'>Детайли за поръчката</h3>
+                        {orderItemsHtml}
+                        <h3 style='margin-top: 20px;'>Обща сума: <span style='color: #ffc107;'>€{(order.TotalPrice * 0.51m):0.00}</span></h3>
+                        <p style='margin-top: 30px; font-size: 0.9em; color: #666;'>Ако имате въпроси относно поръчката, не се колебайте да се свържете с нашия екип.</p>
+                    </div>
+                </div>";
+
+            if (!string.IsNullOrEmpty(order.Email))
+            {
+                await _emailService.SendEmailAsync(order.Email, subject, body);
+            }
+
+            // ✅ 8. Success message
             TempData["SuccessMessage"] = "✅ Поръчката е приета успешно!";
-            return RedirectToAction("OrderSuccess");
+            return RedirectToAction("OrderSuccess", new { id = order.Id });
         }
 
         // ✅ Get Cart Count API
@@ -281,9 +304,19 @@ namespace GymPower.Controllers
         }
 
         // ✅ Add this new method right BELOW PlaceOrder()
-        public IActionResult OrderSuccess()
+        public IActionResult OrderSuccess(int id)
         {
-            return View("OrderSuccess");
+            var order = _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefault(o => o.Id == id);
+                
+            if (order == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            
+            return View("OrderSuccess", order);
         }
     }
     

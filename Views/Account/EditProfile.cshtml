@@ -3,94 +3,207 @@
     ViewData["Title"] = "Редактирай профила";
 }
 
-<section class="py-5" style="background-color:#0b0b14; color:#f1f1f1;">
-    <div class="container">
-        <div class="card bg-dark border-0 shadow-lg p-4 mx-auto" style="max-width:600px;">
-            <h2 class="text-warning fw-bold mb-4 text-center">✏️ Редактирай профила си</h2>
+<style>
+    .premium-profile-card {
+        background: rgba(30, 31, 41, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        overflow: hidden;
+    }
+    
+    .profile-header-gradient {
+        background: linear-gradient(135deg, #FFB800 0%, #FF8A00 100%);
+        padding: 2rem;
+        position: relative;
+    }
+    
+    .profile-avatar-container {
+        width: 100px;
+        height: 100px;
+        background: #111;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #FFB800;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        margin: -50px auto 20px;
+        position: relative;
+        z-index: 2;
+    }
 
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success text-center fw-bold">
-                    @TempData["SuccessMessage"]
-                </div>
-            }
+    .form-control-premium {
+        background: rgba(0, 0, 0, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+        border-radius: 10px;
+        padding: 0.75rem 1.25rem;
+        transition: all 0.3s ease;
+    }
 
-            <form asp-action="EditProfile" asp-controller="Account" method="post">
-                @Html.AntiForgeryToken() <!-- ✅ required -->
-                <input type="hidden" asp-for="Id" />
+    .form-control-premium:focus {
+        border-color: #FFB800 !important;
+        box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.2) !important;
+        background: rgba(0, 0, 0, 0.4) !important;
+    }
 
-                <div class="mb-3">
-                    <label class="form-label text-light">Потребителско име:</label>
-                    <input type="text" asp-for="Username"
-                           class="form-control bg-dark text-white border-secondary" required />
-                    <span asp-validation-for="Username" class="text-danger"></span>
-                </div>
+    .form-label-premium {
+        font-weight: 600;
+        color: rgba(255,255,255,0.8);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
 
-                <div class="mb-3">
-                    <label class="form-label text-light">Имейл:</label>
-                    <input type="email" asp-for="Email"
-                           class="form-control bg-dark text-white border-secondary" required />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+    .btn-premium-save {
+        background: linear-gradient(135deg, #FFB800 0%, #FF8A00 100%);
+        color: #000;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-                <div class="mb-3">
-                    <label class="form-label text-light">Възраст:</label>
-                    <input type="number" asp-for="Age" class="form-control bg-dark text-white border-secondary" required min="14" max="100" />
-                </div>
+    .btn-premium-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 184, 0, 0.4);
+        color: #000;
+    }
 
-                <div class="mb-3">
-                    <label class="form-label text-light">Пол:</label>
-                    <select asp-for="Gender" class="form-select bg-dark text-white border-secondary">
-                        <option value="Male">Мъж</option>
-                        <option value="Female">Жена</option>
-                    </select>
-                </div>
+    .btn-premium-back {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+    }
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-light">Фитнес цел:</label>
-                        <select asp-for="FitnessGoal" class="form-select bg-dark text-white border-secondary">
-                            <option value="Maintenance">Поддържане</option>
-                            <option value="MuscleGain">Покачване на мускулна маса</option>
-                            <option value="FatLoss">Изгаряне на мазнини</option>
-                        </select>
+    .btn-premium-back:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+</style>
+
+<section class="py-5" style="min-height: calc(100vh - 80px);">
+    <div class="container animate-fade-in">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Outer Glassmorphism Card -->
+                <div class="premium-profile-card">
+                    <!-- Header Gradient -->
+                    <div class="profile-header-gradient text-center">
+                        <h3 class="text-dark fw-bold mb-0" style="margin-top: -10px;">
+                            <i class="fas fa-user-edit me-2"></i>
+                            <span data-bg="Редактирай профила си" data-en="Edit Your Profile">Редактирай профила си</span>
+                        </h3>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-light">Ниво:</label>
-                        <select asp-for="TrainingLevel" class="form-select bg-dark text-white border-secondary">
-                            <option value="Beginner">Начинаещ</option>
-                            <option value="Intermediate">Напреднал</option>
-                            <option value="Advanced">Професионалист</option>
-                        </select>
+
+                    <!-- Avatar -->
+                    <div class="profile-avatar-container">
+                        @Model.Username.Substring(0, 1).ToUpper()
+                    </div>
+
+                    <div class="px-4 pb-4 px-md-5 pb-md-5 pt-0 mt-3">
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show border-0 shadow text-center fw-bold" style="background: rgba(46, 196, 182, 0.2); color: #2ec4b6; border-left: 4px solid #2ec4b6 !important;">
+                                <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
+                        <form asp-action="EditProfile" asp-controller="Account" method="post" id="editProfileForm">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="Id" />
+
+                            <div class="row">
+                                <div class="col-12 mb-4">
+                                    <label class="form-label-premium text-uppercase" data-bg="<i class='fas fa-user text-warning me-1'></i> Потребителско име" data-en="<i class='fas fa-user text-warning me-1'></i> Username"><i class="fas fa-user text-warning me-1"></i> Потребителско име</label>
+                                    <input type="text" asp-for="Username" class="form-control form-control-premium" required />
+                                    <span asp-validation-for="Username" class="text-danger mt-1 small"></span>
+                                </div>
+
+                                <div class="col-12 mb-4">
+                                    <label class="form-label-premium text-uppercase" data-bg="<i class='fas fa-envelope text-warning me-1'></i> Имейл" data-en="<i class='fas fa-envelope text-warning me-1'></i> Email"><i class="fas fa-envelope text-warning me-1"></i> Имейл</label>
+                                    <input type="email" asp-for="Email" class="form-control form-control-premium" required />
+                                    <span asp-validation-for="Email" class="text-danger mt-1 small"></span>
+                                </div>
+                            </div>
+
+                            <hr class="border-secondary opacity-25 my-4" />
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label-premium text-uppercase" data-bg="Възраст" data-en="Age">Възраст</label>
+                                    <input type="number" asp-for="Age" class="form-control form-control-premium" required min="14" max="100" />
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label-premium text-uppercase" data-bg="Пол" data-en="Gender">Пол</label>
+                                    <select asp-for="Gender" class="form-select form-control-premium">
+                                        <option value="Male" data-bg="Мъж" data-en="Male">Мъж</option>
+                                        <option value="Female" data-bg="Жена" data-en="Female">Жена</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label-premium text-uppercase" data-bg="Фитнес цел" data-en="Fitness Goal">Фитнес цел</label>
+                                    <select asp-for="FitnessGoal" class="form-select form-control-premium">
+                                        <option value="Maintenance" data-bg="Поддържане" data-en="Maintenance">Поддържане</option>
+                                        <option value="MuscleGain" data-bg="Покачване на мускулна маса" data-en="Build Muscle">Покачване на мускулна маса</option>
+                                        <option value="FatLoss" data-bg="Изгаряне на мазнини" data-en="Fat Loss">Изгаряне на мазнини</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label-premium text-uppercase" data-bg="Ниво" data-en="Experience Level">Ниво</label>
+                                    <select asp-for="TrainingLevel" class="form-select form-control-premium">
+                                        <option value="Beginner" data-bg="Начинаещ" data-en="Beginner">Начинаещ</option>
+                                        <option value="Intermediate" data-bg="Напреднал" data-en="Intermediate">Напреднал</option>
+                                        <option value="Advanced" data-bg="Професионалист" data-en="Advanced">Професионалист</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="border-secondary opacity-25 my-4" />
+                            <h5 class="text-warning mb-3 fw-bold" data-bg="<i class='fas fa-lock me-2'></i> Смяна на парола" data-en="<i class='fas fa-lock me-2'></i> Change Password"><i class="fas fa-lock me-2"></i> Смяна на парола</h5>
+
+                            <div class="mb-4">
+                                <label class="form-label-premium text-uppercase" data-bg="Нова Парола (по избор)" data-en="New Password (optional)">Нова Парола (по избор)</label>
+                                <input type="password" asp-for="Password" data-val="false"
+                                       class="form-control form-control-premium" id="editPassword"
+                                       placeholder="Остави празно, ако не променяш" />
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label-premium text-uppercase" data-bg="Потвърди парола" data-en="Confirm Password">Потвърди парола</label>
+                                <input type="password" name="ConfirmPassword" data-val="false"
+                                       class="form-control form-control-premium" id="editConfirmPassword"
+                                       placeholder="Остави празно, ако не променяш" />
+                                <span id="confirmPasswordError" class="mt-2 d-block small fw-bold"></span>
+                            </div>
+
+                            <div class="d-flex flex-column flex-sm-row gap-3 mt-5">
+                                <button type="submit" class="btn btn-premium-save flex-grow-1" id="saveButton">
+                                    <i class="fas fa-save me-2"></i> <span data-bg="Запази промените" data-en="Save Changes">Запази промените</span>
+                                </button>
+                                
+                                <a asp-action="Profile" class="btn btn-premium-back px-4 text-center">
+                                    <i class="fas fa-arrow-left me-2"></i> <span data-bg="Назад към профила" data-en="Back to Profile">Назад към профила</span>
+                                </a>
+                            </div>
+                        </form>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-light">Парола (по избор):</label>
-                    <!-- Make client-side validation ignore Required on edit -->
-                    <input type="password" asp-for="Password" data-val="false"
-                           class="form-control bg-dark text-white border-secondary" id="editPassword"
-                           placeholder="Остави празно, ако не искаш да я променяш" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-light">Потвърди парола (по избор):</label>
-                    <input type="password" name="ConfirmPassword" data-val="false"
-                           class="form-control bg-dark text-white border-secondary" id="editConfirmPassword"
-                           placeholder="Остави празно, ако не променяш паролата" />
-                    <span id="confirmPasswordError" class="text-danger small"></span>
-                </div>
-
-                <button type="submit"
-                        class="btn btn-warning fw-bold w-100 rounded-pill mt-3 shadow">
-                    💾 Запази промените
-                </button>
-
-                <a asp-action="Profile"
-                   class="btn btn-outline-light fw-bold w-100 rounded-pill mt-3">
-                    ← Назад
-                </a>
-            </form>
+            </div>
         </div>
     </div>
 </section>
@@ -101,22 +214,31 @@
             const passwordInput = document.getElementById("editPassword");
             const confirmPasswordInput = document.getElementById("editConfirmPassword");
             const confirmPasswordError = document.getElementById("confirmPasswordError");
+            const saveButton = document.getElementById("saveButton");
+
+            // Simple language grabber for JS translations
+            function isEnglish() {
+                return (document.cookie.indexOf('lang=en') !== -1);
+            }
 
             function validatePasswordMatch() {
                 const password = passwordInput.value;
                 const confirmPassword = confirmPasswordInput.value;
+                const en = isEnglish();
 
                 // If both are empty, it's valid (no password change)
                 if (password.length === 0 && confirmPassword.length === 0) {
                     confirmPasswordInput.style.borderColor = '';
-                    confirmPasswordError.textContent = '';
+                    confirmPasswordError.innerHTML = '';
+                    saveButton.disabled = false;
                     return true;
                 }
 
                 // If password is entered but confirm is empty
                 if (password.length > 0 && confirmPassword.length === 0) {
-                    confirmPasswordInput.style.borderColor = '#444';
-                    confirmPasswordError.textContent = '';
+                    confirmPasswordInput.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    confirmPasswordError.innerHTML = '';
+                    saveButton.disabled = false;
                     return true;
                 }
 
@@ -124,12 +246,14 @@
                 if (password === confirmPassword) {
                     confirmPasswordInput.style.borderColor = '#2ec4b6';
                     confirmPasswordError.style.color = '#2ec4b6';
-                    confirmPasswordError.innerHTML = '<i class="fas fa-check-circle"></i> Паролите съвпадат';
+                    confirmPasswordError.innerHTML = en ? '<i class="fas fa-check-circle me-1"></i> Passwords match' : '<i class="fas fa-check-circle me-1"></i> Паролите съвпадат';
+                    saveButton.disabled = false;
                     return true;
                 } else {
                     confirmPasswordInput.style.borderColor = '#ff6b35';
                     confirmPasswordError.style.color = '#ff6b35';
-                    confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Паролите не съвпадат';
+                    confirmPasswordError.innerHTML = en ? '<i class="fas fa-times-circle me-1"></i> Passwords do not match' : '<i class="fas fa-times-circle me-1"></i> Паролите не съвпадат';
+                    saveButton.disabled = true;
                     return false;
                 }
             }
@@ -142,15 +266,22 @@
             });
 
             // Prevent form submission if passwords don't match
-            document.querySelector("form").addEventListener("submit", function(e) {
+            document.getElementById("editProfileForm").addEventListener("submit", function(e) {
                 // Only validate if user is trying to change password
                 if (passwordInput.value.length > 0 || confirmPasswordInput.value.length > 0) {
                     if (!validatePasswordMatch()) {
                         e.preventDefault();
-                        confirmPasswordError.innerHTML = '<i class="fas fa-times-circle"></i> Моля, уверете се, че паролите съвпадат';
+                        const en = isEnglish();
+                        confirmPasswordError.innerHTML = en ? '<i class="fas fa-exclamation-circle me-1"></i> Please ensure passwords match' : '<i class="fas fa-exclamation-circle me-1"></i> Моля, уверете се, че паролите съвпадат';
                     }
                 }
             });
+            
+            // Initial placeholder language translation
+            if(isEnglish()) {
+                passwordInput.placeholder = "Leave empty if not changing";
+                confirmPasswordInput.placeholder = "Leave empty if not changing";
+            }
         });
     </script>
 }

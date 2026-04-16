@@ -148,21 +148,28 @@ namespace GymPower.Controllers
                 }
             }
 
-            // 🔧 Disable server-side validation for password when left empty
+            // 🔧 Disable server-side validation for all properties except the ones being explicitly edited
             if (string.IsNullOrWhiteSpace(form.Password))
             {
                 ModelState.Remove(nameof(AppUser.Password));
             }
-            else
+            else if (form.Password != confirmPassword)
             {
-                if (form.Password != confirmPassword)
-                {
-                    ModelState.AddModelError("Password", "Паролите не съвпадат");
-                }
+                ModelState.AddModelError("Password", "Паролите не съвпадат");
+            }
+
+            // Only allow validation to block if the core input fields are the ones failing
+            var allowedKeys = new[] { "Username", "Email", "Password" };
+            var keysToRemove = ModelState.Keys.Where(k => !allowedKeys.Contains(k)).ToList();
+            foreach (var key in keysToRemove)
+            {
+                ModelState.Remove(key);
             }
 
             if (!ModelState.IsValid)
+            {
                 return View(form);
+            }
 
             // ✅ Update username if changed
             if (!string.IsNullOrWhiteSpace(form.Username) && form.Username != user.Username)
@@ -186,7 +193,7 @@ namespace GymPower.Controllers
             _context.SaveChanges();
 
             TempData["SuccessMessage"] = "✅ Промените са запазени успешно!";
-            return RedirectToAction("EditProfile");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Profile()

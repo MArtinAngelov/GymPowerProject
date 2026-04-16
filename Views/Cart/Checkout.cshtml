@@ -1,4 +1,4 @@
-﻿@model List<GymPower.Models.CartItem>
+@model List<GymPower.Models.CartItem>
 @{
     ViewData["Title"] = "Плащане и поръчка";
     var total = ViewBag.Total ?? 0m;
@@ -84,7 +84,6 @@
                                 <label class="form-label">Начин на плащане:</label>
                                 <select name="PaymentMethod" class="form-select">
                                     <option>Наложен платеж</option>
-                                    <option>Банкова карта</option>
                                 </select>
                             </div>
 

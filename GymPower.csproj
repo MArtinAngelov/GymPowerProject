@@ -3,7 +3,8 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
-	</PropertyGroup>
+	  <UserSecretsId>b69b6be4-93be-441e-bb94-b0ae857c09f7</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.*" />

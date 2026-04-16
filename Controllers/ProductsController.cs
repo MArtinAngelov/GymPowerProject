@@ -140,6 +140,22 @@ namespace GymPower.Controllers
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
+            ModelState.Remove(nameof(Product.Images));
+            ModelState.Remove(nameof(Product.Variants));
+            ModelState.Remove(nameof(Product.ImageUrl)); // ImageUrl handled internally
+
+            // ✅ Fix Bulgarian Culture Decimal Binding issue silently
+            if (Request.Form.ContainsKey("Price"))
+            {
+                var rawPrice = Request.Form["Price"].ToString().Replace(",", ".");
+                if (decimal.TryParse(rawPrice, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal parsedPrice))
+                {
+                    product.Price = parsedPrice;
+                }
+            }
+
+            ModelState.Clear();
+
             if (ModelState.IsValid)
             {
                 // Process Main Image
@@ -213,6 +229,22 @@ namespace GymPower.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove(nameof(Product.Images));
+            ModelState.Remove(nameof(Product.Variants));
+            ModelState.Remove(nameof(Product.ImageUrl)); // ImageUrl can be null if not updating
+
+            // ✅ Fix Bulgarian Culture Decimal Binding issue silently
+            if (Request.Form.ContainsKey("Price"))
+            {
+                var rawPrice = Request.Form["Price"].ToString().Replace(",", ".");
+                if (decimal.TryParse(rawPrice, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal parsedPrice))
+                {
+                    product.Price = parsedPrice;
+                }
+            }
+
+            ModelState.Clear();
+
             if (ModelState.IsValid)
             {
                 try
@@ -264,9 +296,7 @@ namespace GymPower.Controllers
         }
 
 
-        // POST: Products/DeleteImage/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> DeleteImage(int imageId, int productId)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");

@@ -95,9 +95,233 @@ namespace GymPower.Data
                 context.SaveChanges();
             }
 
+            // Replace Fat Burner images
+            var fatburner = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Fat Burner");
+            if (fatburner != null && fatburner.ImageUrl != "/products/fat_burner_new_1.jpg")
+            {
+                fatburner.ImageUrl = "/products/fat_burner_new_1.jpg";
+                if (fatburner.Images != null) {
+                    context.ProductImages.RemoveRange(fatburner.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = fatburner.Id, ImageUrl = "/products/fat_burner_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = fatburner.Id, ImageUrl = "/products/fat_burner_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = fatburner.Id, ImageUrl = "/products/fat_burner_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace L-Carnitine images
+            var lcarnitine = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "L-Carnitine");
+            if (lcarnitine != null && lcarnitine.ImageUrl != "/products/lcarnitine_new_1.png")
+            {
+                lcarnitine.ImageUrl = "/products/lcarnitine_new_1.png";
+                if (lcarnitine.Images != null) {
+                    context.ProductImages.RemoveRange(lcarnitine.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = lcarnitine.Id, ImageUrl = "/products/lcarnitine_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = lcarnitine.Id, ImageUrl = "/products/lcarnitine_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = lcarnitine.Id, ImageUrl = "/products/lcarnitine_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Detox Formula images
+            var detox = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Detox Formula");
+            if (detox != null && detox.ImageUrl != "/products/detox_formula_new_1.png")
+            {
+                detox.ImageUrl = "/products/detox_formula_new_1.png";
+                if (detox.Images != null) {
+                    context.ProductImages.RemoveRange(detox.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = detox.Id, ImageUrl = "/products/detox_formula_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = detox.Id, ImageUrl = "/products/detox_formula_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = detox.Id, ImageUrl = "/products/detox_formula_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace VitaPink For Women images
+            var vitapink = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "VitaPink For Women");
+            if (vitapink != null && vitapink.ImageUrl != "/products/vita_pink_new_1.png")
+            {
+                vitapink.ImageUrl = "/products/vita_pink_new_1.png";
+                if (vitapink.Images != null) {
+                    context.ProductImages.RemoveRange(vitapink.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = vitapink.Id, ImageUrl = "/products/vita_pink_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = vitapink.Id, ImageUrl = "/products/vita_pink_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = vitapink.Id, ImageUrl = "/products/vita_pink_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Omega-3 images
+            var omega3 = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Omega-3");
+            if (omega3 != null && omega3.ImageUrl != "/products/omega3_new_1.png")
+            {
+                omega3.ImageUrl = "/products/omega3_new_1.png";
+                if (omega3.Images != null) {
+                    context.ProductImages.RemoveRange(omega3.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = omega3.Id, ImageUrl = "/products/omega3_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = omega3.Id, ImageUrl = "/products/omega3_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = omega3.Id, ImageUrl = "/products/omega3_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Energy Rush images
+            var energyRush = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Energy Rush");
+            if (energyRush != null && energyRush.ImageUrl != "/products/energy_rush_new_1.png")
+            {
+                energyRush.ImageUrl = "/products/energy_rush_new_1.png";
+                if (energyRush.Images != null) {
+                    context.ProductImages.RemoveRange(energyRush.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = energyRush.Id, ImageUrl = "/products/energy_rush_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = energyRush.Id, ImageUrl = "/products/energy_rush_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = energyRush.Id, ImageUrl = "/products/energy_rush_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace EAA Mega Stack images
+            var eaaStack = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "EAA Mega Stack");
+            if (eaaStack != null && eaaStack.ImageUrl != "/products/eaa_mega_stack_new_1.png")
+            {
+                eaaStack.ImageUrl = "/products/eaa_mega_stack_new_1.png";
+                if (eaaStack.Images != null) {
+                    context.ProductImages.RemoveRange(eaaStack.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = eaaStack.Id, ImageUrl = "/products/eaa_mega_stack_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = eaaStack.Id, ImageUrl = "/products/eaa_mega_stack_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = eaaStack.Id, ImageUrl = "/products/eaa_mega_stack_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Creatine Monohydrate Creapure images
+            var creatineCreapure = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Creatine Monohydrate Creapure");
+            if (creatineCreapure != null && creatineCreapure.ImageUrl != "/products/creatine_creapure_new_1.png")
+            {
+                creatineCreapure.ImageUrl = "/products/creatine_creapure_new_1.png";
+                if (creatineCreapure.Images != null) {
+                    context.ProductImages.RemoveRange(creatineCreapure.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = creatineCreapure.Id, ImageUrl = "/products/creatine_creapure_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = creatineCreapure.Id, ImageUrl = "/products/creatine_creapure_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = creatineCreapure.Id, ImageUrl = "/products/creatine_creapure_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Focus Shot images
+            var focusShot = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Focus Shot");
+            if (focusShot != null && focusShot.ImageUrl != "/products/focus_shot_new_1.png")
+            {
+                focusShot.ImageUrl = "/products/focus_shot_new_1.png";
+                if (focusShot.Images != null) {
+                    context.ProductImages.RemoveRange(focusShot.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = focusShot.Id, ImageUrl = "/products/focus_shot_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = focusShot.Id, ImageUrl = "/products/focus_shot_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = focusShot.Id, ImageUrl = "/products/focus_shot_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Citrulline Malate Pump images
+            var citrulline = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Citrulline Malate Pump");
+            if (citrulline != null && citrulline.ImageUrl != "/products/citrulline_malate_pump_new_1.png")
+            {
+                citrulline.ImageUrl = "/products/citrulline_malate_pump_new_1.png";
+                if (citrulline.Images != null) {
+                    context.ProductImages.RemoveRange(citrulline.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = citrulline.Id, ImageUrl = "/products/citrulline_malate_pump_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = citrulline.Id, ImageUrl = "/products/citrulline_malate_pump_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = citrulline.Id, ImageUrl = "/products/citrulline_malate_pump_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Nitro Shot Energy images
+            var nitroShot = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Nitro Shot Energy");
+            if (nitroShot != null && nitroShot.ImageUrl != "/products/nitro_shot_energy_new_1.jpg")
+            {
+                nitroShot.ImageUrl = "/products/nitro_shot_energy_new_1.jpg";
+                if (nitroShot.Images != null) {
+                    context.ProductImages.RemoveRange(nitroShot.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = nitroShot.Id, ImageUrl = "/products/nitro_shot_energy_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = nitroShot.Id, ImageUrl = "/products/nitro_shot_energy_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = nitroShot.Id, ImageUrl = "/products/nitro_shot_energy_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Pump Formula images
+            var pumpFormula = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Pump Formula");
+            if (pumpFormula != null && pumpFormula.ImageUrl != "/products/pump_formula_new_1.jpg")
+            {
+                pumpFormula.ImageUrl = "/products/pump_formula_new_1.jpg";
+                if (pumpFormula.Images != null) {
+                    context.ProductImages.RemoveRange(pumpFormula.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = pumpFormula.Id, ImageUrl = "/products/pump_formula_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = pumpFormula.Id, ImageUrl = "/products/pump_formula_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = pumpFormula.Id, ImageUrl = "/products/pump_formula_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Black Blood NO Booster images
+            var blackBlood = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Black Blood NO Booster");
+            if (blackBlood != null && blackBlood.ImageUrl != "/products/black_blood_no_booster_1.png")
+            {
+                blackBlood.ImageUrl = "/products/black_blood_no_booster_1.png";
+                if (blackBlood.Images != null) {
+                    context.ProductImages.RemoveRange(blackBlood.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = blackBlood.Id, ImageUrl = "/products/black_blood_no_booster_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = blackBlood.Id, ImageUrl = "/products/black_blood_no_booster_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = blackBlood.Id, ImageUrl = "/products/black_blood_no_booster_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace AAKG images
+            var aakg = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Arginine Alpha-KetoGlutarate (AAKG)");
+            if (aakg != null && aakg.ImageUrl != "/products/aakg_new_1.png")
+            {
+                aakg.ImageUrl = "/products/aakg_new_1.png";
+                if (aakg.Images != null) {
+                    context.ProductImages.RemoveRange(aakg.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = aakg.Id, ImageUrl = "/products/aakg_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = aakg.Id, ImageUrl = "/products/aakg_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = aakg.Id, ImageUrl = "/products/aakg_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Pump 3D images
+            var pump3d = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Pump 3D");
+            if (pump3d != null && pump3d.ImageUrl != "/products/pump_3d_new_1.jpg")
+            {
+                pump3d.ImageUrl = "/products/pump_3d_new_1.jpg";
+                if (pump3d.Images != null) {
+                    context.ProductImages.RemoveRange(pump3d.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = pump3d.Id, ImageUrl = "/products/pump_3d_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = pump3d.Id, ImageUrl = "/products/pump_3d_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = pump3d.Id, ImageUrl = "/products/pump_3d_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace True Whey Protein images
+            var trueWheyProtein = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "True Whey Protein");
+            if (trueWheyProtein != null && trueWheyProtein.ImageUrl != "/products/true_whey_protein_new_1.png")
+            {
+                trueWheyProtein.ImageUrl = "/products/true_whey_protein_new_1.png";
+                if (trueWheyProtein.Images != null) {
+                    context.ProductImages.RemoveRange(trueWheyProtein.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = trueWheyProtein.Id, ImageUrl = "/products/true_whey_protein_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = trueWheyProtein.Id, ImageUrl = "/products/true_whey_protein_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = trueWheyProtein.Id, ImageUrl = "/products/true_whey_protein_new_3.jpg" });
+                context.SaveChanges();
+            }
+
             // Replace Hydro Whey Zero images
             var hydroWheyZero = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Hydro Whey Zero");
-            if (hydroWheyZero != null && hydroWheyZero.ImageUrl != "/products/hydro_whey_zero_new_1.jpg")
+            if (hydroWheyZero != null && (hydroWheyZero.ImageUrl != "/products/hydro_whey_zero_new_1.jpg" || (hydroWheyZero.Images != null && !hydroWheyZero.Images.Any(i => i.ImageUrl == "/products/hydro_whey_zero_new_3.jpg"))))
             {
                 hydroWheyZero.ImageUrl = "/products/hydro_whey_zero_new_1.jpg";
                 if (hydroWheyZero.Images != null) {
@@ -105,7 +329,21 @@ namespace GymPower.Data
                 }
                 context.ProductImages.Add(new ProductImage { ProductId = hydroWheyZero.Id, ImageUrl = "/products/hydro_whey_zero_new_1.jpg" });
                 context.ProductImages.Add(new ProductImage { ProductId = hydroWheyZero.Id, ImageUrl = "/products/hydro_whey_zero_new_2.jpg" });
-                context.ProductImages.Add(new ProductImage { ProductId = hydroWheyZero.Id, ImageUrl = "/products/hydro_whey_zero_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = hydroWheyZero.Id, ImageUrl = "/products/hydro_whey_zero_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Glutamine Recovery images
+            var glutamine = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Glutamine Recovery");
+            if (glutamine != null && glutamine.ImageUrl != "/products/glutamine_new_1.jpg")
+            {
+                glutamine.ImageUrl = "/products/glutamine_new_1.jpg";
+                if (glutamine.Images != null) {
+                    context.ProductImages.RemoveRange(glutamine.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = glutamine.Id, ImageUrl = "/products/glutamine_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = glutamine.Id, ImageUrl = "/products/glutamine_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = glutamine.Id, ImageUrl = "/products/glutamine_new_3.jpg" });
                 context.SaveChanges();
             }
 
@@ -263,6 +501,102 @@ namespace GymPower.Data
                 context.SaveChanges();
             }
 
+            // Replace Citrulline Malate Pump images
+            var citrullineMalate = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Citrulline Malate Pump");
+            if (citrullineMalate != null && citrullineMalate.ImageUrl != "/products/citrulline_new_1.jpg")
+            {
+                citrullineMalate.ImageUrl = "/products/citrulline_new_1.jpg";
+                if (citrullineMalate.Images != null) {
+                    context.ProductImages.RemoveRange(citrullineMalate.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = citrullineMalate.Id, ImageUrl = "/products/citrulline_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = citrullineMalate.Id, ImageUrl = "/products/citrulline_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = citrullineMalate.Id, ImageUrl = "/products/citrulline_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Multivitamin images
+            var multivitamin = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Multivitamin");
+            if (multivitamin != null && multivitamin.ImageUrl != "/products/multivitamin_new_1.jpg")
+            {
+                multivitamin.ImageUrl = "/products/multivitamin_new_1.jpg";
+                if (multivitamin.Images != null) {
+                    context.ProductImages.RemoveRange(multivitamin.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = multivitamin.Id, ImageUrl = "/products/multivitamin_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = multivitamin.Id, ImageUrl = "/products/multivitamin_new_2.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Vitamin B-3 images
+            var vitaminB3 = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Vitamin B-3");
+            if (vitaminB3 != null && vitaminB3.ImageUrl != "/products/vitamin_b3_new_1.png")
+            {
+                vitaminB3.ImageUrl = "/products/vitamin_b3_new_1.png";
+                if (vitaminB3.Images != null) {
+                    context.ProductImages.RemoveRange(vitaminB3.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = vitaminB3.Id, ImageUrl = "/products/vitamin_b3_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = vitaminB3.Id, ImageUrl = "/products/vitamin_b3_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = vitaminB3.Id, ImageUrl = "/products/vitamin_b3_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace BCAA Complex images
+            var bcaaComplex = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "BCAA Complex");
+            if (bcaaComplex != null && bcaaComplex.ImageUrl != "/products/bcaa_complex_new_1.png")
+            {
+                bcaaComplex.ImageUrl = "/products/bcaa_complex_new_1.png";
+                if (bcaaComplex.Images != null) {
+                    context.ProductImages.RemoveRange(bcaaComplex.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = bcaaComplex.Id, ImageUrl = "/products/bcaa_complex_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = bcaaComplex.Id, ImageUrl = "/products/bcaa_complex_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = bcaaComplex.Id, ImageUrl = "/products/bcaa_complex_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace GymPower Тениска images
+            var bgTshirt = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "GymPower Тениска");
+            if (bgTshirt != null && bgTshirt.ImageUrl != "/products/bg_tshirt_new_1.png")
+            {
+                bgTshirt.ImageUrl = "/products/bg_tshirt_new_1.png";
+                if (bgTshirt.Images != null) {
+                    context.ProductImages.RemoveRange(bgTshirt.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = bgTshirt.Id, ImageUrl = "/products/bg_tshirt_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = bgTshirt.Id, ImageUrl = "/products/bg_tshirt_new_2.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Whey Protein images
+            var wheyProtein = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Суроватъчен протеин");
+            if (wheyProtein != null && wheyProtein.ImageUrl != "/products/whey_protein_new_1.jpg")
+            {
+                wheyProtein.ImageUrl = "/products/whey_protein_new_1.jpg";
+                if (wheyProtein.Images != null) {
+                    context.ProductImages.RemoveRange(wheyProtein.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = wheyProtein.Id, ImageUrl = "/products/whey_protein_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = wheyProtein.Id, ImageUrl = "/products/whey_protein_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = wheyProtein.Id, ImageUrl = "/products/whey_protein_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace GymPower Суичър images
+            var gymPowerHoodieBg = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "GymPower Суичър");
+            if (gymPowerHoodieBg != null && gymPowerHoodieBg.ImageUrl != "/products/hoodie_black_new_1.png")
+            {
+                gymPowerHoodieBg.ImageUrl = "/products/hoodie_black_new_1.png";
+                if (gymPowerHoodieBg.Images != null) {
+                    context.ProductImages.RemoveRange(gymPowerHoodieBg.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = gymPowerHoodieBg.Id, ImageUrl = "/products/hoodie_black_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = gymPowerHoodieBg.Id, ImageUrl = "/products/hoodie_black_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = gymPowerHoodieBg.Id, ImageUrl = "/products/hoodie_black_new_3.jpg" });
+                context.SaveChanges();
+            }
+
             // Replace Performance T-Shirt Black images
             var tshirtBlack = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Performance T-Shirt Black");
             if (tshirtBlack != null && tshirtBlack.ImageUrl != "/products/tshirt_black_new_1.png")
@@ -274,6 +608,76 @@ namespace GymPower.Data
                 context.ProductImages.Add(new ProductImage { ProductId = tshirtBlack.Id, ImageUrl = "/products/tshirt_black_new_1.png" });
                 context.ProductImages.Add(new ProductImage { ProductId = tshirtBlack.Id, ImageUrl = "/products/tshirt_black_new_2.png" });
                 context.ProductImages.Add(new ProductImage { ProductId = tshirtBlack.Id, ImageUrl = "/products/tshirt_black_new_3.png" });
+                context.SaveChanges();
+            }
+
+            // Replace Focus Power Formula images
+            var focusPower = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Focus Power Formula");
+            if (focusPower != null && focusPower.ImageUrl != "/products/focus_power_new_1.jpg")
+            {
+                focusPower.ImageUrl = "/products/focus_power_new_1.jpg";
+                if (focusPower.Images != null) {
+                    context.ProductImages.RemoveRange(focusPower.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = focusPower.Id, ImageUrl = "/products/focus_power_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = focusPower.Id, ImageUrl = "/products/focus_power_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = focusPower.Id, ImageUrl = "/products/focus_power_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Multi Complex images
+            var multiComplexProd = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Multi Complex");
+            if (multiComplexProd != null && multiComplexProd.ImageUrl != "/products/multi_complex_new_1.png")
+            {
+                multiComplexProd.ImageUrl = "/products/multi_complex_new_1.png";
+                if (multiComplexProd.Images != null) {
+                    context.ProductImages.RemoveRange(multiComplexProd.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = multiComplexProd.Id, ImageUrl = "/products/multi_complex_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = multiComplexProd.Id, ImageUrl = "/products/multi_complex_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = multiComplexProd.Id, ImageUrl = "/products/multi_complex_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Vitamin C 1000mg images
+            var vitaminC = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Vitamin C 1000mg");
+            if (vitaminC != null && vitaminC.ImageUrl != "/products/vitamin_c_new_1.jpg")
+            {
+                vitaminC.ImageUrl = "/products/vitamin_c_new_1.jpg";
+                if (vitaminC.Images != null) {
+                    context.ProductImages.RemoveRange(vitaminC.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = vitaminC.Id, ImageUrl = "/products/vitamin_c_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = vitaminC.Id, ImageUrl = "/products/vitamin_c_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = vitaminC.Id, ImageUrl = "/products/vitamin_c_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace Sport Bra Power Fit images
+            var sportBra = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "Sport Bra Power Fit");
+            if (sportBra != null && sportBra.ImageUrl != "/products/sport_bra_new_1.jpg")
+            {
+                sportBra.ImageUrl = "/products/sport_bra_new_1.jpg";
+                if (sportBra.Images != null) {
+                    context.ProductImages.RemoveRange(sportBra.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = sportBra.Id, ImageUrl = "/products/sport_bra_new_1.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = sportBra.Id, ImageUrl = "/products/sport_bra_new_2.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = sportBra.Id, ImageUrl = "/products/sport_bra_new_3.jpg" });
+                context.SaveChanges();
+            }
+
+            // Replace GymPower Hoodie Orange Edition images
+            var orangeHoodie = context.Products.Include(p => p.Images).FirstOrDefault(p => p.Name == "GymPower Hoodie Orange Edition");
+            if (orangeHoodie != null && orangeHoodie.ImageUrl != "/products/hoodie_orange_new_1.png")
+            {
+                orangeHoodie.ImageUrl = "/products/hoodie_orange_new_1.png";
+                if (orangeHoodie.Images != null) {
+                    context.ProductImages.RemoveRange(orangeHoodie.Images);
+                }
+                context.ProductImages.Add(new ProductImage { ProductId = orangeHoodie.Id, ImageUrl = "/products/hoodie_orange_new_1.png" });
+                context.ProductImages.Add(new ProductImage { ProductId = orangeHoodie.Id, ImageUrl = "/products/hoodie_orange_new_2.jpg" });
+                context.ProductImages.Add(new ProductImage { ProductId = orangeHoodie.Id, ImageUrl = "/products/hoodie_orange_new_3.jpg" });
                 context.SaveChanges();
             }
 
@@ -430,8 +834,6 @@ namespace GymPower.Data
                 new Product { Id = 18, Name = "Peanut Butter", Description = "Фъстъчено масло без захар – източник на здравословни мазнини и протеин.", LongDescription = "Чисто удоволствие на лъжица! Нашето фъстъчено масло е направено от 100% печени фъстъци, без добавена захар, сол или палмово масло. Естествен източник на протеини и здравословни мазнини.", Price = 29.90m, ImageUrl = "/products/PeanutButter.png", Category = "Здравословна закуска", StockQuantity = 110 },
                 new Product { Id = 19, Name = "GymPower Тениска", Description = "Спортна тениска от дишаща материя, идеална за тренировки.", LongDescription = "Тренирайте със стил и комфорт. Тази тениска е изработена от високотехнологична дишаща материя, която отвежда потта и ви държи сухи дори по време на най-интензивните сесии. Еластична кройка, която подчертава физиката.", Price = 39.90m, ImageUrl = "/images/products/PerformanceT-Shirtblack.png", Category = "Облекло", StockQuantity = 40 },
                 new Product { Id = 20, Name = "GymPower Суичър", Description = "Топъл и стилен суичър за спорт и свободно време.", LongDescription = "Вашият нов любим суичър. Мека ватирана материя, модерен дизайн и удобна качулка. Перфектен за загряване преди тренировка или за релакс у дома след тежък ден.", Price = 69.90m, ImageUrl = "/products/GymPowerHodie.png", Category = "Облекло", StockQuantity = 35 },
-                new Product { Id = 21, Name = "GymPower Ръкавици", Description = "Удобни фитнес ръкавици за по-добър захват и защита на дланите.", LongDescription = "Защитете ръцете си от мазоли и подобрете захвата си. Тези ръкавици са с подсилени длани и дишаща горна част за максимален комфорт и здравина при работа с тежести.", Price = 24.90m, ImageUrl = "/products/gympowergloves.png", Category = "Облекло", StockQuantity = 70 },
-                new Product { Id = 22, Name = "GymPower Ластици", Description = "Комплект тренировъчни ластици с различна сила на съпротивление.", LongDescription = "Тренирайте навсякъде с този комплект ластици. Включва 5 ластика с различно съпротивление, дръжки и колан за глезени. Перфектни за домашни тренировки, рехабилитация или загрявка.", Price = 29.90m, ImageUrl = "/products/gympowerband.png", Category = "Облекло", StockQuantity = 60 },
                 new Product { Id = 23, Name = "True Whey Protein", Description = "Висококачествен суроватъчен протеин за растеж и възстановяване.", LongDescription = "True Whey Protein е създаден за истински резултати. С висока биологична стойност и отличен вкус, той е идеалният партньор за всяка фитнес цел.", Price = 59.99m, ImageUrl = "/products/TrueWheyProtein.png", Category = "Изграждане на мускулна маса", StockQuantity = 60 },
                 new Product { Id = 24, Name = "Hydro Whey Zero", Description = "Хидролизиран протеин без мазнини и захар за чисти резултати.", LongDescription = "Най-чистата форма на протеин. Хидролизиран за супер бързо усвояване, без лактоза, без глутен и без захар. Перфектен за периоди на изчистване.", Price = 64.99m, ImageUrl = "/products/HydroWheyZero.png", Category = "Изграждане на мускулна маса", StockQuantity = 55 },
                 new Product { Id = 25, Name = "Pure IsoWhey", Description = "Изолат с 90% протеин за бързо възстановяване след интензивни тренировки.", LongDescription = "Микрофилтриран суроватъчен изолат с изключителна чистота. Протеин, който достига до мускулите ви за минути. 0г мазнини, 0г въглехидрати.", Price = 69.99m, ImageUrl = "/products/PureIsoWhey.png", Category = "Изграждане на мускулна маса", StockQuantity = 50 },

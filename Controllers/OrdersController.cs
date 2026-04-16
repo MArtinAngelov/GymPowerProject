@@ -23,6 +23,7 @@ namespace GymPower.Controllers
         {
             var orders = _context.Orders
                 .Include(o => o.OrderItems)
+                .AsNoTracking()
                 .ToList();
 
             // Debug check — if no data, return empty list

@@ -92,7 +92,7 @@ namespace GymPower.Services
             }
         }
 
-        public async Task<string> GetAIResponseAsync(string userMessage, int userId)
+        public async Task<string> GetAIResponseAsync(string userMessage, int userId, List<ChatMessage>? guestHistory = null)
         {
             try
             {
@@ -131,18 +131,51 @@ namespace GymPower.Services
                 // 3. Combine Static Prompt with Dynamic Context
                 var fullSystemPrompt = $"{staticPrompt}\n\n{productContext}";
 
-                // 4. Request Payload (Standard OpenAI Compatible)
+                // 4. Build message payload with conversation memory
+                var messagePayload = new List<object>
+                {
+                    new { role = "system", content = fullSystemPrompt }
+                };
+
+                // Add past conversation memory if it's a logged-in user
+                if (userId > 0)
+                {
+                    var pastMessages = await _context.ChatMessages
+                        .AsNoTracking()
+                        .Where(m => m.UserId == userId)
+                        .OrderByDescending(m => m.CreatedAt)
+                        .Take(10) // fetch last 10 messages to keep context window light
+                        .ToListAsync();
+
+                    // Reverse them so they are in chronological order
+                    pastMessages.Reverse();
+
+                    foreach (var m in pastMessages)
+                    {
+                        // Match role to OpenAI standards (Assistant -> assistant, User -> user)
+                        var roleStr = m.Role.ToLower(); 
+                        messagePayload.Add(new { role = roleStr, content = m.Message });
+                    }
+                }
+                else if (guestHistory != null)
+                {
+                    // Guest memory
+                    foreach (var m in guestHistory)
+                    {
+                        var roleStr = m.Role.ToLower(); 
+                        messagePayload.Add(new { role = roleStr, content = m.Message });
+                    }
+                }
+
+                messagePayload.Add(new { role = "user", content = userMessage });
+
+                // 5. Request Payload (Standard OpenAI Compatible)
                 var requestBody = new
                 {
                     model = model,
-                    messages = new[]
-                    {
-                        new { role = "system", content = fullSystemPrompt },
-                        new { role = "user", content = userMessage }
-                    },
-                    max_tokens = 512,
+                    messages = messagePayload.ToArray(),
+                    max_tokens = 2048,
                     temperature = 0.7
-                    // Removed provider-specific params like top_k to ensure cross-compatibility
                 };
 
                 // 5. Send Request

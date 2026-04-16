@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace GymPower.Controllers
 {
     public class AdminController : Controller
     {
         private readonly GymPower.Services.InsightsService _insightsService;
+        private readonly GymPower.Data.AppDbContext _context;
 
-        public AdminController(GymPower.Services.InsightsService insightsService)
+        public AdminController(GymPower.Services.InsightsService insightsService, GymPower.Data.AppDbContext context)
         {
             _insightsService = insightsService;
+            _context = context;
         }
 
         // ✅ Main Admin Panel

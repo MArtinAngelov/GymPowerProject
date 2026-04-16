@@ -3,37 +3,51 @@
 @{
     ViewData["Title"] = "Премиум добавки - GymPower";
 }
-<!-- 🛒 Product Page Hero Slider -->
-<div id="productsCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2200">
+<!-- 🎬 Cinematic Hero Carousel -->
+<div id="productsCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="1200">
     <div class="carousel-inner">
 
         <!-- Slide 1 -->
-        <div class="carousel-item active" style="background-image: url('/images/hero/ManWithSuplements.png');">
+        <div class="carousel-item active" data-bs-interval="2000">
+            <div class="carousel-bg" style="background-image: url('/images/hero/hero_1.jpg');"></div>
             <div class="overlay"></div>
             <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
-                <h1 class="fw-bold display-5 mb-2">💪 Избери своята цел</h1>
-                <p class="lead mb-3">Открий добавките, които ще те доближат до нея.</p>
-                <a href="/Products?category=Изграждане на мускулна маса" class="btn btn-warning btn-sm px-4 fw-bold">ИЗГРАЖДАНЕ НА МУСКУЛНА МАСА</a>
+                <h1 class="fw-bold display-4 mb-2 cinematic-title">💪 ИЗБЕРИ СВОЯТА ЦЕЛ</h1>
+                <p class="lead mb-4 cinematic-subtitle">Открий добавките, които ще те доближат до нея.</p>
+                <a href="#category-section" class="btn btn-warning btn-lg px-5 fw-bold cinematic-btn" onclick="document.querySelector('.container.mt-5').scrollIntoView({behavior: 'smooth'})">ПАЗАРУВАЙ СЕГА</a>
             </div>
         </div>
 
         <!-- Slide 2 -->
-        <div class="carousel-item" style="background-image: url('/images/hero/FatBurner.png');">
+        <div class="carousel-item" data-bs-interval="2000">
+            <div class="carousel-bg" style="background-image: url('/images/hero/hero_2.jpg');"></div>
             <div class="overlay"></div>
             <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
-                <h1 class="fw-bold display-5 mb-2">🔥 Изгори мазнините интелигентно</h1>
-                <p class="lead mb-3">Fat Burners и L-Carnitine формули за по-добри резултати.</p>
-                <a href="/Products?category=Отслабване" class="btn btn-warning btn-sm px-4 fw-bold">ОТСЛАБВАНЕ</a>
+                <h1 class="fw-bold display-4 mb-2 cinematic-title">🔥 ИЗГОРИ МАЗНИНИТЕ ИНТЕЛИГЕНТНО</h1>
+                <p class="lead mb-4 cinematic-subtitle">Fat Burners и L-Carnitine формули за по-добри резултати.</p>
+                <a href="/Products?category=Отслабване" class="btn btn-warning btn-lg px-5 fw-bold cinematic-btn">ОТСЛАБВАНЕ</a>
             </div>
         </div>
 
         <!-- Slide 3 -->
-        <div class="carousel-item" style="background-image: url('/images/hero/ThorPreWorkout.png');">
+        <div class="carousel-item" data-bs-interval="2000">
+            <div class="carousel-bg" style="background-image: url('/images/hero/hero_3.jpg');"></div>
             <div class="overlay"></div>
             <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
-                <h1 class="fw-bold display-5 mb-2">⚡ Повиши издръжливостта си</h1>
-                <p class="lead mb-3">Открий Energy и Pump формули за максимална производителност.</p>
-                <a href="/Products?category=Висока производителност" class="btn btn-warning btn-sm px-4 fw-bold">ВИСОКА ПРОИЗВОДИТЕЛНОСТ</a>
+                <h1 class="fw-bold display-4 mb-2 cinematic-title">⚡ ПОВИШИ ИЗДРЪЖЛИВОСТТА СИ</h1>
+                <p class="lead mb-4 cinematic-subtitle">Открий Energy и Pump формули за максимална производителност.</p>
+                <a href="/Products?category=Висока производителност" class="btn btn-warning btn-lg px-5 fw-bold cinematic-btn">ВИСОКА ПРОИЗВОДИТЕЛНОСТ</a>
+            </div>
+        </div>
+        
+        <!-- Slide 4 -->
+        <div class="carousel-item" data-bs-interval="2000">
+            <div class="carousel-bg" style="background-image: url('/images/hero/hero_4.jpg');"></div>
+            <div class="overlay"></div>
+            <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
+                <h1 class="fw-bold display-4 mb-2 cinematic-title">🏋️ МАКСИМАЛНА ТЕЖЕСТ</h1>
+                <p class="lead mb-4 cinematic-subtitle">Днес полагаш основите на утрешната си победа.</p>
+                <a href="/Products" class="btn btn-warning btn-lg px-5 fw-bold cinematic-btn">КЪМ МАГАЗИНА</a>
             </div>
         </div>
     </div>
@@ -42,86 +56,101 @@
 <!-- 🎨 Carousel Styles -->
 <style>
     #productsCarousel {
-        height: 50vh;
+        height: 75vh;
+        min-height: 600px;
         position: relative;
         overflow: hidden;
+        border-bottom: 2px solid var(--primary);
     }
 
-    .carousel-item {
-        height: 50vh;
+    #productsCarousel .carousel-item {
+        height: 75vh;
+        min-height: 600px;
+        transition: opacity 0.4s ease-in-out;
+    }
+
+    /* Isolate background so Bootstrap JS doesn't see animation time */
+    #productsCarousel .carousel-bg {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
         background-size: cover;
-        background-position: center;
-        transition: opacity 0.8s ease-in-out, transform 3s ease;
+        background-position: center top;
+        z-index: 0;
     }
 
-        .carousel-item.active {
-            animation: zoomIn 4s ease-in-out infinite alternate;
-        }
-
-    @@keyframes zoomIn {
-        from {
-            transform: scale(1);
-        }
-
-        to {
-            transform: scale(1.05);
-        }
+    /* Cinematic Ken Burns Effect */
+    #productsCarousel .carousel-item.active .carousel-bg {
+        animation: kenBurns 15s ease-in-out infinite alternate;
     }
 
-    .overlay {
+    @@keyframes kenBurns {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.15); }
+    }
+
+    /* Dramatic Vignette Overlay */
+    #productsCarousel .overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.55);
+        background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.85) 100%), 
+                    linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 40%, rgba(0,0,0,0.9) 100%);
         z-index: 1;
     }
 
-    .carousel-caption {
+    #productsCarousel .carousel-caption {
         z-index: 10;
         text-align: center;
         color: #fff;
-        text-shadow: 0 2px 12px rgba(0,0,0,0.9);
+        bottom: 20%;
     }
 
-        .carousel-caption h1 {
-            font-size: 2rem;
-            background: linear-gradient(90deg, #ff6b35, #f7b733);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 4s ease-in-out infinite alternate;
-        }
-
-    @@keyframes glow {
-        from {
-            text-shadow: 0 0 10px rgba(255,107,53,0.4);
-        }
-
-        to {
-            text-shadow: 0 0 25px rgba(255,193,7,0.9);
-        }
+    .cinematic-title {
+        font-size: 3rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #ffffff, #f1f1f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 5px 20px rgba(0,0,0,0.8);
+        animation: cinematicGlow 3s ease-in-out infinite alternate;
     }
 
-    .carousel-caption p {
-        font-size: 1rem;
-        color: #f1f1f1;
-        margin-bottom: 10px;
+    @@keyframes cinematicGlow {
+        from { text-shadow: 0 2px 15px rgba(255,107,53,0.3); }
+        to { text-shadow: 0 5px 30px rgba(255,193,7,0.7); }
     }
 
-    .carousel-caption .btn {
-        border-radius: 40px;
-        padding: 8px 25px;
-        font-size: 1rem;
-        font-weight: 700;
-        box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
-        transition: all 0.3s ease;
+    .cinematic-subtitle {
+        font-size: 1.25rem;
+        font-weight: 300;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 2px 10px rgba(0,0,0,1);
     }
 
-        .carousel-caption .btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 25px rgba(255, 193, 7, 0.7);
-        }
+    .cinematic-btn {
+        border-radius: 50px;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        padding: 12px 35px;
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .cinematic-btn:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(255, 193, 7, 0.8);
+        background-color: #fff;
+        color: var(--primary) !important;
+    }
+
+    @@media (max-width: 768px) {
+        .cinematic-title { font-size: 2rem; }
+        #productsCarousel, #productsCarousel .carousel-item { height: 60vh; min-height: 400px; }
+    }
 </style>
 
 <div class="container mt-5">

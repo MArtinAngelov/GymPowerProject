@@ -62,26 +62,15 @@
                     @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
                     {
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 user-dropdown-toggle"
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 user-dropdown-toggle text-white"
                                href="#" id="userDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="user-avatar-circle">@(Context.Session.GetString("Username")?[0].ToString().ToUpper())</span>
-                                <span class="fw-semibold" data-bg="Здравей, @Context.Session.GetString("Username")" data-en="Hi, @Context.Session.GetString("Username")">Здравей, @Context.Session.GetString("Username")</span>
-                                <i class="fas fa-chevron-down small opacity-75"></i>
+                                <span class="fw-semibold text-white" data-bg="Здравей, @Context.Session.GetString("Username")" data-en="Hi, @Context.Session.GetString("Username")">Здравей, @Context.Session.GetString("Username")</span>
+                                <i class="fas fa-chevron-down small opacity-75 text-white"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu shadow-lg" aria-labelledby="userDropdown">
-                                <!-- Language -->
-                                <li class="px-3 pt-2 pb-1">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-globe me-2 text-warning"></i>
-                                        <span class="small text-muted me-auto" data-bg="Език" data-en="Language">Език</span>
-                                        <div class="lang-toggle-group">
-                                            <button class="lang-btn" id="langBtnBg" onclick="setLanguage('bg')" title="Български">БГ</button>
-                                            <button class="lang-btn" id="langBtnEn" onclick="setLanguage('en')" title="English">EN</button>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li><hr class="dropdown-divider my-1"></li>
+
                                 <!-- Edit Profile -->
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="Account" asp-action="EditProfile">
@@ -113,8 +102,8 @@
                         <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Register">Регистрация</a></li>
                     }
                     <li class="nav-item ms-2">
-                        <a class="btn btn-warning rounded-pill px-3" asp-controller="Cart" asp-action="Index">
-                            <i class="fa fa-shopping-cart"></i> <span id="cartCountBadge" class="badge bg-dark ms-1">0</span>
+                        <a class="btn btn-warning rounded-pill px-3 fw-bold" asp-controller="Cart" asp-action="Index">
+                            <i class="fa fa-shopping-cart"></i> <span id="cartCountBadge" class="badge ms-1 text-white" style="background-color: #1a1a2e; border: none;">0</span>
                         </a>
                     </li>
                 </ul>
@@ -160,8 +149,10 @@
         <!-- Footer -->
         <div class="chat-footer">
             <div class="input-group">
-                <input type="text" id="chatInput" class="form-control hover-shadow" placeholder="Попитай нещо..." style="border-radius: 20px 0 0 20px;">
+                <input type="text" id="chatInput" class="form-control hover-shadow" placeholder="Попитай фитнес асистент" style="border-radius: 20px 0 0 20px;">
                 <button id="sendMessage" class="btn btn-primary" style="border-radius: 0 20px 20px 0;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -403,7 +394,7 @@
 
         function applyLanguage(lang) {
             document.querySelectorAll('[data-bg][data-en]').forEach(function(el) {
-                el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-bg');
+                el.innerHTML = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-bg');
             });
         }
 
