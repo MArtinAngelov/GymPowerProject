@@ -20,8 +20,9 @@ builder.Services.AddTransient<GymPower.Services.IEmailService, GymPower.Services
 
 
 // ✅ Database connection
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=GymPower.db";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(connectionString));
 
 // ✅ Session + Context Access
 builder.Services.AddHttpContextAccessor();
