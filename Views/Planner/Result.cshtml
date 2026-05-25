@@ -56,7 +56,7 @@
                             <h5 class="card-title fw-bold">@product.Name</h5>
                             <p class="card-text text-muted small">@product.Category</p>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="h5 fw-bold text-primary mb-0">@GymPower.Helpers.CurrencyHelper.Format(product.Price)</span>
+                                <span class="h5 fw-bold text-primary mb-0">@GymPower.Helpers.CurrencyHelper.ToEuro(product.Price)</span>
                             </div>
                         </div>
                         <div class="card-footer bg-white border-0 pt-0 pb-3">
@@ -74,7 +74,7 @@
         {
             <div class="text-center mt-5">
                 <div class="card bg-dark text-white p-4 d-inline-block rounded-3 shadow-lg">
-                    <h4 class="fw-bold text-warning">Обща стойност: @GymPower.Helpers.CurrencyHelper.Format(totalCost)</h4>
+                    <h4 class="fw-bold text-warning">Обща стойност: @GymPower.Helpers.CurrencyHelper.ToEuro(totalCost)</h4>
                     <p class="text-white-50">Вземи целия пакет за максимални резултати</p>
                     <button onclick="addAllToCart(@Json.Serialize(Model.RecommendedProducts.Select(p => p.Id)))" 
                             class="btn btn-primary btn-lg rounded-pill px-5 fw-bold pulse-animation">

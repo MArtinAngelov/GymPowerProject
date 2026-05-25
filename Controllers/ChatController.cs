@@ -115,6 +115,30 @@ namespace GymPower.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ClearHistory()
+        {
+            try
+            {
+                var userId = HttpContext.Session.GetInt32("UserId");
+                if (userId.HasValue)
+                {
+                    var messages = await _context.ChatMessages.Where(m => m.UserId == userId.Value).ToListAsync();
+                    _context.ChatMessages.RemoveRange(messages);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    HttpContext.Session.Remove("GuestChatHistory");
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
     }
 
     public class ChatRequest

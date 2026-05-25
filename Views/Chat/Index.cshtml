@@ -151,11 +151,14 @@
 
         <div class="chat-container">
             <!-- Header for context -->
-            <div class="chat-header">
+            <div class="chat-header d-flex justify-content-between align-items-center w-100">
                 <div>
                     <h5 class="m-0 fw-bold">Асистент за добавки</h5>
                     <small class="text-white-50">Онлайн</small>
                 </div>
+                <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="clearChatHistory()" style="border-color: rgba(220, 53, 69, 0.5); font-size: 0.85rem;">
+                    <i class="fas fa-trash-alt me-1"></i> Изчисти чата
+                </button>
             </div>
 
             <div class="chat-box" id="chatBox">
@@ -252,5 +255,27 @@
         div.textContent = text;
         chatBox.appendChild(div);
         chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function clearChatHistory() {
+        if (!confirm("Сигурни ли сте, че искате да изчистите историята на чата?")) return;
+
+        try {
+            const response = await fetch('/Chat/ClearHistory', { method: 'POST' });
+            if (response.ok) {
+                // Clear chat UI and show welcome message
+                chatBox.innerHTML = `
+                    <div class="message assistant">
+                        Здравей! Аз съм твоят GymPower AI треньор. 💪<br /> 
+                        Мога да ти помогна с избор на добавки, тренировъчни съвети и възстановяване. Попитай ме нещо!
+                    </div>
+                `;
+            } else {
+                alert("Неуспешно изчистване на историята.");
+            }
+        } catch (error) {
+            console.error("Clear chat error:", error);
+            alert("Грешка при свързване със сървъра.");
+        }
     }
 </script>

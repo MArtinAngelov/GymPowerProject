@@ -809,7 +809,7 @@ namespace GymPower.Data
                 context.SaveChanges();
             }
 
-            if (context.Products.Any()) return; // ✅ Prevent duplicates if data already exists
+            if (context.Products.Any(p => p.Name == "Суроватъчен протеин")) return; // ✅ Prevent duplicates if main data already exists
 
             // 1. Seed Products
             var products = new List<Product>

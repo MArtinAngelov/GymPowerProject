@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using GymPower.Constants;
 using GymPower.Data;
 using GymPower.Models;
+using GymPower.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -43,7 +44,7 @@ namespace GymPower.Services
             try
             {
                 var products = await _context.Products.AsNoTracking().ToListAsync();
-                var productContext = string.Join("\n", products.Select(p => $"{p.Id}: {p.Name} ({p.Category}) - {p.Price:C}"));
+                var productContext = string.Join("\n", products.Select(p => $"{p.Id}: {p.Name} ({p.Category}) - {p.Price.ToEuro()}"));
 
                 var prompt = $@"
                     Generate a personalized fitness plan for:
@@ -122,10 +123,10 @@ namespace GymPower.Services
                 productContext.AppendLine("Product context:");
                 foreach (var p in products)
                 {
-                    productContext.AppendLine($"- {p.Name} ({p.Category}): {p.Price:C}. {p.Description}");
+                    productContext.AppendLine($"- {p.Name} ({p.Category}): {p.Price.ToEuro()}. {p.Description}");
                 }
 
-                var fullSystemPrompt = $"{staticPrompt}\n\n{productContext}";
+                var fullSystemPrompt = $"{staticPrompt}\n\nВАЖНО: Когато предлагаш или изброяваш продукти, ВИНАГИ показвай цените им в ЕВРО, като използваш ТОЧНИТЕ цени от предоставения списък с продукти (напр. '50.00 €'). Никога не измисляй или променяй цените!\n\n{productContext}";
 
                 var allMessages = new List<(string role, string text)>();
 
